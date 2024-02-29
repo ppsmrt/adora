@@ -3,33 +3,6 @@
 #Visit (https://tataprime.wordpress.com) For More
 #Please Dont Copy My Work, Give Credit Before Sharing
 
-#EXTINF:-1 tvg-id="colorstamilhd.in" tvg-name="IN: COLORS TAMIL FHD" tvg-logo="http://landiptv.vip:2095/images/tAMEysP4gkZCw5tGuBhL3LLwAOCM7Oe6-TC3wmpAxi6moURKzq1n5_ByQ5pcU-TUyFuWoeIOfoTZu1wLvLbHY6KONKOI9uML-gSPfcUOZrjiQPzci45cnS7S_oYNk57c.png" group-title="Tamil", COLORS TAMIL FHD
-http://719086047881772475.ofd0208.xyz:80/live/vi84800/tpqv7TgvUG/772475.m3u8
-
-#EXTINF:-1 tvg-id="" tvg-name="IN: JAYA MAX SD" tvg-logo="https://asiagrandiptv.us/logo/jayamax.png" group-title="Tamil",JAYA MAX SD
-http://719086047881776422.ofd0208.xyz:80/live/vi84800/tpqv7TgvUG/776422.m3u8
-
-#EXTINF:-1 tvg-id="" tvg-name="IN: RAJ TV SD" tvg-logo="http://landiptv.vip:2095/images/HjwEu7iTOqkLhxl1ITLIBTm-dmLKRiCNsAFuX3GsBYMPBVzUqsICiX_UsvmKsWS1.png" group-title="Tamil", RAJ TV SD
-http://719086047881777647.ofd0208.xyz:80/live/vi84800/tpqv7TgvUG/777647.m3u8
-
-#EXTINF:-1 tvg-id="" tvg-name="IN: CARTOON NETWORK FHD" tvg-logo="http://landiptv.vip:2095/images/HjwEu7iTOqkLhxl1ITLIBQs7mrrP87FCg_zMp_q79qEx30_dtw0H2y9M3-T_oKH_NaREqGHR6fTfEKRSCI1xEQ.png" group-title="India",IN: CARTOON NETWORK FHD
-http://719086047881781769.ofd0208.xyz:80/live/vi84800/tpqv7TgvUG/781769.m3u8
-
-#EXTINF:-1 tvg-id="" tvg-name="IN: NATIONAL GEOGRAPHIC WILD FHD" tvg-logo="https://asiagrandiptv.us/logo/natgeowild.png" group-title="India",IN: NATIONAL GEOGRAPHIC WILD FHD
-http://719086047881781774.ofd0208.xyz:80/live/vi84800/tpqv7TgvUG/781774.m3u8
-
-#EXTINF:-1 tvg-id="" tvg-name="IN: HBO FHD" tvg-logo="https://asiagrandiptv.us/logo/hbo.png" group-title="India",IN: HBO FHD
-http://719086047881783228.ofd0208.xyz:80/live/vi84800/tpqv7TgvUG/783228.m3u8
-
-#EXTINF:-1 tvg-id="" tvg-name="IN: JAYA TV FHD" tvg-logo="" group-title="India",IN: JAYA TV FHD
-http://719086047881783810.ofd0208.xyz:80/live/vi84800/tpqv7TgvUG/783810.m3u8
-
-#EXTINF:-1 tvg-id="suntv.in" tvg-name="IN: SUN TV FHD" tvg-logo="http://landiptv.vip:2095/images/HjwEu7iTOqkLhxl1ITLIBVZH1cLgBEdZ8pXSLuJrXn2MGcv4OPdJLpMPCSQbcAUE.png" group-title="India",IN: SUN TV FHD
-http://719086047881771779.ofd0208.xyz:80/live/vi84800/tpqv7TgvUG/771779.m3u8
-
-#EXTINF:-1 tvg-id="" tvg-name="IN: RAJ NEWS SD" tvg-logo="" group-title="India",IN: RAJ NEWS SD
-http://719086047881783814.ofd0208.xyz:80/live/vi84800/tpqv7TgvUG/783814.m3u8
-
 #EXTINF: -1 tvg-id="521" tvg-logo="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-11960-j9lu9vow-v1/imageContent-11960-j9lu9vow-m1.png" group-title="Extra-Tv-Team Regional Tamil", Sun TV HD
 https://bpprod3catchup.akamaized.net/bpk-tv/irdeto_com_Channel_760/output/manifest.mpd?begin=20240206T060000&end=20240214T060000
 
@@ -43,7 +16,7 @@ https://bpprod5catchup.akamaized.net/bpk-tv/irdeto_com_Channel_818/output/manife
 https://bpprod5catchup.akamaized.net/bpk-tv/irdeto_com_Channel_842/output/manifest.mpd?begin=20240206T060000&end=20240214T060000
 
 #EXTINF: -1 tvg-id="674" tvg-logo="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-33814-jo5jba9s-v3/imageContent-33814-jo5jba9s-m3.PNG" group-title="Extra-Tv-Team Regional Tamil", Colors Tamil HD
-https://bpprod7catchup.akamaized.net/bpk-tv/irdeto_com_Channel_916/output/manifest.mpd?begin=20240206T060000&end=20240214T060000
+http://719086047881772475.ofd0208.xyz:80/live/vi84800/tpqv7TgvUG/772475.m3u8
 
 #EXTINF: -1 tvg-id="200" tvg-logo="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-819-j5m8fsfs-v1/imageContent-819-j5m8fsfs-m1.png" group-title="Extra-Tv-Team Regional Tamil", Kalaignar TV
 https://bpprod7catchup.akamaized.net/bpk-tv/irdeto_com_Channel_344/output/manifest.mpd?begin=20240206T060000&end=20240214T060000
