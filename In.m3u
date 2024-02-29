@@ -90,4 +90,4 @@ https://bpprod1catchup.akamaized.net/bpk-tv/irdeto_com_Channel_456/output/manife
 #EXTINF: -1 tvg-id="408" tvg-logo="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-11622-j9k0845k-v2/imageContent-11622-j9k0845k-m2.png" group-title="Extra-Tv-Team Regional Tamil", Nambikkai TV
 https://bpprod1catchup.akamaized.net/bpk-tv/irdeto_com_Channel_651/output/manifest.mpd?begin=20240206T060000&end=20240214T060000
 #EXTINF: -1 tvg-id="421" tvg-logo="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-11667-j9kdkb6w-v1/imageContent-11667-j9kdkb6w-m1.png" group-title="Extra-Tv-Team Regional Tamil", Peppers TV
-https://bpprod4catchup.akamaized.net/bpk-tv/irdeto_com_Channel_671/output/manifest.mpd?begin=20240206T060000&end=20240214T060000
+https://tp-gules-seven.vercel.app/player.html?channel=Peppers%20TV
