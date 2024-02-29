@@ -9,8 +9,8 @@ https://edge1.laotv.la/live/SunTV/index.m3u8
 #EXTINF: -1 tvg-id="496" tvg-logo="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-11909-j9l52epk-v2/imageContent-11909-j9l52epk-m4.png" group-title="Tamil", Star Vijay
 http://198.16.100.90:8278/starvijay_raj/playlist.m3u8?tid=MB0B3845002438450024&ct=19249&tsum=8a504d218e4ac85489e322b00289efcb
 
-#EXTINF: -1 tvg-id="608" tvg-logo="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-11997-j9lux9ig-v1/imageContent-11997-j9lux9ig-m5.png" group-title="Extra-Tv-Team Regional Tamil", Zee Tamil HD
-https://bpprod5catchup.akamaized.net/bpk-tv/irdeto_com_Channel_842/output/manifest.mpd?begin=20240206T060000&end=20240214T060000
+#EXTINF: -1 tvg-id="608" tvg-logo="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-11997-j9lux9ig-v1/imageContent-11997-j9lux9ig-m5.png" group-title="Tamil", Zee Tamil HD
+http://50.7.136.130:8000/live/vi84800/tpqv7TgvUG/712392.m3u8?token=H0EMV0RQRl8UAgsCBgNTCQMCVghRUgIBAg5fAVpbUFUFU1RUUwhVBA5DFRZAFkBdBw48WFASDVMEBVUBURQXRhcGFmleXEZfFFMPAQBWBRpKQRdYWVUVXgUbREgKXBcJChYIWhsaAR1CBEtaUg5tXAMVClJREg0KQFsKFEFXW2wABglXWVxGXxRQGxgRC0FIRFkNRFhcG0ZXXhJKAkxQEV4NEVpbFEYGWRRXQEEbEAJEKi0TGBJSHEFSCEsKV1sRXkEJBUIARkkUCEprQQdBTBQGAlxRQhVeFwdEFEFVVEs7AAtYWV0HEV8OV0cRWBALRE9BXFteXhBaRTlIClwXCQoWCFpK
 
 #EXTINF: -1 tvg-id="674" tvg-logo="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-33814-jo5jba9s-v3/imageContent-33814-jo5jba9s-m3.PNG" group-title="Extra-Tv-Team Regional Tamil", Colors Tamil HD
 http://719086047881772475.ofd0208.xyz:80/live/vi84800/tpqv7TgvUG/772475.m3u8
