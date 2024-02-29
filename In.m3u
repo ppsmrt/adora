@@ -3,14 +3,11 @@
 #Visit (https://tataprime.wordpress.com) For More
 #Please Dont Copy My Work, Give Credit Before Sharing
 
-#EXTINF: -1 tvg-id="521" tvg-logo="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-11960-j9lu9vow-v1/imageContent-11960-j9lu9vow-m1.png" group-title="Tamil", Sun TV HD
-https://player.livepush.io/emvoh5SsvdyXW
+#EXTINF: -1 tvg-id="521" tvg-logo="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-11960-j9lu9vow-v1/imageContent-11960-j9lu9vow-m1.png" group-title="Tamil", Sun TV
+https://edge1.laotv.la/live/SunTV/index.m3u8
 
-#EXTINF: -1 tvg-id="474" tvg-logo="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-11837-j9kzms9s-v2/imageContent-11837-j9kzms9s-m3.png" group-title="Extra-Tv-Team Regional Tamil", Sun Life
-https://bpprod3catchup.akamaized.net/bpk-tv/irdeto_com_Channel_756/output/manifest.mpd?begin=20240206T060000&end=20240214T060000
-
-#EXTINF: -1 tvg-id="496" tvg-logo="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-11909-j9l52epk-v2/imageContent-11909-j9l52epk-m4.png" group-title="Extra-Tv-Team Regional Tamil", Star Vijay HD
-https://bpprod5catchup.akamaized.net/bpk-tv/irdeto_com_Channel_818/output/manifest.mpd?begin=20240206T060000&end=20240214T060000
+#EXTINF: -1 tvg-id="496" tvg-logo="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-11909-j9l52epk-v2/imageContent-11909-j9l52epk-m4.png" group-title="Tamil", Star Vijay
+http://198.16.100.90:8278/starvijay_raj/playlist.m3u8?tid=MB0B3845002438450024&ct=19249&tsum=8a504d218e4ac85489e322b00289efcb
 
 #EXTINF: -1 tvg-id="608" tvg-logo="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-11997-j9lux9ig-v1/imageContent-11997-j9lux9ig-m5.png" group-title="Extra-Tv-Team Regional Tamil", Zee Tamil HD
 https://bpprod5catchup.akamaized.net/bpk-tv/irdeto_com_Channel_842/output/manifest.mpd?begin=20240206T060000&end=20240214T060000
