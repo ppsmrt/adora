@@ -15,8 +15,8 @@ https://bpprod5catchup.akamaized.net/bpk-tv/irdeto_com_Channel_842/output/manife
 #EXTINF: -1 tvg-id="674" tvg-logo="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-33814-jo5jba9s-v3/imageContent-33814-jo5jba9s-m3.PNG" group-title="Extra-Tv-Team Regional Tamil", Colors Tamil HD
 http://719086047881772475.ofd0208.xyz:80/live/vi84800/tpqv7TgvUG/772475.m3u8
 
-#EXTINF: -1 tvg-id="200" tvg-logo="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-819-j5m8fsfs-v1/imageContent-819-j5m8fsfs-m1.png" group-title="Extra-Tv-Team Regional Tamil", Kalaignar TV
-https://bpprod7catchup.akamaized.net/bpk-tv/irdeto_com_Channel_344/output/manifest.mpd?begin=20240206T060000&end=20240214T060000
+#EXTINF: -1 tvg-id="200" tvg-logo="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-819-j5m8fsfs-v1/imageContent-819-j5m8fsfs-m1.png" group-title="Tamil", Kalaignar TV
+https://segment.yuppcdn.net/240122/kalaignartv/playlist.m3u8
 
 #EXTINF: -1 tvg-id="439" tvg-logo="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-11700-j9ksbotk-v1/imageContent-11700-j9ksbotk-m1.png" group-title="Extra-Tv-Team Regional Tamil", Raj TV
 https://bpprod7catchup.akamaized.net/bpk-tv/irdeto_com_Channel_691/output/manifest.mpd?begin=20240206T060000&end=20240214T060000
@@ -75,8 +75,8 @@ https://bpprod4catchup.akamaized.net/bpk-tv/irdeto_com_Channel_519/output/manife
 https://bpprod4catchup.akamaized.net/bpk-tv/irdeto_com_Channel_350/output/manifest.mpd?begin=20240206T060000&end=20240214T060000
 #EXTINF: -1 tvg-id="425" tvg-logo="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-11682-j9khxjoo-v1/imageContent-11682-j9khxjoo-m1.png" group-title="Extra-Tv-Team Regional Tamil", Raj Musix
 https://bpprod7catchup.akamaized.net/bpk-tv/irdeto_com_Channel_684/output/manifest.mpd?begin=20240206T060000&end=20240214T060000
-#EXTINF: -1 tvg-id="647" tvg-logo="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-24578-jgotgry0-v1/imageContent-24578-jgotgry0-m1.png" group-title="Extra-Tv-Team Regional Tamil", Isaiaruvi
-https://bpprod6catchup.akamaized.net/bpk-tv/irdeto_com_Channel_578/output/manifest.mpd?begin=20240206T060000&end=20240214T060000
+#EXTINF: -1 tvg-id="647" tvg-logo="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-24578-jgotgry0-v1/imageContent-24578-jgotgry0-m1.png" group-title="Tamil", Isaiaruvi
+https://segment.yuppcdn.net/140622/isaiaruvi/playlist.m3u8
 #EXTINF: -1 tvg-id="411" tvg-logo="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-11616-j9k04eo0-v1/imageContent-11616-j9k04eo0-m1.png" group-title="Tamil", Murasu TV
 https://segment.yuppcdn.net/050522/murasu/playlist.m3u8
 #EXTINF: -1 tvg-id="400" tvg-logo="https://ltsk-cdn.s3.eu-west-1.amazonaws.com/jumpstart/Temp_Live/cdn/HLS/Channel/imageContent-11583-j9jype8w-v3/imageContent-11583-j9jype8w-m3.png" group-title="Extra-Tv-Team Regional Tamil", Mega Musiq
