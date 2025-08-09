@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Admin Login</title>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
+    import {
+      getAuth,
+      signInWithEmailAndPassword,
+      onAuthStateChanged,
+      signOut,
+    } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB9GaCbYFH22WbiLs1pc_UJTsM_0Tetj6E",
+      authDomain: "tnm3ulive.firebaseapp.com",
+      databaseURL: "https://tnm3ulive-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "tnm3ulive",
+      storageBucket: "tnm3ulive.firebasestorage.app",
+      messagingSenderId: "80664356882",
+      appId: "1:80664356882:web:c8464819b0515ec9b210cb",
+      measurementId: "G-FNS9JWZ9LS"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.login = async () => {
+      const emailInput = document.getElementById("email");
+      const passwordInput = document.getElementById("password");
+
+      const email = emailInput.value;
+      const password = passwordInput.value;
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        alert("Login successful!");
+        // Redirect or show admin panel here
+        document.getElementById("login-form").style.display = "none";
+        document.getElementById("admin-panel").style.display = "block";
+      } catch (error) {
+        alert("Login failed: " + error.message);
+      }
+    };
+
+    window.logout = async () => {
+      await signOut(auth);
+      alert("Logged out");
+      document.getElementById("login-form").style.display = "block";
+      document.getElementById("admin-panel").style.display = "none";
+    };
+
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // User is signed in
+        document.getElementById("login-form").style.display = "none";
+        document.getElementById("admin-panel").style.display = "block";
+      } else {
+        // No user signed in
+        document.getElementById("login-form").style.display = "block";
+        document.getElementById("admin-panel").style.display = "none";
+      }
+    });
+  </script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 400px;
+      margin: 2rem auto;
+      padding: 1rem;
+      border: 1px solid #ddd;
+      border-radius: 8px;
+    }
+    input {
+      width: 100%;
+      padding: 0.5rem;
+      margin-top: 0.5rem;
+      margin-bottom: 1rem;
+      font-size: 1rem;
+    }
+    button {
+      padding: 0.6rem 1rem;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+    #admin-panel {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <h2>Admin Login</h2>
+  <div id="login-form">
+    <label for="email">Email:</label>
+    <input id="email" type="email" placeholder="admin@example.com" value="admin@example.com" />
+    <label for="password">Password:</label>
+    <input id="password" type="password" placeholder="Password" value="test@123" />
+    <button onclick="login()">Login</button>
+  </div>
+
+  <div id="admin-panel">
+    <h3>Welcome, Admin!</h3>
+    <button onclick="logout()">Logout</button>
+    <p>Here you can add/manage TV channels (coming soon!)</p>
+  </div>
+</body>
+</html>
