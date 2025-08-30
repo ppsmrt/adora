@@ -1,196 +1,101 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Live TV Channels with Filters</title>
-
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-app.js";
-    import { getFirestore, collection, query, onSnapshot } from "https://www.gstatic.com/firebasejs/10.1.0/firebase-firestore.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyB9GaCbYFH22WbiLs1pc_UJTsM_0Tetj6E",
-      authDomain: "tnm3ulive.firebaseapp.com",
-      databaseURL: "https://tnm3ulive-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "tnm3ulive",
-      storageBucket: "tnm3ulive.firebasestorage.app",
-      messagingSenderId: "80664356882",
-      appId: "1:80664356882:web:c8464819b0515ec9b210cb",
-      measurementId: "G-FNS9JWZ9LS"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
-
-    let allChannels = []; // Cache all channels locally
-    let filters = {
-      region: "",
-      language: "",
-      category: ""
-    };
-
-    window.onload = () => {
-      const channelsContainer = document.getElementById("channels-container");
-      const q = query(collection(db, "channels"));
-      onSnapshot(q, (snapshot) => {
-        allChannels = [];
-        snapshot.forEach(doc => {
-          allChannels.push(doc.data());
-        });
-        renderChannels();
-      });
-
-      // Setup filter event listeners
-      document.getElementById("filter-region").addEventListener("change", (e) => {
-        filters.region = e.target.value;
-        renderChannels();
-      });
-      document.getElementById("filter-language").addEventListener("change", (e) => {
-        filters.language = e.target.value;
-        renderChannels();
-      });
-      document.getElementById("filter-category").addEventListener("change", (e) => {
-        filters.category = e.target.value;
-        renderChannels();
-      });
-    };
-
-    function renderChannels() {
-      const container = document.getElementById("channels-container");
-      container.innerHTML = "";
-
-      // Filter channels based on current filters
-      const filtered = allChannels.filter(ch => {
-        return (filters.region === "" || ch.region === filters.region)
-            && (filters.language === "" || ch.language === filters.language)
-            && (filters.category === "" || ch.category === filters.category);
-      });
-
-      if (filtered.length === 0) {
-        container.innerHTML = `<p class="col-span-full text-center text-gray-500">No channels found for selected filters.</p>`;
-        return;
-      }
-
-      filtered.forEach(ch => {
-        const card = document.createElement("div");
-        card.className = "tv-card cursor-pointer bg-white rounded-lg shadow-md flex flex-col items-center p-4 hover:scale-105 transition-transform duration-200";
-
-        card.innerHTML = `
-          <div class="tv-icon-wrapper flex-9 w-full flex justify-center items-center">
-            <img src="${ch.iconUrl}" alt="${ch.tvName}" class="max-w-[90%] max-h-[100px] object-contain select-none pointer-events-none" />
-          </div>
-          <div class="tv-name flex-1 font-semibold text-center mt-2 truncate">${ch.tvName}</div>
-        `;
-
-        card.addEventListener("click", () => openPlayerPopup(ch.m3u8Url, ch.tvName));
-
-        container.appendChild(card);
-      });
-    }
-
-    function openPlayerPopup(url, name) {
-      const popup = document.getElementById("player-popup");
-      const video = document.getElementById("tv-player");
-      const title = document.getElementById("player-title");
-      title.textContent = name;
-      video.src = url;
-      popup.style.display = "flex";
-      video.play();
-    }
-
-    function closePlayerPopup() {
-      const popup = document.getElementById("player-popup");
-      const video = document.getElementById("tv-player");
-      video.pause();
-      video.src = "";
-      popup.style.display = "none";
-    }
-
-    window.closePlayerPopup = closePlayerPopup;
-  </script>
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Live TV</title>
+  <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css">
   <style>
-    /* Tailwind handles most styling */
-    #player-popup {
-      position: fixed;
-      inset: 0;
-      background: rgba(0,0,0,0.75);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 1000;
+    body {
+      margin: 0;
+      background: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
     }
-    #player-content {
-      background: black;
-      border-radius: 0.5rem;
-      max-width: 90vw;
-      max-height: 80vh;
-      width: 600px;
+    .player-container {
       display: flex;
       flex-direction: column;
-      overflow: hidden;
+      height: 100vh;
     }
-    #tv-player {
+    video {
       width: 100%;
-      height: 360px;
+      height: auto;
       background: black;
+    }
+    .playlist {
+      background: #111;
+      padding: 10px;
+      overflow-x: auto;
+      white-space: nowrap;
+      display: flex;
+      gap: 10px;
+    }
+    .playlist-item {
+      background: #222;
+      padding: 10px;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 14px;
+      cursor: pointer;
+      flex: 0 0 auto;
+      width: 120px;
+      text-align: center;
+    }
+    .playlist-item.active {
+      background: #e50914;
     }
   </style>
 </head>
-<body class="bg-gray-100 min-h-screen p-4">
-
-  <h1 class="text-center text-3xl font-bold mb-6">Live TV Channels</h1>
-
-  <!-- Filters -->
-  <div class="max-w-4xl mx-auto mb-6 grid grid-cols-1 sm:grid-cols-3 gap-4">
-    <select id="filter-region" class="p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-      <option value="">All Regions</option>
-      <option>Asia</option>
-      <option>Europe</option>
-      <option>North America</option>
-      <option>South America</option>
-      <option>Africa</option>
-      <option>Oceania</option>
-    </select>
-
-    <select id="filter-language" class="p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-      <option value="">All Languages</option>
-      <option>English</option>
-      <option>Hindi</option>
-      <option>Spanish</option>
-      <option>French</option>
-      <option>Chinese</option>
-      <option>Arabic</option>
-    </select>
-
-    <select id="filter-category" class="p-2 rounded border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500">
-      <option value="">All Categories</option>
-      <option>News</option>
-      <option>Sports</option>
-      <option>Entertainment</option>
-      <option>Music</option>
-      <option>Kids</option>
-      <option>Education</option>
-    </select>
+<body>
+  <div class="player-container">
+    <video id="player" controls autoplay></video>
+    <div class="playlist" id="playlist"></div>
   </div>
 
-  <!-- Channels Grid -->
-  <div id="channels-container" class="max-w-4xl mx-auto grid grid-cols-3 gap-6 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-    <!-- Channels appear here -->
-  </div>
+  <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+  <script>
+    const player = new Plyr('#player', {
+      controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'],
+      autoplay: true
+    });
 
-  <!-- Player Popup -->
-  <div id="player-popup" class="flex" onclick="closePlayerPopup()">
-    <div id="player-content" class="relative" onclick="event.stopPropagation()">
-      <button onclick="closePlayerPopup()" class="absolute top-2 right-2 text-white text-3xl font-bold hover:text-red-500 transition">×</button>
-      <div id="player-title" class="text-white font-bold text-center p-4 bg-gray-900"></div>
-      <video id="tv-player" controls autoplay playsinline></video>
-    </div>
-  </div>
+    let playlistData = [];
+    let currentIndex = 0;
 
+    async function loadPlaylist() {
+      const response = await fetch('playlist.json');
+      playlistData = await response.json();
+      renderPlaylist();
+      loadVideo(0);
+    }
+
+    function renderPlaylist() {
+      const container = document.getElementById('playlist');
+      container.innerHTML = '';
+      playlistData.forEach((item, index) => {
+        const div = document.createElement('div');
+        div.className = 'playlist-item' + (index === currentIndex ? ' active' : '');
+        div.textContent = item.title;
+        div.onclick = () => loadVideo(index);
+        container.appendChild(div);
+      });
+    }
+
+    function loadVideo(index) {
+      currentIndex = index;
+      const videoData = playlistData[index];
+      const videoElement = document.querySelector('#player');
+      videoElement.src = videoData.url;
+      player.play();
+      renderPlaylist();
+    }
+
+    player.on('ended', () => {
+      currentIndex = (currentIndex + 1) % playlistData.length;
+      loadVideo(currentIndex);
+    });
+
+    loadPlaylist();
+  </script>
 </body>
 </html>
