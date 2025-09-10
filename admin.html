@@ -3,22 +3,127 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Adora - Admin</title>
-  <link rel="stylesheet" href="assets/css/style.css">
+  <title>Adora Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js"></script>
 </head>
-<body>
-  <div class="admin-panel">
-    <h1>Adora Admin Panel</h1>
-    <form id="uploadForm">
-      <label>Select Ad (Image/Video):</label>
-      <input type="file" id="fileInput" accept="image/*,video/*" required>
-      <button type="submit">Upload</button>
-    </form>
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center">
 
-    <h2>Uploaded Ads</h2>
-    <ul id="adList"></ul>
+  <!-- Login Page -->
+  <div id="login-page" class="w-full max-w-md p-8 bg-gray-800 rounded-2xl shadow-lg space-y-6">
+    <h2 class="text-3xl font-bold text-center text-purple-400">Adora Admin Login</h2>
+    <input id="email" type="email" placeholder="Email" class="w-full p-3 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+    <input id="password" type="password" placeholder="Password" class="w-full p-3 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+    <button onclick="login()" class="w-full bg-purple-600 hover:bg-purple-700 transition p-3 rounded-lg font-semibold shadow-md">Login</button>
+    <p id="login-error" class="text-red-500 text-center hidden">Invalid email or password</p>
   </div>
 
-  <script type="module" src="assets/js/admin.js"></script>
+  <!-- Admin Dashboard -->
+  <div id="admin-page" class="hidden w-full max-w-4xl p-8 bg-gray-800 rounded-2xl shadow-lg">
+    <h2 class="text-3xl font-bold text-purple-400 mb-6">Upload Ad</h2>
+    <form id="upload-form" class="space-y-4">
+      <input id="ad-title" type="text" placeholder="Title of the Ad" class="w-full p-3 rounded-lg bg-gray-700 text-white focus:outline-none focus:ring-2 focus:ring-purple-500">
+
+      <input id="ad-file" type="file" accept="image/*,video/*" class="w-full text-sm text-gray-400 file:mr-4 file:py-2 file:px-4 
+        file:rounded-full file:border-0 file:text-sm file:font-semibold 
+        file:bg-purple-600 file:text-white hover:file:bg-purple-700">
+
+      <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 transition p-3 rounded-lg font-semibold shadow-md">Submit</button>
+    </form>
+
+    <div id="ads-list" class="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3"></div>
+  </div>
+
+  <script>
+    // Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCrGIB_YK33p_2EPTpU-klZ_3xQ5TOPm4c",
+      authDomain: "adora-ad.firebaseapp.com",
+      projectId: "adora-ad",
+      storageBucket: "adora-ad.appspot.com",
+      messagingSenderId: "550034277527",
+      appId: "1:550034277527:web:966b16ce942a161e8955d2"
+    };
+    const app = firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.database();
+    const storage = firebase.storage();
+
+    // Login
+    function login() {
+      const email = document.getElementById("email").value;
+      const password = document.getElementById("password").value;
+      auth.signInWithEmailAndPassword(email, password)
+        .then(() => {
+          document.getElementById("login-page").classList.add("hidden");
+          document.getElementById("admin-page").classList.remove("hidden");
+          loadAds();
+        })
+        .catch(() => {
+          document.getElementById("login-error").classList.remove("hidden");
+        });
+    }
+
+    // Upload Ad
+    document.getElementById("upload-form").addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const title = document.getElementById("ad-title").value;
+      const file = document.getElementById("ad-file").files[0];
+      if (!file || !title) return alert("Please enter title and select file.");
+
+      const fileRef = storage.ref().child("ads/" + Date.now() + "_" + file.name);
+      await fileRef.put(file);
+      const url = await fileRef.getDownloadURL();
+
+      const newAdRef = db.ref("ads").push();
+      newAdRef.set({
+        title,
+        type: file.type.startsWith("video") ? "video" : "image",
+        url,
+        createdAt: Date.now()
+      });
+
+      document.getElementById("ad-title").value = "";
+      document.getElementById("ad-file").value = "";
+      loadAds();
+    });
+
+    // Load Ads
+    function loadAds() {
+      const adsList = document.getElementById("ads-list");
+      adsList.innerHTML = "";
+      db.ref("ads").orderByChild("createdAt").on("value", (snapshot) => {
+        adsList.innerHTML = "";
+        snapshot.forEach((child) => {
+          const ad = child.val();
+          const card = document.createElement("div");
+          card.className = "bg-gray-700 rounded-xl p-4 shadow-lg hover:scale-105 transition transform";
+
+          const title = document.createElement("h3");
+          title.className = "text-lg font-semibold mb-2 text-purple-300";
+          title.textContent = ad.title;
+
+          if (ad.type === "image") {
+            const img = document.createElement("img");
+            img.src = ad.url;
+            img.className = "w-full h-48 object-cover rounded-lg";
+            card.appendChild(img);
+          } else {
+            const video = document.createElement("video");
+            video.src = ad.url;
+            video.controls = true;
+            video.className = "w-full h-48 object-cover rounded-lg";
+            card.appendChild(video);
+          }
+
+          card.appendChild(title);
+          adsList.prepend(card);
+        });
+      });
+    }
+  </script>
 </body>
 </html>
