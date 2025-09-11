@@ -9,11 +9,24 @@
 <body class="bg-gray-900 flex items-center justify-center min-h-screen text-white">
   <div class="w-full max-w-md bg-gray-800 p-8 rounded-xl shadow-lg space-y-6">
     <h2 class="text-2xl font-bold text-center text-purple-400">Login</h2>
-    <input id="login-email" type="email" placeholder="Email" class="w-full p-3 rounded bg-gray-700" />
-    <input id="login-password" type="password" placeholder="Password" class="w-full p-3 rounded bg-gray-700" />
-    <button id="login-btn" class="w-full bg-purple-600 hover:bg-purple-700 p-3 rounded">Login</button>
+
+    <!-- ✅ wrapped in form -->
+    <form id="login-form" class="space-y-4">
+      <input id="login-email" type="email" placeholder="Email"
+             class="w-full p-3 rounded bg-gray-700" required />
+      <input id="login-password" type="password" placeholder="Password"
+             class="w-full p-3 rounded bg-gray-700" required />
+      <button type="submit"
+              class="w-full bg-purple-600 hover:bg-purple-700 p-3 rounded">
+        Login
+      </button>
+    </form>
+
     <p id="login-msg" class="hidden text-center mt-2"></p>
-    <p class="text-center mt-4">No account? <a href="signup.html" class="text-blue-400">Sign up</a></p>
+    <p class="text-center mt-4">
+      No account?
+      <a href="signup.html" class="text-blue-400">Sign up</a>
+    </p>
   </div>
 
   <script type="module" src="assets/js/account.js"></script>
