@@ -35,23 +35,17 @@
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getDatabase, ref, set, push, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-    import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
-    // ✅ Correct Firebase Config
+    // ✅ Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyCrGIB_YK33p_2EPTpU-klZ_3xQ5TOPm4c",
       authDomain: "adora-ad.firebaseapp.com",
       databaseURL: "https://adora-ad-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "adora-ad",
-      storageBucket: "adora-ad.appspot.com",   // ✅ FIXED
-      messagingSenderId: "550034277527",
-      appId: "1:550034277527:web:966b16ce942a161e8955d2",
-      measurementId: "G-QW5Y41EKLR"
+      projectId: "adora-ad"
     };
 
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-    const storage = getStorage(app);
 
     document.addEventListener("DOMContentLoaded", () => {
       const blockEl = document.getElementById("block");
@@ -68,21 +62,21 @@
 
         if (!block || !floor || !name || !file) return alert("Fill all fields");
 
-        try {
-          // Upload logo to Storage
-          const logoRef = sRef(storage, `logos/${block}/${floor}/${file.name}`);
-          await uploadBytes(logoRef, file);
-          const logoUrl = await getDownloadURL(logoRef);
+        const reader = new FileReader();
+        reader.onload = async function () {
+          const base64Logo = reader.result; // Base64 string (data:image/png;base64,...)
 
-          // Save tenant in Database
-          const tenantRef = push(ref(db, `blocks/${block}/floors/${floor}/tenants`));
-          await set(tenantRef, { name, logoUrl });
+          try {
+            const tenantRef = push(ref(db, `blocks/${block}/floors/${floor}/tenants`));
+            await set(tenantRef, { name, logo: base64Logo });
 
-          alert("Tenant Added!");
-          e.target.reset();
-        } catch (err) {
-          alert("Error: " + err.message);
-        }
+            alert("Tenant Added!");
+            e.target.reset();
+          } catch (err) {
+            alert("Error: " + err.message);
+          }
+        };
+        reader.readAsDataURL(file);
       });
 
       // Watch tenants when block/floor is selected
@@ -112,10 +106,12 @@
             const left = document.createElement("div");
             left.className = "flex items-center gap-3";
 
-            const logo = document.createElement("img");
-            logo.src = t.logoUrl;
-            logo.className = "h-8 w-auto";
-            left.appendChild(logo);
+            if (t.logo) {
+              const logo = document.createElement("img");
+              logo.src = t.logo;
+              logo.className = "h-8 w-auto rounded";
+              left.appendChild(logo);
+            }
 
             const name = document.createElement("span");
             name.textContent = t.name;
