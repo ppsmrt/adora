@@ -38,7 +38,7 @@ if (signupForm) {
       msg.classList.remove("hidden");
 
       setTimeout(() => {
-        window.location.href = "index.html";
+        window.location.href = "admin.html";
       }, 1500);
     } catch (err) {
       msg.textContent = "Error: " + err.message;
@@ -65,7 +65,7 @@ if (loginForm) {
       msg.classList.remove("hidden");
 
       setTimeout(() => {
-        window.location.href = "index.html";
+        window.location.href = "admin.html";
       }, 1500);
     } catch (err) {
       msg.textContent = "Error: " + err.message;
