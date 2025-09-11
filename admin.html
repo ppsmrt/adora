@@ -17,12 +17,12 @@
       <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 transition p-3 rounded-lg">Submit</button>
     </form>
     <p id="upload-success" class="text-green-500 text-center hidden">Ad uploaded successfully!</p>
-    <p id="upload-error" class="text-red-500 text-center hidden">Please enter title and select a file.</p>
+    <p id="upload-error" class="text-red-500 text-center hidden">Error uploading ad.</p>
   </div>
 
   <script type="module">
     import { auth, db, storage } from "/adora/assets/js/auth.js";
-    import { signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { ref as dbRef, push, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
     import { ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
@@ -30,13 +30,16 @@
     const uploadSuccess = document.getElementById("upload-success");
     const uploadError = document.getElementById("upload-error");
 
-    // Sign in anonymously
+    // ✅ Automatically log in with fixed account
+    const FIXED_EMAIL = "upload@adora.com";     // Replace with your Firebase email
+    const FIXED_PASSWORD = "YourPassword123";   // Replace with your Firebase password
+
     try {
-      const userCred = await signInAnonymously(auth);
-      console.log("Signed in anonymously with UID:", userCred.user.uid);
+      const userCred = await signInWithEmailAndPassword(auth, FIXED_EMAIL, FIXED_PASSWORD);
+      console.log("Logged in as:", userCred.user.email);
     } catch (err) {
-      console.error("Anonymous sign-in failed:", err.code, err.message);
-      uploadError.textContent = "Failed to authenticate with Firebase.";
+      console.error("Login failed:", err.code, err.message);
+      uploadError.textContent = "Failed to authenticate. Check credentials.";
       uploadError.classList.remove("hidden");
     }
 
@@ -55,12 +58,10 @@
       }
 
       try {
-        // Upload to Firebase Storage
         const fileRef = sRef(storage, "ads/" + Date.now() + "_" + file.name);
         await uploadBytes(fileRef, file);
         const url = await getDownloadURL(fileRef);
 
-        // Save metadata to Realtime Database
         const newAdRef = push(dbRef(db, "ads"));
         await set(newAdRef, {
           id: newAdRef.key,
@@ -71,7 +72,6 @@
           storagePath: fileRef.fullPath
         });
 
-        // Reset form
         document.getElementById("ad-title").value = "";
         document.getElementById("ad-file").value = "";
 
