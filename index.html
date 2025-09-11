@@ -1,21 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Adora - Home</title>
-  <link rel="stylesheet" href="assets/css/style.css" />
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Block A - Clients</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCrGIB_YK33p_2EPTpU-klZ_3xQ5TOPm4c",
+      authDomain: "adora-ad.firebaseapp.com",
+      databaseURL: "https://adora-ad-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "adora-ad",
+      storageBucket: "adora-ad.firebasestorage.app",
+      messagingSenderId: "550034277527",
+      appId: "1:550034277527:web:966b16ce942a161e8955d2",
+      measurementId: "G-QW5Y41EKLR"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // Fetch clients for Block A
+    const block = "A"; // change to B or C for other pages
+    const floorsRef = ref(db, `blocks/${block}/floors`);
+
+    onValue(floorsRef, (snapshot) => {
+      const data = snapshot.val();
+      const container = document.getElementById("clients");
+      container.innerHTML = "";
+
+      if (data) {
+        Object.keys(data).forEach(floor => {
+          const floorBox = document.createElement("div");
+          floorBox.className = "p-4 border rounded-lg shadow bg-gray-900 text-white mb-4";
+
+          const title = document.createElement("h2");
+          title.className = "text-lg font-bold mb-2";
+          title.textContent = `Floor ${floor}`;
+          floorBox.appendChild(title);
+
+          const tenants = data[floor].tenants || {};
+          Object.keys(tenants).forEach(tid => {
+            const t = tenants[tid];
+            const item = document.createElement("div");
+            item.className = "flex items-center gap-2 mb-2";
+
+            const logo = document.createElement("img");
+            logo.src = t.logoUrl;
+            logo.className = "h-8 w-auto";
+            item.appendChild(logo);
+
+            const name = document.createElement("span");
+            name.textContent = t.name;
+            item.appendChild(name);
+
+            floorBox.appendChild(item);
+          });
+
+          container.appendChild(floorBox);
+        });
+      }
+    });
+  </script>
 </head>
-<body>
-  <!-- Background Animation -->
-  <div class="animated-bg"></div>
-
-  <!-- Ads -->
-  <div class="ad-container">
-    <img id="adImage" style="display:none;" />
-    <video id="adVideo" autoplay muted playsinline style="display:none;"></video>
-  </div>
-
-  <script type="module" src="assets/js/script.js"></script>
+<body class="bg-black min-h-screen text-white p-6">
+  <h1 class="text-2xl font-bold mb-4">Block A - Clients</h1>
+  <div id="clients"></div>
 </body>
 </html>
