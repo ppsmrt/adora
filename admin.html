@@ -25,11 +25,15 @@
     const db = getDatabase(app);
     const storage = getStorage(app);
 
+    const blockEl = document.getElementById("block");
+    const floorEl = document.getElementById("floor");
+    const tenantList = document.getElementById("tenantList");
+
     // Add Tenant
     document.getElementById("addForm").addEventListener("submit", async (e) => {
       e.preventDefault();
-      const block = document.getElementById("block").value;
-      const floor = document.getElementById("floor").value;
+      const block = blockEl.value;
+      const floor = floorEl.value;
       const name = document.getElementById("name").value;
       const file = document.getElementById("logo").files[0];
 
@@ -47,12 +51,69 @@
       alert("Tenant Added!");
       e.target.reset();
     });
+
+    // Watch tenants when block/floor is selected
+    function watchTenants() {
+      const block = blockEl.value;
+      const floor = floorEl.value;
+      if (!block || !floor) {
+        tenantList.innerHTML = "<p class='text-gray-400'>Select block and floor to view tenants.</p>";
+        return;
+      }
+
+      const tenantsRef = ref(db, `blocks/${block}/floors/${floor}/tenants`);
+      onValue(tenantsRef, (snapshot) => {
+        const data = snapshot.val();
+        tenantList.innerHTML = "";
+
+        if (!data) {
+          tenantList.innerHTML = "<p class='text-gray-400'>No tenants found.</p>";
+          return;
+        }
+
+        Object.keys(data).forEach(tid => {
+          const t = data[tid];
+          const item = document.createElement("div");
+          item.className = "flex items-center justify-between bg-gray-800 p-3 rounded mb-2";
+
+          const left = document.createElement("div");
+          left.className = "flex items-center gap-3";
+
+          const logo = document.createElement("img");
+          logo.src = t.logoUrl;
+          logo.className = "h-8 w-auto";
+          left.appendChild(logo);
+
+          const name = document.createElement("span");
+          name.textContent = t.name;
+          left.appendChild(name);
+
+          item.appendChild(left);
+
+          const delBtn = document.createElement("button");
+          delBtn.textContent = "Delete";
+          delBtn.className = "bg-red-600 px-3 py-1 rounded text-sm hover:bg-red-700";
+          delBtn.onclick = async () => {
+            if (confirm(`Delete tenant ${t.name}?`)) {
+              await remove(ref(db, `blocks/${block}/floors/${floor}/tenants/${tid}`));
+            }
+          };
+          item.appendChild(delBtn);
+
+          tenantList.appendChild(item);
+        });
+      });
+    }
+
+    blockEl.addEventListener("change", watchTenants);
+    floorEl.addEventListener("input", watchTenants);
   </script>
 </head>
 <body class="bg-gray-900 text-white p-6">
   <h1 class="text-2xl font-bold mb-4">Admin - Manage Clients</h1>
 
-  <form id="addForm" class="space-y-4">
+  <!-- Add Tenant Form -->
+  <form id="addForm" class="space-y-4 mb-6">
     <select id="block" class="p-2 bg-gray-800 rounded w-full">
       <option value="">Select Block</option>
       <option value="A">Block A</option>
@@ -68,5 +129,9 @@
 
     <button type="submit" class="bg-green-600 px-4 py-2 rounded">Add Tenant</button>
   </form>
+
+  <!-- Tenant List -->
+  <h2 class="text-xl font-bold mb-2">Existing Tenants</h2>
+  <div id="tenantList" class="space-y-2"></div>
 </body>
 </html>
