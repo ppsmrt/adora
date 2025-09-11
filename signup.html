@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adora Admin Signup</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center">
+
+  <div id="signup-page" class="w-full max-w-md p-8 bg-gray-800 rounded-2xl shadow-lg space-y-6">
+    <h2 class="text-3xl font-bold text-center text-green-400">Adora Admin Signup</h2>
+    <input id="signup-email" type="email" placeholder="Email" class="w-full p-3 rounded-lg bg-gray-700">
+    <input id="signup-password" type="password" placeholder="Password" class="w-full p-3 rounded-lg bg-gray-700">
+    <button id="signup-btn" class="w-full bg-green-600 hover:bg-green-700 transition p-3 rounded-lg">Sign Up</button>
+    <p id="signup-msg" class="text-center mt-2 hidden"></p>
+  </div>
+
+  <script type="module">
+    import { app, auth, db } from "./auth.js";
+    import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+    import { ref, set, get, child } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+    document.getElementById("signup-btn").addEventListener("click", async () => {
+      const email = document.getElementById("signup-email").value;
+      const password = document.getElementById("signup-password").value;
+      const msgBox = document.getElementById("signup-msg");
+
+      if (!email || !password) {
+        msgBox.textContent = "Please enter email and password.";
+        msgBox.className = "text-red-500 text-center";
+        msgBox.classList.remove("hidden");
+        return;
+      }
+
+      try {
+        // Create auth user
+        const userCred = await createUserWithEmailAndPassword(auth, email, password);
+        const uid = userCred.user.uid;
+
+        // Check if this is first user
+        const snapshot = await get(child(ref(db), "users"));
+        let role = "user";
+        if (!snapshot.exists()) {
+          role = "superadmin";
+        }
+
+        // Save user role
+        await set(ref(db, "users/" + uid), {
+          email,
+          role,
+          createdAt: Date.now()
+        });
+
+        msgBox.textContent = `Signup successful! You are registered as ${role}.`;
+        msgBox.className = "text-green-400 text-center";
+        msgBox.classList.remove("hidden");
+      } catch (error) {
+        msgBox.textContent = "Error: " + error.message;
+        msgBox.className = "text-red-500 text-center";
+        msgBox.classList.remove("hidden");
+      }
+    });
+  </script>
+</body>
+</html>
