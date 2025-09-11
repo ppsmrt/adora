@@ -3,152 +3,69 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Adora Admin</title>
+  <title>Adora Ad Upload</title>
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-900 text-white min-h-screen flex items-center justify-center">
 
-  <!-- Login Page -->
-  <div id="login-page" class="w-full max-w-md p-8 bg-gray-800 rounded-2xl shadow-lg space-y-6">
-    <h2 class="text-3xl font-bold text-center text-purple-400">Adora Admin Login</h2>
-    <input id="email" type="email" placeholder="Email" class="w-full p-3 rounded-lg bg-gray-700">
-    <input id="password" type="password" placeholder="Password" class="w-full p-3 rounded-lg bg-gray-700">
-    <button id="login-btn" class="w-full bg-purple-600 hover:bg-purple-700 transition p-3 rounded-lg">Login</button>
-    <p id="login-error" class="text-red-500 text-center hidden">Invalid email or password</p>
-  </div>
-
-  <!-- Admin Dashboard -->
-  <div id="admin-page" class="hidden w-full max-w-5xl p-8 bg-gray-800 rounded-2xl shadow-lg">
-    <h2 class="text-3xl font-bold text-purple-400 mb-6">Ad Management</h2>
-
-    <!-- Upload only for superadmin -->
-    <form id="upload-form" class="space-y-4 hidden">
+  <!-- Ad Upload Form -->
+  <div id="upload-page" class="w-full max-w-md p-8 bg-gray-800 rounded-2xl shadow-lg space-y-6">
+    <h2 class="text-3xl font-bold text-center text-purple-400">Upload Advertisement</h2>
+    <form id="upload-form" class="space-y-4">
       <input id="ad-title" type="text" placeholder="Title of the Ad" class="w-full p-3 rounded-lg bg-gray-700">
       <input id="ad-file" type="file" accept="image/*,video/*" class="w-full">
       <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 transition p-3 rounded-lg">Submit</button>
     </form>
-
-    <div id="ads-list" class="mt-8 grid gap-6 md:grid-cols-2 lg:grid-cols-3"></div>
+    <p id="upload-success" class="text-green-500 text-center hidden">Ad uploaded successfully!</p>
+    <p id="upload-error" class="text-red-500 text-center hidden">Please enter title and select a file.</p>
   </div>
 
   <script type="module">
-    import { app, auth, db, storage } from "./assets/js/auth.js";
-    import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { ref, push, set, onValue, remove, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-    import { ref as sRef, uploadBytes, getDownloadURL, deleteObject } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+    import { app, auth, db, storage } from ".assets/js/auth.js";
+    import { ref as dbRef, push, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+    import { ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
-    const loginPage = document.getElementById("login-page");
-    const adminPage = document.getElementById("admin-page");
-    const adsList = document.getElementById("ads-list");
     const uploadForm = document.getElementById("upload-form");
+    const uploadSuccess = document.getElementById("upload-success");
+    const uploadError = document.getElementById("upload-error");
 
-    let currentRole = "user";
-
-    // Login
-    document.getElementById("login-btn").addEventListener("click", async () => {
-      const email = document.getElementById("email").value;
-      const password = document.getElementById("password").value;
-
-      try {
-        const userCred = await signInWithEmailAndPassword(auth, email, password);
-        const uid = userCred.user.uid;
-
-        // Get role from DB
-        const snapshot = await get(ref(db, "users/" + uid));
-        if (snapshot.exists()) {
-          currentRole = snapshot.val().role;
-        }
-
-        loginPage.classList.add("hidden");
-        adminPage.classList.remove("hidden");
-
-        if (currentRole === "superadmin") {
-          uploadForm.classList.remove("hidden");
-        }
-
-        loadAds();
-      } catch (err) {
-        document.getElementById("login-error").classList.remove("hidden");
-      }
-    });
-
-    // Upload Ad (only superadmin)
+    // Upload Ad
     uploadForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      if (currentRole !== "superadmin") {
-        return alert("Only superadmin can upload ads.");
-      }
 
       const title = document.getElementById("ad-title").value;
       const file = document.getElementById("ad-file").files[0];
-      if (!file || !title) return alert("Please enter title and select file.");
 
-      const fileRef = sRef(storage, "ads/" + Date.now() + "_" + file.name);
-      await uploadBytes(fileRef, file);
-      const url = await getDownloadURL(fileRef);
+      if (!file || !title) {
+        uploadError.classList.remove("hidden");
+        return;
+      }
 
-      const newAdRef = push(ref(db, "ads"));
-      await set(newAdRef, {
-        id: newAdRef.key,
-        title,
-        type: file.type.startsWith("video") ? "video" : "image",
-        url,
-        createdAt: Date.now(),
-        storagePath: fileRef.fullPath
-      });
+      try {
+        const fileRef = sRef(storage, "ads/" + Date.now() + "_" + file.name);
+        await uploadBytes(fileRef, file);
+        const url = await getDownloadURL(fileRef);
 
-      document.getElementById("ad-title").value = "";
-      document.getElementById("ad-file").value = "";
-      alert("Ad uploaded successfully!");
-    });
-
-    // Load Ads
-    function loadAds() {
-      onValue(ref(db, "ads"), (snapshot) => {
-        adsList.innerHTML = "";
-        snapshot.forEach((child) => {
-          const ad = child.val();
-          const card = document.createElement("div");
-          card.className = "bg-gray-700 rounded-xl p-4 shadow-lg space-y-2";
-
-          if (ad.type === "image") {
-            const img = document.createElement("img");
-            img.src = ad.url;
-            img.className = "w-full max-h-48 object-contain rounded-lg";
-            card.appendChild(img);
-          } else {
-            const video = document.createElement("video");
-            video.src = ad.url;
-            video.controls = true;
-            video.className = "w-full max-h-48 object-contain rounded-lg";
-            card.appendChild(video);
-          }
-
-          const title = document.createElement("h3");
-          title.className = "text-lg font-semibold text-purple-300";
-          title.textContent = ad.title;
-          card.appendChild(title);
-
-          // Delete only for superadmin
-          if (currentRole === "superadmin") {
-            const delBtn = document.createElement("button");
-            delBtn.textContent = "Delete";
-            delBtn.className = "mt-2 bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded";
-            delBtn.onclick = async () => {
-              if (confirm("Delete this ad?")) {
-                await remove(ref(db, "ads/" + ad.id));
-                if (ad.storagePath) {
-                  await deleteObject(sRef(storage, ad.storagePath));
-                }
-              }
-            };
-            card.appendChild(delBtn);
-          }
-
-          adsList.prepend(card);
+        const newAdRef = push(dbRef(db, "ads"));
+        await set(newAdRef, {
+          id: newAdRef.key,
+          title,
+          type: file.type.startsWith("video") ? "video" : "image",
+          url,
+          createdAt: Date.now(),
+          storagePath: fileRef.fullPath
         });
-      });
-    }
+
+        document.getElementById("ad-title").value = "";
+        document.getElementById("ad-file").value = "";
+
+        uploadSuccess.classList.remove("hidden");
+        uploadError.classList.add("hidden");
+      } catch (error) {
+        uploadError.textContent = "Error uploading ad. Please try again.";
+        uploadError.classList.remove("hidden");
+      }
+    });
   </script>
 </body>
 </html>
