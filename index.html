@@ -23,8 +23,8 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // Fetch clients for Block A
-    const block = "A"; // change to B or C for other pages
+    // Force Block A
+    const block = "A";
     const floorsRef = ref(db, `blocks/${block}/floors`);
 
     onValue(floorsRef, (snapshot) => {
@@ -33,41 +33,57 @@
       container.innerHTML = "";
 
       if (data) {
-        Object.keys(data).forEach(floor => {
+        // Sort floors numerically/alphabetically
+        Object.keys(data).sort((a,b)=>a.localeCompare(b, undefined, {numeric:true})).forEach(floor => {
+          const row = document.createElement("div");
+          row.className = "flex items-center border-t border-gray-400 py-3";
+
+          // Floor label
           const floorBox = document.createElement("div");
-          floorBox.className = "p-4 border rounded-lg shadow bg-gray-900 text-white mb-4";
+          floorBox.className = "w-24 text-center font-bold text-xl text-white";
+          floorBox.textContent = floor;
+          row.appendChild(floorBox);
 
-          const title = document.createElement("h2");
-          title.className = "text-lg font-bold mb-2";
-          title.textContent = `Floor ${floor}`;
-          floorBox.appendChild(title);
-
+          // Tenants (logos + names in straight line)
           const tenants = data[floor].tenants || {};
+          const tenantsBox = document.createElement("div");
+          tenantsBox.className = "flex flex-wrap gap-8 ml-6";
+
           Object.keys(tenants).forEach(tid => {
             const t = tenants[tid];
             const item = document.createElement("div");
-            item.className = "flex items-center gap-2 mb-2";
+            item.className = "flex items-center gap-2";
 
-            const logo = document.createElement("img");
-            logo.src = t.logoUrl;
-            logo.className = "h-8 w-auto";
-            item.appendChild(logo);
+            if (t.logoUrl) {
+              const logo = document.createElement("img");
+              logo.src = t.logoUrl;
+              logo.className = "h-8 w-auto";
+              item.appendChild(logo);
+            }
 
             const name = document.createElement("span");
+            name.className = "text-lg text-white";
             name.textContent = t.name;
             item.appendChild(name);
 
-            floorBox.appendChild(item);
+            tenantsBox.appendChild(item);
           });
 
-          container.appendChild(floorBox);
+          row.appendChild(tenantsBox);
+          container.appendChild(row);
         });
       }
     });
   </script>
 </head>
 <body class="bg-black min-h-screen text-white p-6">
-  <h1 class="text-2xl font-bold mb-4">Block A - Clients</h1>
-  <div id="clients"></div>
+  <!-- Header like in the image -->
+  <div class="text-center mb-8">
+    <h1 class="text-5xl font-extrabold tracking-wider">GLOBAL</h1>
+    <h2 class="text-3xl">INFOSITY PARK CHENNAI</h2>
+    <h3 class="text-2xl mt-3">BLOCK - A</h3>
+  </div>
+
+  <div id="clients" class="w-full border-b border-gray-400"></div>
 </body>
 </html>
