@@ -1,89 +1,72 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Adora Ad Upload</title>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Admin - Manage Clients</title>
   <script src="https://cdn.tailwindcss.com"></script>
-</head>
-<body class="bg-gray-900 text-white min-h-screen flex items-center justify-center">
-
-  <!-- Ad Upload Form -->
-  <div id="upload-page" class="w-full max-w-md p-8 bg-gray-800 rounded-2xl shadow-lg space-y-6">
-    <h2 class="text-3xl font-bold text-center text-purple-400">Upload Advertisement</h2>
-    <form id="upload-form" class="space-y-4">
-      <input id="ad-title" type="text" placeholder="Title of the Ad" class="w-full p-3 rounded-lg bg-gray-700">
-      <input id="ad-file" type="file" accept="image/*,video/*" class="w-full">
-      <button type="submit" class="w-full bg-purple-600 hover:bg-purple-700 transition p-3 rounded-lg">Submit</button>
-    </form>
-    <p id="upload-success" class="text-green-500 text-center hidden">Ad uploaded successfully!</p>
-    <p id="upload-error" class="text-red-500 text-center hidden">Error uploading ad.</p>
-  </div>
-
   <script type="module">
-    import { auth, db, storage } from "/adora/assets/js/auth.js";
-    import { signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-    import { ref as dbRef, push, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-    import { ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, set, push, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+    import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
-    const uploadForm = document.getElementById("upload-form");
-    const uploadSuccess = document.getElementById("upload-success");
-    const uploadError = document.getElementById("upload-error");
+    const firebaseConfig = {
+      apiKey: "AIzaSyCrGIB_YK33p_2EPTpU-klZ_3xQ5TOPm4c",
+      authDomain: "adora-ad.firebaseapp.com",
+      databaseURL: "https://adora-ad-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "adora-ad",
+      storageBucket: "adora-ad.firebasestorage.app",
+      messagingSenderId: "550034277527",
+      appId: "1:550034277527:web:966b16ce942a161e8955d2",
+      measurementId: "G-QW5Y41EKLR"
+    };
 
-    // ✅ Automatically log in with fixed account
-    const FIXED_EMAIL = "upload@adora.com";     // Replace with your Firebase email
-    const FIXED_PASSWORD = "YourPassword123";   // Replace with your Firebase password
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const storage = getStorage(app);
 
-    try {
-      const userCred = await signInWithEmailAndPassword(auth, FIXED_EMAIL, FIXED_PASSWORD);
-      console.log("Logged in as:", userCred.user.email);
-    } catch (err) {
-      console.error("Login failed:", err.code, err.message);
-      uploadError.textContent = "Failed to authenticate. Check credentials.";
-      uploadError.classList.remove("hidden");
-    }
-
-    // Upload Ad
-    uploadForm.addEventListener("submit", async (e) => {
+    // Add Tenant
+    document.getElementById("addForm").addEventListener("submit", async (e) => {
       e.preventDefault();
+      const block = document.getElementById("block").value;
+      const floor = document.getElementById("floor").value;
+      const name = document.getElementById("name").value;
+      const file = document.getElementById("logo").files[0];
 
-      const title = document.getElementById("ad-title").value.trim();
-      const file = document.getElementById("ad-file").files[0];
+      if (!block || !floor || !name || !file) return alert("Fill all fields");
 
-      if (!file || !title) {
-        uploadError.textContent = "Please enter title and select a file.";
-        uploadError.classList.remove("hidden");
-        uploadSuccess.classList.add("hidden");
-        return;
-      }
+      // Upload Logo
+      const logoRef = sRef(storage, `logos/${block}/${floor}/${file.name}`);
+      await uploadBytes(logoRef, file);
+      const logoUrl = await getDownloadURL(logoRef);
 
-      try {
-        const fileRef = sRef(storage, "ads/" + Date.now() + "_" + file.name);
-        await uploadBytes(fileRef, file);
-        const url = await getDownloadURL(fileRef);
+      // Save to DB
+      const tenantRef = push(ref(db, `blocks/${block}/floors/${floor}/tenants`));
+      await set(tenantRef, { name, logoUrl });
 
-        const newAdRef = push(dbRef(db, "ads"));
-        await set(newAdRef, {
-          id: newAdRef.key,
-          title,
-          type: file.type.startsWith("video") ? "video" : "image",
-          url,
-          createdAt: Date.now(),
-          storagePath: fileRef.fullPath
-        });
-
-        document.getElementById("ad-title").value = "";
-        document.getElementById("ad-file").value = "";
-
-        uploadSuccess.classList.remove("hidden");
-        uploadError.classList.add("hidden");
-      } catch (err) {
-        console.error("Upload failed:", err);
-        uploadError.textContent = "Error uploading ad. Please try again.";
-        uploadError.classList.remove("hidden");
-        uploadSuccess.classList.add("hidden");
-      }
+      alert("Tenant Added!");
+      e.target.reset();
     });
   </script>
+</head>
+<body class="bg-gray-900 text-white p-6">
+  <h1 class="text-2xl font-bold mb-4">Admin - Manage Clients</h1>
+
+  <form id="addForm" class="space-y-4">
+    <select id="block" class="p-2 bg-gray-800 rounded w-full">
+      <option value="">Select Block</option>
+      <option value="A">Block A</option>
+      <option value="B">Block B</option>
+      <option value="C">Block C</option>
+    </select>
+
+    <input id="floor" type="number" placeholder="Floor Number" class="p-2 bg-gray-800 rounded w-full"/>
+
+    <input id="name" type="text" placeholder="Tenant Name" class="p-2 bg-gray-800 rounded w-full"/>
+
+    <input id="logo" type="file" accept="image/*" class="p-2 bg-gray-800 rounded w-full"/>
+
+    <button type="submit" class="bg-green-600 px-4 py-2 rounded">Add Tenant</button>
+  </form>
 </body>
 </html>
