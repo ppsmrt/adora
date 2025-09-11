@@ -21,7 +21,7 @@
   </div>
 
   <script type="module">
-    import { app, auth, db, storage } from "/adora/assets/js/auth.js";
+    import { auth, db, storage } from "/adora/assets/js/auth.js";
     import { signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { ref as dbRef, push, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
     import { ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
@@ -30,12 +30,12 @@
     const uploadSuccess = document.getElementById("upload-success");
     const uploadError = document.getElementById("upload-error");
 
-    // Sign in anonymously to allow uploads
+    // Sign in anonymously
     try {
-      await signInAnonymously(auth);
-      console.log("Signed in anonymously");
+      const userCred = await signInAnonymously(auth);
+      console.log("Signed in anonymously with UID:", userCred.user.uid);
     } catch (err) {
-      console.error("Anonymous sign-in failed:", err);
+      console.error("Anonymous sign-in failed:", err.code, err.message);
       uploadError.textContent = "Failed to authenticate with Firebase.";
       uploadError.classList.remove("hidden");
     }
@@ -55,10 +55,12 @@
       }
 
       try {
+        // Upload to Firebase Storage
         const fileRef = sRef(storage, "ads/" + Date.now() + "_" + file.name);
         await uploadBytes(fileRef, file);
         const url = await getDownloadURL(fileRef);
 
+        // Save metadata to Realtime Database
         const newAdRef = push(dbRef(db, "ads"));
         await set(newAdRef, {
           id: newAdRef.key,
