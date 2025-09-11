@@ -1,5 +1,5 @@
 // admin.js
-import { auth, db, storage } from "./auth.js";
+import { auth, db, storage } from "./assets/js/auth.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { ref as dbRef, push, set, onValue, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { ref as storageRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
