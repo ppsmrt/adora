@@ -1,22 +1,21 @@
-// Firebase SDKs
+// Firebase SDK
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getDatabase } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 import { getAuth } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-// Config
+// Config (replace with your actual keys)
 const firebaseConfig = {
-  apiKey: "AIzaSyCrGIB_YK33p_2EPTpU-klZ_3xQ5TOPm4c",
+  apiKey: "YOUR_API_KEY",
   authDomain: "adora-ad.firebaseapp.com",
-  databaseURL: "https://adora-ad-default-rtdb.firebaseio.com",
+  databaseURL: "https://adora-ad-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "adora-ad",
   storageBucket: "adora-ad.appspot.com",
-  messagingSenderId: "550034277527",
-  appId: "1:550034277527:web:966b16ce942a161e8955d2",
-  measurementId: "G-QW5Y41EKLR"
+  messagingSenderId: "YOUR_SENDER_ID",
+  appId: "YOUR_APP_ID"
 };
 
-// Initialize Firebase
+// Init Firebase
 export const app = initializeApp(firebaseConfig);
 export const db = getDatabase(app);
 export const storage = getStorage(app);
