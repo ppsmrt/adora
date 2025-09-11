@@ -5,109 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Admin - Manage Clients</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-    import { getDatabase, ref, set, push, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-    import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
-
-    const firebaseConfig = {
-      apiKey: "AIzaSyCrGIB_YK33p_2EPTpU-klZ_3xQ5TOPm4c",
-      authDomain: "adora-ad.firebaseapp.com",
-      databaseURL: "https://adora-ad-default-rtdb.asia-southeast1.firebasedatabase.app",
-      projectId: "adora-ad",
-      storageBucket: "adora-ad.firebasestorage.app",
-      messagingSenderId: "550034277527",
-      appId: "1:550034277527:web:966b16ce942a161e8955d2",
-      measurementId: "G-QW5Y41EKLR"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-    const storage = getStorage(app);
-
-    const blockEl = document.getElementById("block");
-    const floorEl = document.getElementById("floor");
-    const tenantList = document.getElementById("tenantList");
-
-    // Add Tenant
-    document.getElementById("addForm").addEventListener("submit", async (e) => {
-      e.preventDefault();
-      const block = blockEl.value;
-      const floor = floorEl.value;
-      const name = document.getElementById("name").value;
-      const file = document.getElementById("logo").files[0];
-
-      if (!block || !floor || !name || !file) return alert("Fill all fields");
-
-      // Upload Logo
-      const logoRef = sRef(storage, `logos/${block}/${floor}/${file.name}`);
-      await uploadBytes(logoRef, file);
-      const logoUrl = await getDownloadURL(logoRef);
-
-      // Save to DB
-      const tenantRef = push(ref(db, `blocks/${block}/floors/${floor}/tenants`));
-      await set(tenantRef, { name, logoUrl });
-
-      alert("Tenant Added!");
-      e.target.reset();
-    });
-
-    // Watch tenants when block/floor is selected
-    function watchTenants() {
-      const block = blockEl.value;
-      const floor = floorEl.value;
-      if (!block || !floor) {
-        tenantList.innerHTML = "<p class='text-gray-400'>Select block and floor to view tenants.</p>";
-        return;
-      }
-
-      const tenantsRef = ref(db, `blocks/${block}/floors/${floor}/tenants`);
-      onValue(tenantsRef, (snapshot) => {
-        const data = snapshot.val();
-        tenantList.innerHTML = "";
-
-        if (!data) {
-          tenantList.innerHTML = "<p class='text-gray-400'>No tenants found.</p>";
-          return;
-        }
-
-        Object.keys(data).forEach(tid => {
-          const t = data[tid];
-          const item = document.createElement("div");
-          item.className = "flex items-center justify-between bg-gray-800 p-3 rounded mb-2";
-
-          const left = document.createElement("div");
-          left.className = "flex items-center gap-3";
-
-          const logo = document.createElement("img");
-          logo.src = t.logoUrl;
-          logo.className = "h-8 w-auto";
-          left.appendChild(logo);
-
-          const name = document.createElement("span");
-          name.textContent = t.name;
-          left.appendChild(name);
-
-          item.appendChild(left);
-
-          const delBtn = document.createElement("button");
-          delBtn.textContent = "Delete";
-          delBtn.className = "bg-red-600 px-3 py-1 rounded text-sm hover:bg-red-700";
-          delBtn.onclick = async () => {
-            if (confirm(`Delete tenant ${t.name}?`)) {
-              await remove(ref(db, `blocks/${block}/floors/${floor}/tenants/${tid}`));
-            }
-          };
-          item.appendChild(delBtn);
-
-          tenantList.appendChild(item);
-        });
-      });
-    }
-
-    blockEl.addEventListener("change", watchTenants);
-    floorEl.addEventListener("input", watchTenants);
-  </script>
 </head>
 <body class="bg-gray-900 text-white p-6">
   <h1 class="text-2xl font-bold mb-4">Admin - Manage Clients</h1>
@@ -133,5 +30,117 @@
   <!-- Tenant List -->
   <h2 class="text-xl font-bold mb-2">Existing Tenants</h2>
   <div id="tenantList" class="space-y-2"></div>
+
+  <!-- Firebase + Script -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, set, push, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+    import { getStorage, ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
+
+    // ✅ Correct Firebase Config
+    const firebaseConfig = {
+      apiKey: "AIzaSyCrGIB_YK33p_2EPTpU-klZ_3xQ5TOPm4c",
+      authDomain: "adora-ad.firebaseapp.com",
+      databaseURL: "https://adora-ad-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "adora-ad",
+      storageBucket: "adora-ad.appspot.com",   // ✅ FIXED
+      messagingSenderId: "550034277527",
+      appId: "1:550034277527:web:966b16ce942a161e8955d2",
+      measurementId: "G-QW5Y41EKLR"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const storage = getStorage(app);
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const blockEl = document.getElementById("block");
+      const floorEl = document.getElementById("floor");
+      const tenantList = document.getElementById("tenantList");
+
+      // Add Tenant
+      document.getElementById("addForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const block = blockEl.value;
+        const floor = floorEl.value;
+        const name = document.getElementById("name").value;
+        const file = document.getElementById("logo").files[0];
+
+        if (!block || !floor || !name || !file) return alert("Fill all fields");
+
+        try {
+          // Upload logo to Storage
+          const logoRef = sRef(storage, `logos/${block}/${floor}/${file.name}`);
+          await uploadBytes(logoRef, file);
+          const logoUrl = await getDownloadURL(logoRef);
+
+          // Save tenant in Database
+          const tenantRef = push(ref(db, `blocks/${block}/floors/${floor}/tenants`));
+          await set(tenantRef, { name, logoUrl });
+
+          alert("Tenant Added!");
+          e.target.reset();
+        } catch (err) {
+          alert("Error: " + err.message);
+        }
+      });
+
+      // Watch tenants when block/floor is selected
+      function watchTenants() {
+        const block = blockEl.value;
+        const floor = floorEl.value;
+        if (!block || !floor) {
+          tenantList.innerHTML = "<p class='text-gray-400'>Select block and floor to view tenants.</p>";
+          return;
+        }
+
+        const tenantsRef = ref(db, `blocks/${block}/floors/${floor}/tenants`);
+        onValue(tenantsRef, (snapshot) => {
+          const data = snapshot.val();
+          tenantList.innerHTML = "";
+
+          if (!data) {
+            tenantList.innerHTML = "<p class='text-gray-400'>No tenants found.</p>";
+            return;
+          }
+
+          Object.keys(data).forEach(tid => {
+            const t = data[tid];
+            const item = document.createElement("div");
+            item.className = "flex items-center justify-between bg-gray-800 p-3 rounded mb-2";
+
+            const left = document.createElement("div");
+            left.className = "flex items-center gap-3";
+
+            const logo = document.createElement("img");
+            logo.src = t.logoUrl;
+            logo.className = "h-8 w-auto";
+            left.appendChild(logo);
+
+            const name = document.createElement("span");
+            name.textContent = t.name;
+            left.appendChild(name);
+
+            item.appendChild(left);
+
+            const delBtn = document.createElement("button");
+            delBtn.textContent = "Delete";
+            delBtn.className = "bg-red-600 px-3 py-1 rounded text-sm hover:bg-red-700";
+            delBtn.onclick = async () => {
+              if (confirm(`Delete tenant ${t.name}?`)) {
+                await remove(ref(db, `blocks/${block}/floors/${floor}/tenants/${tid}`));
+              }
+            };
+            item.appendChild(delBtn);
+
+            tenantList.appendChild(item);
+          });
+        });
+      }
+
+      blockEl.addEventListener("change", watchTenants);
+      floorEl.addEventListener("input", watchTenants);
+    });
+  </script>
 </body>
 </html>
