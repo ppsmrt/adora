@@ -1,8 +1,15 @@
 import { auth, db } from "./auth.js";
-import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { ref, set, get } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import {
+  ref,
+  set,
+  get
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-// Signup
+// 🔹 Signup logic
 const signupBtn = document.getElementById("signup-btn");
 if (signupBtn) {
   signupBtn.addEventListener("click", async () => {
@@ -14,9 +21,10 @@ if (signupBtn) {
       const userCred = await createUserWithEmailAndPassword(auth, email, password);
       const uid = userCred.user.uid;
 
+      // check if first user → superadmin
       const usersRef = ref(db, "users");
       const snapshot = await get(usersRef);
-      let role = snapshot.exists() ? "user" : "superadmin";
+      const role = snapshot.exists() ? "user" : "superadmin";
 
       await set(ref(db, "users/" + uid), {
         email,
@@ -39,7 +47,7 @@ if (signupBtn) {
   });
 }
 
-// Login
+// 🔹 Login logic
 const loginBtn = document.getElementById("login-btn");
 if (loginBtn) {
   loginBtn.addEventListener("click", async () => {
@@ -49,6 +57,7 @@ if (loginBtn) {
 
     try {
       await signInWithEmailAndPassword(auth, email, password);
+
       msg.textContent = "Login successful. Redirecting...";
       msg.className = "text-green-400 text-center";
       msg.classList.remove("hidden");
