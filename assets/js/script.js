@@ -8,6 +8,7 @@ const adsRef = ref(db, "ads");
 let ads = [];
 let index = 0;
 
+// Load ads from Firebase
 onValue(adsRef, (snapshot) => {
   ads = [];
   snapshot.forEach((child) => {
@@ -32,7 +33,6 @@ function showAd() {
   } else if (ad.type === "video") {
     adVideo.src = ad.url;
     adVideo.style.display = "block";
-    adVideo.style.opacity = 1;
     adVideo.onended = nextAd;
   }
 }
@@ -42,15 +42,9 @@ function nextAd() {
   showAd();
 }
 
-/* Random animations for images */
+/* Simple random animations for images */
 function runImageAnimation(el) {
-  const animations = [
-    "fadeIn",
-    "zoomIn",
-    "slideLeft",
-    "slideRight",
-    "rotateIn"
-  ];
+  const animations = ["fadeIn", "zoomIn", "slideLeft", "slideRight", "rotateIn"];
   const randomAnim = animations[Math.floor(Math.random() * animations.length)];
   
   el.className = ""; // reset
