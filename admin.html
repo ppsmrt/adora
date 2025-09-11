@@ -22,6 +22,7 @@
 
   <script type="module">
     import { app, auth, db, storage } from "/adora/assets/js/auth.js";
+    import { signInAnonymously } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
     import { ref as dbRef, push, set } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
     import { ref as sRef, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-storage.js";
 
@@ -29,15 +30,27 @@
     const uploadSuccess = document.getElementById("upload-success");
     const uploadError = document.getElementById("upload-error");
 
+    // Sign in anonymously to allow uploads
+    try {
+      await signInAnonymously(auth);
+      console.log("Signed in anonymously");
+    } catch (err) {
+      console.error("Anonymous sign-in failed:", err);
+      uploadError.textContent = "Failed to authenticate with Firebase.";
+      uploadError.classList.remove("hidden");
+    }
+
     // Upload Ad
     uploadForm.addEventListener("submit", async (e) => {
       e.preventDefault();
 
-      const title = document.getElementById("ad-title").value;
+      const title = document.getElementById("ad-title").value.trim();
       const file = document.getElementById("ad-file").files[0];
 
       if (!file || !title) {
+        uploadError.textContent = "Please enter title and select a file.";
         uploadError.classList.remove("hidden");
+        uploadSuccess.classList.add("hidden");
         return;
       }
 
@@ -56,14 +69,17 @@
           storagePath: fileRef.fullPath
         });
 
+        // Reset form
         document.getElementById("ad-title").value = "";
         document.getElementById("ad-file").value = "";
 
         uploadSuccess.classList.remove("hidden");
         uploadError.classList.add("hidden");
-      } catch (error) {
+      } catch (err) {
+        console.error("Upload failed:", err);
         uploadError.textContent = "Error uploading ad. Please try again.";
         uploadError.classList.remove("hidden");
+        uploadSuccess.classList.add("hidden");
       }
     });
   </script>
