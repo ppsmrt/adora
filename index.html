@@ -5,35 +5,142 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Global InfoCity Park Chennai - Block A</title>
   <style>
+    /* Background Gradient + Animation */
     body {
       margin: 0;
-      background-color: black;
-      color: white;
-      font-family: Arial, sans-serif;
+      font-family: "Poppins", sans-serif;
+      color: #222;
+      background: linear-gradient(135deg, #fff6e5, #ff9e42);
+      overflow-x: hidden;
+      position: relative;
+      min-height: 100vh;
+    }
+
+    /* Container */
+    .container {
+      width: 100%;
+      max-width: 520px;
+      margin: 0 auto;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Logo */
+    .logo img {
+      width: 100%;
+      height: auto;
+      animation: fadeInDown 1.2s ease-in-out;
+    }
+
+    /* Header */
+    .title {
+      display: flex;
+      justify-content: space-between;
+      padding: 10px 14px;
+      border-top: 3px solid #ff6a00;
+      border-bottom: 3px solid #ff6a00;
+      font-weight: bold;
+      font-style: italic;
+      font-size: 22px;
+      text-transform: uppercase;
+      animation: pixelate 1.5s steps(5, end) forwards;
+    }
+    .title span {
+      text-decoration: underline;
+      color: #ff6a00;
+    }
+
+    /* Table */
+    table { width: 100%; border-collapse: collapse; }
+    tr { border-top: 1px solid rgba(0,0,0,0.1); }
+    td { padding: 14px; text-align: center; }
+
+    /* Floor Label */
+    td.floor {
+      font-weight: bold;
+      font-size: 20px;
+      width: 70px;
+      color: #ff6a00;
+    }
+
+    /* Company Grid */
+    td.company {
       display: flex;
       justify-content: center;
+      gap: 20px;
+      flex-wrap: wrap;
     }
-    .container { width: 100%; max-width: 480px; }
-    .logo img { width: 100%; height: auto; }
-    .title {
-      display: flex; justify-content: space-between;
-      padding: 10px 14px;
-      border-top: 2px solid white;
-      border-bottom: 2px solid white;
-      font-weight: bold; font-style: italic; font-size: 20px;
+
+    .company-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin: 6px 12px;
+      opacity: 0;
     }
-    .title span { text-decoration: underline; }
-    table { width: 100%; border-collapse: collapse; }
-    tr { border-top: 1px solid rgba(255,255,255,0.4); }
-    td { padding: 12px; text-align: center; }
-    td.floor { font-weight: bold; font-size: 18px; width: 60px; color: #ddd; }
-    td.company { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
-    .company-item { display: flex; flex-direction: column; align-items: center; font-size: 14px; margin: 4px 10px; }
-    .company-item img { max-height: 40px; max-width: 120px; margin-bottom: 6px; filter: brightness(120%); }
-    .company-item span { font-size: 12px; color: #ccc; }
+
+    /* Logo Styling */
+    .company-item img {
+      max-height: 60px;
+      max-width: 140px;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 4px 12px rgba(0,0,0,0.25));
+      border-radius: 12px;
+      background: white;
+      padding: 6px;
+    }
+
+    /* Company Name */
+    .company-item span {
+      font-size: 16px;
+      font-weight: 600;
+      color: #333;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      letter-spacing: 0.5px;
+    }
+
+    /* Animations */
+    @keyframes fadeInDown {
+      0% { opacity: 0; transform: translateY(-50px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes pixelate {
+      0% { filter: blur(8px); opacity: 0; }
+      50% { filter: blur(4px); opacity: 0.5; }
+      100% { filter: blur(0); opacity: 1; }
+    }
+
+    @keyframes fadeInUp {
+      0% { opacity: 0; transform: translateY(40px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInLeft {
+      0% { opacity: 0; transform: translateX(-50px); }
+      100% { opacity: 1; transform: translateX(0); }
+    }
+
+    @keyframes zoomIn {
+      0% { opacity: 0; transform: scale(0.7); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+
+    /* Background Particle Canvas */
+    #particles-js {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      pointer-events: none;
+    }
   </style>
 </head>
 <body>
+  <!-- Background Animation -->
+  <div id="particles-js"></div>
+
   <div class="container">
     <!-- Top Logo -->
     <div class="logo">
@@ -52,12 +159,12 @@
     </table>
   </div>
 
-  <!-- Firebase -->
+  <!-- Firebase + Animations -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-    // Your Firebase Config (Block A)
+    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyCrGIB_YK33p_2EPTpU-klZ_3xQ5TOPm4c",
       authDomain: "adora-ad.firebaseapp.com",
@@ -72,16 +179,15 @@
     // Init Firebase
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
-
-    // Reference Block A floors
     const floorsRef = ref(db, "blocks/A/floors");
-
     const floorsContainer = document.getElementById("floors");
 
-    // Listen for changes
+    // Random animations
+    const animations = ["fadeInUp", "fadeInLeft", "zoomIn"];
+
     onValue(floorsRef, (snapshot) => {
       const data = snapshot.val();
-      floorsContainer.innerHTML = ""; // clear
+      floorsContainer.innerHTML = "";
 
       for (const floor in data) {
         const tenants = data[floor];
@@ -90,9 +196,10 @@
           <td class="floor">${floor}</td>
           <td class="company">`;
 
-        tenants.forEach(tenant => {
+        tenants.forEach((tenant, idx) => {
+          const anim = animations[Math.floor(Math.random() * animations.length)];
           row += `
-            <div class="company-item">
+            <div class="company-item" style="animation:${anim} 1s ease ${idx * 0.3}s forwards;">
               <img src="${tenant.logo}" alt="${tenant.name}"/>
               <span>${tenant.name}</span>
             </div>
@@ -101,6 +208,20 @@
 
         row += `</td></tr>`;
         floorsContainer.innerHTML += row;
+      }
+    });
+  </script>
+
+  <!-- Particles.js Background -->
+  <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+  <script>
+    particlesJS("particles-js", {
+      "particles": {
+        "number": { "value": 60 },
+        "size": { "value": 3 },
+        "move": { "speed": 2 },
+        "line_linked": { "enable": true, "color": "#ff6a00" },
+        "color": { "value": "#ff6a00" }
       }
     });
   </script>
