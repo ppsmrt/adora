@@ -22,7 +22,7 @@
 
     <input id="name" type="text" placeholder="Tenant Name" class="p-2 bg-gray-800 rounded w-full"/>
 
-    <input id="logo" type="file" accept="image/*" class="p-2 bg-gray-800 rounded w-full"/>
+    <input id="logoUrl" type="url" placeholder="Logo Image URL" class="p-2 bg-gray-800 rounded w-full"/>
 
     <button type="submit" class="bg-green-600 px-4 py-2 rounded">Add Tenant</button>
   </form>
@@ -36,7 +36,6 @@
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getDatabase, ref, set, push, remove, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-    // ✅ Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyCrGIB_YK33p_2EPTpU-klZ_3xQ5TOPm4c",
       authDomain: "adora-ad.firebaseapp.com",
@@ -58,25 +57,19 @@
         const block = blockEl.value;
         const floor = floorEl.value;
         const name = document.getElementById("name").value;
-        const file = document.getElementById("logo").files[0];
+        const logoUrl = document.getElementById("logoUrl").value;
 
-        if (!block || !floor || !name || !file) return alert("Fill all fields");
+        if (!block || !floor || !name || !logoUrl) return alert("Fill all fields");
 
-        const reader = new FileReader();
-        reader.onload = async function () {
-          const base64Logo = reader.result; // Base64 string (data:image/png;base64,...)
+        try {
+          const tenantRef = push(ref(db, `blocks/${block}/floors/${floor}/tenants`));
+          await set(tenantRef, { name, logo: logoUrl });
 
-          try {
-            const tenantRef = push(ref(db, `blocks/${block}/floors/${floor}/tenants`));
-            await set(tenantRef, { name, logo: base64Logo });
-
-            alert("Tenant Added!");
-            e.target.reset();
-          } catch (err) {
-            alert("Error: " + err.message);
-          }
-        };
-        reader.readAsDataURL(file);
+          alert("Tenant Added!");
+          e.target.reset();
+        } catch (err) {
+          alert("Error: " + err.message);
+        }
       });
 
       // Watch tenants when block/floor is selected
