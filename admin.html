@@ -7,32 +7,37 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-900 text-white p-6">
-  <h1 class="text-2xl font-bold mb-4">Admin - Manage Clients</h1>
+  <h1 class="text-3xl font-extrabold mb-6 text-orange-400">Admin - Manage Clients</h1>
 
   <!-- Add/Edit Tenant Form -->
-  <form id="addForm" class="space-y-4 mb-6">
-    <select id="block" class="p-2 bg-gray-800 rounded w-full">
+  <form id="addForm" class="space-y-4 mb-8 bg-gray-800 p-6 rounded-lg shadow-lg max-w-md mx-auto">
+    <h2 class="text-xl font-bold mb-4 text-white">Add / Edit Tenant</h2>
+
+    <select id="block" class="p-3 bg-gray-700 rounded w-full text-white">
       <option value="">Select Block</option>
       <option value="A">Block A</option>
       <option value="B">Block B</option>
       <option value="C">Block C</option>
     </select>
 
-    <input id="floor" type="number" placeholder="Floor Number" class="p-2 bg-gray-800 rounded w-full"/>
-    <input id="name" type="text" placeholder="Tenant Name" class="p-2 bg-gray-800 rounded w-full"/>
-    <input id="logoUrl" type="url" placeholder="Logo Image URL" class="p-2 bg-gray-800 rounded w-full"/>
-    <input id="core" type="text" placeholder="Core" class="p-2 bg-gray-800 rounded w-full"/>
-    <textarea id="description" placeholder="Description" class="p-2 bg-gray-800 rounded w-full"></textarea>
-    <input id="contact" type="text" placeholder="Contact Number" class="p-2 bg-gray-800 rounded w-full"/>
-    <input id="email" type="email" placeholder="Email" class="p-2 bg-gray-800 rounded w-full"/>
+    <input id="floor" type="number" placeholder="Floor Number" class="p-3 bg-gray-700 rounded w-full text-white"/>
 
-    <button type="submit" class="bg-green-600 px-4 py-2 rounded">Save Tenant</button>
-    <button type="button" id="cancelEdit" class="bg-gray-600 px-4 py-2 rounded hidden">Cancel Edit</button>
+    <input id="name" type="text" placeholder="Tenant Name" class="p-3 bg-gray-700 rounded w-full text-white"/>
+    <input id="logoUrl" type="url" placeholder="Logo Image URL" class="p-3 bg-gray-700 rounded w-full text-white"/>
+    <input id="core" type="text" placeholder="Core" class="p-3 bg-gray-700 rounded w-full text-white"/>
+    <textarea id="description" placeholder="Description" class="p-3 bg-gray-700 rounded w-full text-white"></textarea>
+    <input id="contact" type="text" placeholder="Contact Number" class="p-3 bg-gray-700 rounded w-full text-white"/>
+    <input id="email" type="email" placeholder="Email" class="p-3 bg-gray-700 rounded w-full text-white"/>
+
+    <div class="flex gap-2">
+      <button type="submit" class="bg-green-500 hover:bg-green-600 px-6 py-2 rounded font-semibold w-full">Save Tenant</button>
+      <button type="button" id="cancelEdit" class="bg-gray-600 hover:bg-gray-700 px-6 py-2 rounded font-semibold w-full hidden">Cancel</button>
+    </div>
   </form>
 
   <!-- Tenant List -->
-  <h2 class="text-xl font-bold mb-2">Existing Tenants</h2>
-  <div id="tenantList" class="space-y-2"></div>
+  <h2 class="text-2xl font-bold mb-4 text-orange-400 text-center">Existing Tenants</h2>
+  <div id="tenantList" class="space-y-4 max-w-3xl mx-auto"></div>
 
   <!-- Firebase + Script -->
   <script type="module">
@@ -108,7 +113,7 @@
         const block = blockEl.value;
         const floor = floorEl.value;
         if (!block || !floor) {
-          tenantList.innerHTML = "<p class='text-gray-400'>Select block and floor to view tenants.</p>";
+          tenantList.innerHTML = "<p class='text-gray-400 text-center'>Select block and floor to view tenants.</p>";
           return;
         }
 
@@ -118,28 +123,27 @@
           tenantList.innerHTML = "";
 
           if (!data) {
-            tenantList.innerHTML = "<p class='text-gray-400'>No tenants found.</p>";
+            tenantList.innerHTML = "<p class='text-gray-400 text-center'>No tenants found.</p>";
             return;
           }
 
           Object.keys(data).forEach(tid => {
             const t = data[tid];
             const item = document.createElement("div");
-            item.className = "flex items-center justify-between bg-gray-800 p-3 rounded mb-2";
+            item.className = "flex items-center justify-between bg-gray-800 p-4 rounded-lg shadow-md";
 
             const left = document.createElement("div");
-            left.className = "flex items-center gap-3";
+            left.className = "flex items-center gap-4";
 
             if (t.logo) {
               const logo = document.createElement("img");
               logo.src = t.logo;
-              logo.className = "h-8 w-auto rounded";
+              logo.className = "h-12 w-12 rounded";
               left.appendChild(logo);
             }
 
             const info = document.createElement("div");
-            info.innerHTML = `<span class="font-bold">${t.name}</span><br>
-                              <span class="text-sm text-gray-400">Core: ${t.core || '-'} | ${t.description || '-'} | Contact: ${t.contact || '-'} | Email: ${t.email || '-'}</span>`;
+            info.innerHTML = `<span class="font-bold text-lg">${t.name}</span><br><span class="text-sm text-gray-400">Floor: ${floor}</span>`;
             left.appendChild(info);
 
             item.appendChild(left);
@@ -150,7 +154,7 @@
             // Edit Button
             const editBtn = document.createElement("button");
             editBtn.textContent = "Edit";
-            editBtn.className = "bg-yellow-600 px-3 py-1 rounded text-sm hover:bg-yellow-700";
+            editBtn.className = "bg-yellow-500 px-4 py-1 rounded hover:bg-yellow-600 text-sm";
             editBtn.onclick = () => {
               editTenantId = tid;
               nameEl.value = t.name;
@@ -166,7 +170,7 @@
             // Delete Button
             const delBtn = document.createElement("button");
             delBtn.textContent = "Delete";
-            delBtn.className = "bg-red-600 px-3 py-1 rounded text-sm hover:bg-red-700";
+            delBtn.className = "bg-red-600 px-4 py-1 rounded hover:bg-red-700 text-sm";
             delBtn.onclick = async () => {
               if (confirm(`Delete tenant ${t.name}?`)) {
                 await remove(ref(db, `blocks/${block}/floors/${floor}/tenants/${tid}`));
