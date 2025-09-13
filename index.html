@@ -8,8 +8,9 @@
   body {
     margin: 0;
     font-family: "Poppins", sans-serif;
-    background: #fff;
     overflow: hidden;
+    background: #fff;
+    color: #fff;
   }
   canvas#particles {
     position: fixed;
@@ -28,59 +29,56 @@
     overflow: auto;
     transition: opacity 0.8s ease;
   }
-  .intro-card {
-    max-width: 600px;
+  /* Fullscreen intro */
+  .intro-fullscreen {
     width: 100%;
-    border-radius: 16px;
-    box-shadow: 0 12px 36px rgba(0,0,0,0.2);
-    overflow: hidden;
+    height: 100%;
+    padding: 40px 20px;
     display: flex;
     flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
     text-align: center;
     animation: fadeInUp 0.8s ease forwards;
     color: #fff;
   }
-  .top-section {
+  /* Force readable text */
+  .intro-fullscreen * {
+    color: #fff !important;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.9), 
+                 0 0 15px rgba(0,0,0,0.7);
+  }
+  .intro-header {
     display: flex;
     align-items: center;
-    justify-content: flex-start;
-    padding: 20px;
     gap: 20px;
+    margin-bottom: 30px;
   }
-  .top-section img.logo {
-    height: 60px;
-    width: 60px;
-    border-radius: 12px;
+  .intro-header img {
+    height: 80px;
+    width: 80px;
+    border-radius: 16px;
     background: #fff;
-    padding: 6px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+    padding: 8px;
   }
-  .top-section .tenant-name {
-    font-size: 28px;
+  .intro-header .tenant-name {
+    font-size: 36px;
     font-weight: 800;
-    color: #fff;
-    text-shadow: 0 0 8px rgba(0,0,0,0.4);
   }
-  .middle-section img.company-logo {
-    width: 80%;
-    max-height: 220px;
+  .intro-logo {
+    max-width: 300px;
+    max-height: 200px;
     margin: 20px auto;
+    background: #fff;
     border-radius: 12px;
     padding: 10px;
-    background: #fff;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
   }
-  .bottom-section {
-    padding: 20px;
+  .intro-details {
+    font-size: 18px;
+    line-height: 1.6;
     text-align: left;
-    font-size: 16px;
-  }
-  .bottom-section h2 {
-    font-size: 24px;
-    font-weight: 800;
-    margin-bottom: 10px;
-    color: #fff;
-    text-shadow: 0 0 8px rgba(0,0,0,0.4);
+    max-width: 800px;
+    margin: 20px auto;
   }
   .directory-container {
     width: 100%;
@@ -137,7 +135,7 @@ const firebaseConfig = {
   authDomain: "adora-ad.firebaseapp.com",
   databaseURL: "https://adora-ad-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "adora-ad",
-  storageBucket: "adora-ad.firebasestorage.app",
+  storageBucket: "adora-ad.firebaseapp.com",
   messagingSenderId: "550034277527",
   appId: "1:550034277527:web:966b16ce942a161e8955d2",
   measurementId: "G-QW5Y41EKLR"
@@ -150,9 +148,9 @@ const tenantIntro = document.getElementById("tenantIntro");
 const directoryView = document.getElementById("directoryView");
 
 const gradients = [
-  ["#ff9e42","#fff"], 
-  ["#42ff90","#fff"], 
-  ["#ff4242","#fff"]
+  ["#ff9e42","#ff7042"], 
+  ["#42ff90","#42d4ff"], 
+  ["#ff4242","#ff42a1"]
 ];
 let gradientIndex = 0;
 
@@ -173,7 +171,10 @@ onValue(floorsRef,(snapshot)=>{
           name: tenantsObj[key].name,
           logo: tenantsObj[key].logo,
           floor: ordinal(Number(floor)),
-          description: tenantsObj[key].description || "Welcome to our company."
+          description: tenantsObj[key].description || "Welcome to our company.",
+          core: tenantsObj[key].core || "N/A",
+          contact: tenantsObj[key].contact || "N/A",
+          email: tenantsObj[key].email || "N/A"
         });
       });
     }
@@ -185,50 +186,46 @@ onValue(floorsRef,(snapshot)=>{
     tenantIntro.style.display="flex";
     directoryView.style.display="none";
     tenantIntro.innerHTML = "";
+
     if(currentIndex < tenantsSequence.length){
       const tenant = tenantsSequence[currentIndex];
-      const card = document.createElement("div");
-      card.className = "intro-card";
-      card.style.background = `linear-gradient(135deg, ${gradients[gradientIndex][0]}, ${gradients[gradientIndex][1]})`;
+      const wrapper = document.createElement("div");
+      wrapper.className = "intro-fullscreen";
+      wrapper.style.background = `linear-gradient(135deg, ${gradients[gradientIndex][0]}, ${gradients[gradientIndex][1]})`;
 
-      // Top
-      const top = document.createElement("div");
-      top.className = "top-section";
-      const logoImg = document.createElement("img");
-      logoImg.src = tenant.logo;
-      logoImg.className = "logo";
-      const tName = document.createElement("div");
-      tName.className = "tenant-name";
-      tName.textContent = tenant.name;
-      top.appendChild(logoImg);
-      top.appendChild(tName);
-      card.appendChild(top);
+      // Header
+      const header = document.createElement("div");
+      header.className = "intro-header";
+      header.innerHTML = `
+        <img src="${tenant.logo}" alt="logo"/>
+        <div class="tenant-name">${tenant.name}</div>
+      `;
+      wrapper.appendChild(header);
 
-      // Middle
-      const middle = document.createElement("div");
-      middle.className = "middle-section";
-      const companyLogo = document.createElement("img");
-      companyLogo.src = tenant.logo;
-      companyLogo.className = "company-logo";
-      middle.appendChild(companyLogo);
-      card.appendChild(middle);
+      // Big logo
+      const bigLogo = document.createElement("img");
+      bigLogo.src = tenant.logo;
+      bigLogo.className = "intro-logo";
+      wrapper.appendChild(bigLogo);
 
-      // Bottom
-      const bottom = document.createElement("div");
-      bottom.className = "bottom-section";
-      bottom.innerHTML = `
+      // Details
+      const details = document.createElement("div");
+      details.className = "intro-details";
+      details.innerHTML = `
         <h2>About ${tenant.name}</h2>
         <p><strong>Description:</strong> ${tenant.description}</p>
-        <p><strong>Floor:</strong> ${tenant.floor}</p>
+        <p><strong>Floor:</strong> ${tenant.floor} Floor</p>
+        <p><strong>Core:</strong> ${tenant.core}</p>
+        <p><strong>Contact:</strong> ${tenant.contact}</p>
+        <p><strong>Email:</strong> ${tenant.email}</p>
       `;
-      card.appendChild(bottom);
+      wrapper.appendChild(details);
 
-      tenantIntro.appendChild(card);
+      tenantIntro.appendChild(wrapper);
 
       currentIndex++;
       setTimeout(showNextTenant,10000);
     } else {
-      // Show directory after intros
       showDirectory();
     }
   }
