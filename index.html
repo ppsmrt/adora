@@ -35,7 +35,6 @@ body {
   flex-direction:column;
   text-align:center;
   animation:fadeInUp 0.8s ease forwards;
-  color:#fff;
 }
 .top-section {
   display:flex;
@@ -55,7 +54,6 @@ body {
 .top-section .tenant-name {
   font-size:28px;
   font-weight:800;
-  color:#fff;
   text-shadow:0 0 8px rgba(0,0,0,0.4);
 }
 .middle-section img.company-logo {
@@ -80,7 +78,6 @@ body {
   font-size:24px;
   font-weight:800;
   margin-bottom:10px;
-  color:#fff;
   text-shadow:0 0 8px rgba(0,0,0,0.4);
 }
 .bottom-section p {margin:6px 0;}
@@ -88,6 +85,11 @@ body {
 </style>
 </head>
 <body>
+
+<!-- Background Music -->
+<audio id="bgMusic" autoplay loop>
+  <source src="https://www.no-copyright-music.com/wp-content/uploads/2021/09/DeeperMeaning.mp3" type="audio/mpeg">
+</audio>
 
 <div id="tenantIntro"></div>
 
@@ -111,6 +113,10 @@ const db = getDatabase(app);
 const floorsRef = ref(db,"blocks/A/floors");
 const tenantIntro = document.getElementById("tenantIntro");
 
+// Set background music volume low
+const bgMusic = document.getElementById("bgMusic");
+bgMusic.volume = 0.2;  // mild volume
+
 function ordinal(n){
   const s=["th","st","nd","rd"], v=n%100;
   return n+(s[(v-20)%10]||s[v]||s[0]);
@@ -127,13 +133,20 @@ function getDominantColor(img) {
   for(let i=0;i<data.length;i+=4){
     r += data[i]; g += data[i+1]; b += data[i+2]; count++;
   }
-  return `rgb(${Math.floor(r/count)},${Math.floor(g/count)},${Math.floor(b/count)})`;
+  r = Math.floor(r/count); g = Math.floor(g/count); b = Math.floor(b/count);
+  return {rgb:`rgb(${r},${g},${b})`, values:[r,g,b]};
 }
 
 // Lighten color for gradient
 function lightenColor(rgb, percent){
   const vals = rgb.match(/\d+/g).map(Number);
   return `rgb(${Math.min(255, vals[0]+percent)},${Math.min(255, vals[1]+percent)},${Math.min(255, vals[2]+percent)})`;
+}
+
+// Decide best text color (black or white) based on brightness
+function getTextColor(r,g,b){
+  const brightness = (r*299 + g*587 + b*114) / 1000;
+  return brightness > 150 ? "#000" : "#fff";
 }
 
 onValue(floorsRef,(snapshot)=>{
@@ -201,9 +214,16 @@ onValue(floorsRef,(snapshot)=>{
       tempImg.crossOrigin = "Anonymous";
       tempImg.src = tenant.logo;
       tempImg.onload = ()=>{
-        const color = getDominantColor(tempImg);
-        const gradient = `linear-gradient(135deg, ${color}, ${lightenColor(color, 80)})`;
+        const {rgb, values} = getDominantColor(tempImg);
+        const gradient = `linear-gradient(135deg, ${rgb}, ${lightenColor(rgb, 80)})`;
         card.style.background = gradient;
+
+        // adjust text colors dynamically
+        const textColor = getTextColor(values[0], values[1], values[2]);
+        card.querySelectorAll("*").forEach(el=>{
+          el.style.color = textColor;
+        });
+
         tenantIntro.appendChild(card);
       };
 
