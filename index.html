@@ -22,12 +22,26 @@
       position: relative;
       z-index: 2;
       padding-bottom: 40px;
+      text-align: center;
     }
 
-    .logo img {
-      width: 100%;
-      height: auto;
-      animation: fadeInDown 1.2s ease-in-out;
+    /* Stylish Heading */
+    .heading {
+      font-size: 32px;
+      font-weight: 800;
+      color: #ff6a00;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      margin: 20px 0;
+      background: linear-gradient(90deg, #ff6a00, #ffd36e);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: glowText 2s ease-in-out infinite alternate;
+    }
+
+    @keyframes glowText {
+      0% { text-shadow: 0 0 8px #ff6a00, 0 0 16px #ffd36e; }
+      100% { text-shadow: 0 0 16px #ff6a00, 0 0 32px #ffd36e; }
     }
 
     .title {
@@ -41,6 +55,7 @@
       font-size: 22px;
       text-transform: uppercase;
       animation: pixelate 1.5s steps(5, end) forwards;
+      margin-bottom: 10px;
     }
     .title span {
       text-decoration: underline;
@@ -120,9 +135,8 @@
   <div id="particles-js"></div>
 
   <div class="container">
-    <div class="logo">
-      <img src="https://i.ibb.co/MxMnGFvY/20250911-222515.jpg" alt="Global InfoCity Park Chennai Logo" />
-    </div>
+    <!-- Stylish Heading -->
+    <div class="heading">Tenant Directory</div>
 
     <div class="title">
       <span>FLOOR</span>
