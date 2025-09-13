@@ -9,8 +9,8 @@
     margin: 0;
     font-family: "Poppins", sans-serif;
     overflow: hidden;
-    background: #000; /* fallback for particles */
-    color: #fff;
+    background: #ffffff; /* Full white background */
+    color: #222;
   }
   canvas#particles {
     position: fixed;
@@ -26,10 +26,10 @@
     padding: 20px;
     box-sizing: border-box;
     z-index: 1;
-    overflow: auto;
+    overflow: hidden;
     transition: opacity 0.8s ease;
   }
-  /* Fullscreen intro transparent */
+  /* Fullscreen intro with white background */
   .intro-fullscreen {
     width: 100%;
     height: 100%;
@@ -40,13 +40,8 @@
     align-items: center;
     text-align: center;
     animation: fadeInUp 0.8s ease forwards;
-    color: #fff;
-    background: transparent;
-  }
-  .intro-fullscreen * {
-    color: #fff !important;
-    text-shadow: 0 2px 8px rgba(0,0,0,0.9), 
-                 0 0 15px rgba(0,0,0,0.7);
+    background: #ffffff;
+    color: #222;
   }
   .intro-header {
     display: flex;
@@ -69,9 +64,6 @@
     max-width: 300px;
     max-height: 200px;
     margin: 20px auto;
-    background: #fff;
-    border-radius: 12px;
-    padding: 10px;
   }
   .intro-details {
     font-size: 18px;
@@ -85,38 +77,42 @@
   .directory-container {
     width: 100%;
     height: 100%;
-    overflow-y: hidden; /* hide vertical scrollbar */
+    overflow: hidden; /* hide scrollbars */
     padding: 40px;
     box-sizing: border-box;
+    background: #ffffff;
     color: #222;
-    background: #ffffff; /* WHITE background */
   }
   .directory-title {
     font-size: 32px;
     font-weight: bold;
+    text-align: center;
     margin-bottom: 20px;
   }
-  .floor-section {
-    margin-bottom: 30px;
-  }
-  .floor-title {
-    font-size: 24px;
+  .directory-header {
+    display: flex;
+    justify-content: space-between;
     font-weight: bold;
     margin-bottom: 10px;
+    font-size: 20px;
+    border-bottom: 2px solid #222;
+    padding-bottom: 5px;
+  }
+  .floor-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 25px;
   }
   .tenant-logos {
     display: flex;
     flex-wrap: nowrap;
     gap: 15px;
-    overflow: hidden; /* hide horizontal scrollbar */
+    overflow: hidden;
   }
   .tenant-logos img {
     height: 70px;
     width: 70px;
-    border-radius: 12px;
-    background: #fff;
-    padding: 5px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
   }
 
   @keyframes fadeInUp {
@@ -140,7 +136,7 @@ const firebaseConfig = {
   authDomain: "adora-ad.firebaseapp.com",
   databaseURL: "https://adora-ad-default-rtdb.asia-southeast1.firebasedatabase.app",
   projectId: "adora-ad",
-  storageBucket: "adora-ad.firebaseapp.com",
+  storageBucket: "adora-ad.appspot.com",
   messagingSenderId: "550034277527",
   appId: "1:550034277527:web:966b16ce942a161e8955d2",
   measurementId: "G-QW5Y41EKLR"
@@ -230,21 +226,23 @@ onValue(floorsRef,(snapshot)=>{
 
     const title = document.createElement("div");
     title.className = "directory-title";
-    title.textContent = "Tenant Directory - Block A";
+    title.textContent = "Tenant Directory";
     container.appendChild(title);
+
+    // Header row with Floor & Block Name
+    const headerRow = document.createElement("div");
+    headerRow.className = "directory-header";
+    headerRow.innerHTML = `<span>Floor</span><span>Block Name</span>`;
+    container.appendChild(headerRow);
 
     Object.keys(data).forEach(floor=>{
       const floorSection = document.createElement("div");
       floorSection.className = "floor-section";
 
-      const floorTitle = document.createElement("div");
-      floorTitle.className = "floor-title";
-      floorTitle.textContent = `Floor ${ordinal(Number(floor))}`;
-      floorSection.appendChild(floorTitle);
-
+      const floorNum = document.createElement("div");
+      floorNum.textContent = ordinal(Number(floor));
       const logosDiv = document.createElement("div");
       logosDiv.className = "tenant-logos";
-      logosDiv.style.overflow = "hidden"; // hide scrollbars
 
       const tenantsObj = data[floor].tenants;
       if(tenantsObj){
@@ -255,6 +253,7 @@ onValue(floorsRef,(snapshot)=>{
         });
       }
 
+      floorSection.appendChild(floorNum);
       floorSection.appendChild(logosDiv);
       container.appendChild(floorSection);
     });
@@ -280,7 +279,7 @@ onValue(floorsRef,(snapshot)=>{
   showNextTenant();
 });
 
-// Particles
+// Green particles
 const canvas = document.getElementById("particles");
 const ctx = canvas.getContext("2d");
 let particlesArray = [];
@@ -300,7 +299,7 @@ function initParticles(){
 }
 function animateParticles(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle="#ccc";
+  ctx.fillStyle="#0f0"; // green particles
   particlesArray.forEach(p=>{
     ctx.beginPath();
     ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
