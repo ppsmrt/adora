@@ -9,7 +9,7 @@
 <body class="bg-gray-900 text-white p-6">
   <h1 class="text-2xl font-bold mb-4">Admin - Manage Clients</h1>
 
-  <!-- Add Tenant Form -->
+  <!-- Add/Edit Tenant Form -->
   <form id="addForm" class="space-y-4 mb-6">
     <select id="block" class="p-2 bg-gray-800 rounded w-full">
       <option value="">Select Block</option>
@@ -19,12 +19,15 @@
     </select>
 
     <input id="floor" type="number" placeholder="Floor Number" class="p-2 bg-gray-800 rounded w-full"/>
-
     <input id="name" type="text" placeholder="Tenant Name" class="p-2 bg-gray-800 rounded w-full"/>
-
     <input id="logoUrl" type="url" placeholder="Logo Image URL" class="p-2 bg-gray-800 rounded w-full"/>
+    <input id="core" type="text" placeholder="Core" class="p-2 bg-gray-800 rounded w-full"/>
+    <textarea id="description" placeholder="Description" class="p-2 bg-gray-800 rounded w-full"></textarea>
+    <input id="contact" type="text" placeholder="Contact Number" class="p-2 bg-gray-800 rounded w-full"/>
+    <input id="email" type="email" placeholder="Email" class="p-2 bg-gray-800 rounded w-full"/>
 
-    <button type="submit" class="bg-green-600 px-4 py-2 rounded">Add Tenant</button>
+    <button type="submit" class="bg-green-600 px-4 py-2 rounded">Save Tenant</button>
+    <button type="button" id="cancelEdit" class="bg-gray-600 px-4 py-2 rounded hidden">Cancel Edit</button>
   </form>
 
   <!-- Tenant List -->
@@ -51,28 +54,56 @@
       const floorEl = document.getElementById("floor");
       const tenantList = document.getElementById("tenantList");
 
-      // Add Tenant
-      document.getElementById("addForm").addEventListener("submit", async (e) => {
+      const nameEl = document.getElementById("name");
+      const logoEl = document.getElementById("logoUrl");
+      const coreEl = document.getElementById("core");
+      const descEl = document.getElementById("description");
+      const contactEl = document.getElementById("contact");
+      const emailEl = document.getElementById("email");
+      const addForm = document.getElementById("addForm");
+      const cancelEditBtn = document.getElementById("cancelEdit");
+
+      let editTenantId = null; // Track tenant being edited
+
+      // Add/Edit Tenant
+      addForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         const block = blockEl.value;
         const floor = floorEl.value;
-        const name = document.getElementById("name").value;
-        const logoUrl = document.getElementById("logoUrl").value;
+        const name = nameEl.value;
+        const logo = logoEl.value;
+        const core = coreEl.value;
+        const description = descEl.value;
+        const contact = contactEl.value;
+        const email = emailEl.value;
 
-        if (!block || !floor || !name || !logoUrl) return alert("Fill all fields");
+        if (!block || !floor || !name) return alert("Fill at least block, floor, and name");
+
+        const tenantData = { name, logo, core, description, contact, email };
 
         try {
-          const tenantRef = push(ref(db, `blocks/${block}/floors/${floor}/tenants`));
-          await set(tenantRef, { name, logo: logoUrl });
+          if (editTenantId) {
+            await set(ref(db, `blocks/${block}/floors/${floor}/tenants/${editTenantId}`), tenantData);
+            editTenantId = null;
+            cancelEditBtn.classList.add("hidden");
+          } else {
+            const tenantRef = push(ref(db, `blocks/${block}/floors/${floor}/tenants`));
+            await set(tenantRef, tenantData);
+          }
 
-          alert("Tenant Added!");
-          e.target.reset();
+          addForm.reset();
         } catch (err) {
           alert("Error: " + err.message);
         }
       });
 
-      // Watch tenants when block/floor is selected
+      cancelEditBtn.addEventListener("click", () => {
+        editTenantId = null;
+        addForm.reset();
+        cancelEditBtn.classList.add("hidden");
+      });
+
+      // Watch tenants
       function watchTenants() {
         const block = blockEl.value;
         const floor = floorEl.value;
@@ -106,12 +137,33 @@
               left.appendChild(logo);
             }
 
-            const name = document.createElement("span");
-            name.textContent = t.name;
-            left.appendChild(name);
+            const info = document.createElement("div");
+            info.innerHTML = `<span class="font-bold">${t.name}</span><br>
+                              <span class="text-sm text-gray-400">Core: ${t.core || '-'} | ${t.description || '-'} | Contact: ${t.contact || '-'} | Email: ${t.email || '-'}</span>`;
+            left.appendChild(info);
 
             item.appendChild(left);
 
+            const right = document.createElement("div");
+            right.className = "flex gap-2";
+
+            // Edit Button
+            const editBtn = document.createElement("button");
+            editBtn.textContent = "Edit";
+            editBtn.className = "bg-yellow-600 px-3 py-1 rounded text-sm hover:bg-yellow-700";
+            editBtn.onclick = () => {
+              editTenantId = tid;
+              nameEl.value = t.name;
+              logoEl.value = t.logo || "";
+              coreEl.value = t.core || "";
+              descEl.value = t.description || "";
+              contactEl.value = t.contact || "";
+              emailEl.value = t.email || "";
+              cancelEditBtn.classList.remove("hidden");
+            };
+            right.appendChild(editBtn);
+
+            // Delete Button
             const delBtn = document.createElement("button");
             delBtn.textContent = "Delete";
             delBtn.className = "bg-red-600 px-3 py-1 rounded text-sm hover:bg-red-700";
@@ -120,8 +172,9 @@
                 await remove(ref(db, `blocks/${block}/floors/${floor}/tenants/${tid}`));
               }
             };
-            item.appendChild(delBtn);
+            right.appendChild(delBtn);
 
+            item.appendChild(right);
             tenantList.appendChild(item);
           });
         });
