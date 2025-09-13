@@ -16,9 +16,7 @@ body {
 #tenantIntro {
   position:fixed;
   top:0; left:0; width:100%; height:100%;
-  background:#fff;
   display:flex;
-  flex-direction:column;
   justify-content:center;
   align-items:center;
   padding:20px;
@@ -28,7 +26,6 @@ body {
   transition:opacity 0.8s ease;
 }
 .intro-card {
-  background:#fff;
   max-width:600px;
   width:100%;
   border-radius:16px;
@@ -38,6 +35,7 @@ body {
   flex-direction:column;
   text-align:center;
   animation:fadeInUp 0.8s ease forwards;
+  color:#fff;
 }
 .top-section {
   display:flex;
@@ -57,13 +55,9 @@ body {
 .top-section .tenant-name {
   font-size:28px;
   font-weight:800;
-  color:#ff6a00;
-  background:linear-gradient(90deg,#ff6a00,#ffd36e);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  text-shadow:0 0 8px #ffd36e;
+  color:#fff;
+  text-shadow:0 0 8px rgba(0,0,0,0.4);
 }
-
 .middle-section img.company-logo {
   width:80%;
   max-height:220px;
@@ -77,21 +71,17 @@ body {
 .middle-section img.company-logo:hover {
   transform:scale(1.05);
 }
-
 .bottom-section {
   padding:20px;
   text-align:left;
   font-size:16px;
-  color:#333;
 }
 .bottom-section h2 {
   font-size:24px;
   font-weight:800;
   margin-bottom:10px;
-  background:linear-gradient(90deg,#ff6a00,#ffd36e);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  text-shadow:0 0 8px #ffd36e;
+  color:#fff;
+  text-shadow:0 0 8px rgba(0,0,0,0.4);
 }
 .bottom-section p {margin:6px 0;}
 @keyframes fadeInUp {0%{opacity:0; transform:translateY(40px);}100%{opacity:1; transform:translateY(0);}}
@@ -126,6 +116,26 @@ function ordinal(n){
   return n+(s[(v-20)%10]||s[v]||s[0]);
 }
 
+// Get dominant color from image
+function getDominantColor(img) {
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = 50; canvas.height = 50;
+  ctx.drawImage(img, 0, 0, 50, 50);
+  const data = ctx.getImageData(0,0,50,50).data;
+  let r=0,g=0,b=0,count=0;
+  for(let i=0;i<data.length;i+=4){
+    r += data[i]; g += data[i+1]; b += data[i+2]; count++;
+  }
+  return `rgb(${Math.floor(r/count)},${Math.floor(g/count)},${Math.floor(b/count)})`;
+}
+
+// Lighten color for gradient
+function lightenColor(rgb, percent){
+  const vals = rgb.match(/\d+/g).map(Number);
+  return `rgb(${Math.min(255, vals[0]+percent)},${Math.min(255, vals[1]+percent)},${Math.min(255, vals[2]+percent)})`;
+}
+
 onValue(floorsRef,(snapshot)=>{
   const data = snapshot.val();
   const tenantsSequence = [];
@@ -149,7 +159,6 @@ onValue(floorsRef,(snapshot)=>{
     tenantIntro.innerHTML = "";
     if(currentIndex < tenantsSequence.length){
       const tenant = tenantsSequence[currentIndex];
-
       const card = document.createElement("div");
       card.className = "intro-card";
 
@@ -187,12 +196,20 @@ onValue(floorsRef,(snapshot)=>{
       `;
       card.appendChild(bottom);
 
-      tenantIntro.appendChild(card);
+      // Wait for image to load to extract color
+      const tempImg = new Image();
+      tempImg.crossOrigin = "Anonymous";
+      tempImg.src = tenant.logo;
+      tempImg.onload = ()=>{
+        const color = getDominantColor(tempImg);
+        const gradient = `linear-gradient(135deg, ${color}, ${lightenColor(color, 80)})`;
+        card.style.background = gradient;
+        tenantIntro.appendChild(card);
+      };
 
       currentIndex++;
       setTimeout(showNextTenant,5000);
     } else {
-      // Hide intro
       tenantIntro.style.opacity=0;
       setTimeout(()=>{tenantIntro.style.display="none";},800);
     }
