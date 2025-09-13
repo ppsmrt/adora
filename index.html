@@ -16,27 +16,35 @@ body {
 }
 #particles-js {position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
 
-/* Full page directory intro */
-#directoryIntro {
+/* Full page tenant intro */
+#tenantIntro {
   position:fixed;
   top:0;left:0;
   width:100%;
   height:100%;
-  background:rgba(255,255,255,0.9);
+  background:rgba(255,255,255,0.95);
   z-index:5;
   display:flex;
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  overflow-y:auto;
   text-align:center;
+  overflow:hidden;
 }
-.intro-floor {margin:20px 0; text-align:center;}
-.intro-floor h2 {color:#ff6a00;font-size:28px;margin-bottom:20px;}
-.intro-logos {display:flex;justify-content:center;gap:20px;flex-wrap:wrap;}
-.intro-logos .company-item {opacity:0; display:flex; flex-direction:column; align-items:center; margin:6px 12px;}
-.intro-logos .company-item img {height:60px;border-radius:10px;background:white;padding:6px;transition:transform 0.3s ease, box-shadow 0.3s ease;}
-.intro-logos .company-item span {display:block;color:#ff6a00;font-weight:700;text-shadow:0 0 6px #ffd36e;margin-top:5px; opacity:0;}
+.floor-label {font-size:28px;color:#ff6a00;margin-bottom:20px;}
+.tenant-name {
+  font-size:48px;
+  font-weight:900;
+  color:#ff6a00;
+  letter-spacing:2px;
+  margin-bottom:20px;
+  background:linear-gradient(90deg,#ff6a00,#ffd36e);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-shadow:0 0 12px #ffd36e;
+  animation:glowText 2s ease-in-out infinite alternate;
+}
+.tenant-logo {height:120px; border-radius:12px; background:white; padding:12px; filter:drop-shadow(0 4px 12px rgba(0,0,0,0.25));}
 
 /* Main Home Content */
 #mainContent {display:none; position:relative; z-index:2; text-align:center; padding-bottom:40px;}
@@ -62,17 +70,14 @@ td.company {display:flex;justify-content:center;gap:20px;flex-wrap:wrap; min-hei
 .company-item img:hover {transform:scale(1.1); box-shadow:0 6px 16px rgba(0,0,0,0.35);}
 .company-item span {font-size:16px;font-weight:600;color:#ff6a00;text-shadow:0 0 8px #ffd36e;letter-spacing:0.5px;}
 
-@keyframes fadeInLeft {0%{opacity:0;transform:translateX(-50px);}100%{opacity:1;transform:translateX(0);}}
-@keyframes fadeInRight {0%{opacity:0;transform:translateX(50px);}100%{opacity:1;transform:translateX(0);}}
-@keyframes fadeInUp {0%{opacity:0;transform:translateY(20px);}100%{opacity:1;transform:translateY(0);}}
 @keyframes glowText {0%{text-shadow:0 0 8px #ff6a00,0 0 16px #ffd36e;}100%{text-shadow:0 0 16px #ff6a00,0 0 32px #ffd36e;}}
 </style>
 </head>
 <body>
 <div id="particles-js"></div>
 
-<!-- Full Page Intro Directory -->
-<div id="directoryIntro"></div>
+<!-- Full Page Tenant Intro -->
+<div id="tenantIntro"></div>
 
 <!-- Main Content -->
 <div id="mainContent" class="container">
@@ -100,60 +105,63 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const floorsRef = ref(db,"blocks/A/floors");
 
-const directoryIntro = document.getElementById("directoryIntro");
+const tenantIntro = document.getElementById("tenantIntro");
 const floorsContainer = document.getElementById("floors");
 
-// Floor-by-floor intro with alternating animation
+// Helper for ordinal floor names
+function ordinal(n){
+  const s=["th","st","nd","rd"], v=n%100;
+  return n+(s[(v-20)%10]||s[v]||s[0]);
+}
+
 onValue(floorsRef,(snapshot)=>{
   const data = snapshot.val();
-  const floorKeys = Object.keys(data);
+  const tenantsSequence=[]; // Flatten all tenants with floor info
+
+  Object.keys(data).forEach(floor=>{
+    const tenantsObj=data[floor].tenants;
+    if(tenantsObj){
+      Object.keys(tenantsObj).forEach(key=>{
+        tenantsSequence.push({
+          name: tenantsObj[key].name,
+          logo: tenantsObj[key].logo,
+          floor: ordinal(Number(floor))
+        });
+      });
+    }
+  });
+
   let currentIndex=0;
 
-  function showNextFloor(){
-    directoryIntro.innerHTML="";
-    if(currentIndex<floorKeys.length){
-      const floor=data[floorKeys[currentIndex]].tenants;
-      const floorDiv=document.createElement("div");
-      floorDiv.className="intro-floor";
+  function showNextTenant(){
+    tenantIntro.innerHTML="";
+    if(currentIndex<tenantsSequence.length){
+      const tenant=tenantsSequence[currentIndex];
 
-      const floorTitle=document.createElement("h2");
-      floorTitle.textContent=`Floor ${floorKeys[currentIndex]}`;
-      floorDiv.appendChild(floorTitle);
+      const floorLabel=document.createElement("div");
+      floorLabel.className="floor-label";
+      floorLabel.textContent=`${tenant.floor} Floor`;
+      tenantIntro.appendChild(floorLabel);
 
-      const logosDiv=document.createElement("div");
-      logosDiv.className="intro-logos";
+      const tenantName=document.createElement("div");
+      tenantName.className="tenant-name";
+      tenantName.textContent=tenant.name;
+      tenantIntro.appendChild(tenantName);
 
-      const direction=(currentIndex%2===0)?"fadeInLeft":"fadeInRight";
+      const logoImg=document.createElement("img");
+      logoImg.className="tenant-logo";
+      logoImg.src=tenant.logo;
+      tenantIntro.appendChild(logoImg);
 
-      if(floor && Object.keys(floor).length>0){
-        Object.keys(floor).forEach((key,idx)=>{
-          const tenant=floor[key];
-          const container=document.createElement("div");
-          container.className="company-item";
-          container.style.animation=`${direction} 1s ease ${idx*0.2}s forwards`;
-          const img=document.createElement("img"); img.src=tenant.logo;
-          container.appendChild(img);
-          const span=document.createElement("span"); span.textContent=tenant.name;
-          span.style.animation=`fadeInUp 0.8s ease ${idx*0.25+0.5}s forwards`;
-          container.appendChild(span);
-          logosDiv.appendChild(container);
-        });
-      } else {
-        const span=document.createElement("span"); span.textContent="No tenants"; span.style.color="#ff6a00";
-        logosDiv.appendChild(span);
-      }
-
-      floorDiv.appendChild(logosDiv);
-      directoryIntro.appendChild(floorDiv);
       currentIndex++;
-      setTimeout(showNextFloor,5000);
+      setTimeout(showNextTenant,5000);
     } else {
-      // After all floors, show full directory
-      directoryIntro.style.display="none";
+      tenantIntro.style.display="none";
       document.getElementById("mainContent").style.display="block";
 
+      // Populate full directory table
       floorsContainer.innerHTML="";
-      floorKeys.forEach(floorKey=>{
+      Object.keys(data).forEach(floorKey=>{
         const tenantsObj=data[floorKey].tenants;
         let row=`<tr><td class="floor">${floorKey}</td><td class="company">`;
         if(tenantsObj && Object.keys(tenantsObj).length>0){
@@ -170,7 +178,7 @@ onValue(floorsRef,(snapshot)=>{
     }
   }
 
-  showNextFloor();
+  showNextTenant();
 });
 </script>
 
