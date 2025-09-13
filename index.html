@@ -29,12 +29,13 @@ body {
   justify-content:center;
   align-items:center;
   overflow-y:auto;
+  text-align:center;
 }
 .intro-floor {margin:20px 0; text-align:center;}
-.intro-floor h2 {color:#ff6a00;font-size:24px;margin-bottom:10px;}
+.intro-floor h2 {color:#ff6a00;font-size:28px;margin-bottom:20px;}
 .intro-logos {display:flex;justify-content:center;gap:20px;flex-wrap:wrap;}
 .intro-logos img {height:60px;border-radius:10px;animation:fadeIn 1s ease forwards;}
-.intro-logos span {display:block;color:#ff6a00;font-weight:700;text-shadow:0 0 6px #ffd36e; animation:fadeIn 1s ease forwards;}
+.intro-logos span {display:block;color:#ff6a00;font-weight:700;text-shadow:0 0 6px #ffd36e; animation:fadeIn 1s ease forwards; margin-top:5px;}
 
 /* Main Home Content */
 #mainContent {display:none; position:relative; z-index:2; text-align:center; padding-bottom:40px;}
@@ -99,77 +100,73 @@ const floorsRef = ref(db,"blocks/A/floors");
 const directoryIntro = document.getElementById("directoryIntro");
 const floorsContainer = document.getElementById("floors");
 
-const animations = ["fadeIn","fadeIn","fadeIn"];
-
-// Fetch floors and tenants
+// Fetch all floors and tenants
 onValue(floorsRef,(snapshot)=>{
   const data = snapshot.val();
-  directoryIntro.innerHTML="";
+  const floorKeys = Object.keys(data);
+  let currentIndex=0;
 
-  // Show full page directory first
-  for(const floor in data){
-    const tenantsObj = data[floor].tenants;
-    const floorDiv = document.createElement("div");
-    floorDiv.className="intro-floor";
+  // Show floor by floor
+  function showNextFloor(){
+    directoryIntro.innerHTML="";
+    if(currentIndex<floorKeys.length){
+      const floor=data[floorKeys[currentIndex]].tenants;
+      const floorDiv=document.createElement("div");
+      floorDiv.className="intro-floor";
 
-    const floorTitle = document.createElement("h2");
-    floorTitle.textContent=`Floor ${floor}`;
-    floorDiv.appendChild(floorTitle);
+      const floorTitle=document.createElement("h2");
+      floorTitle.textContent=`Floor ${floorKeys[currentIndex]}`;
+      floorDiv.appendChild(floorTitle);
 
-    const logosDiv = document.createElement("div");
-    logosDiv.className="intro-logos";
+      const logosDiv=document.createElement("div");
+      logosDiv.className="intro-logos";
 
-    if(tenantsObj && Object.keys(tenantsObj).length>0){
-      Object.keys(tenantsObj).forEach((key,idx)=>{
-        const tenant = tenantsObj[key];
-        const container = document.createElement("div");
-        container.className="company-item";
-        container.style.animation=`fadeIn 1s ease ${idx*0.2}s forwards`;
-
-        const img = document.createElement("img");
-        img.src=tenant.logo;
-        container.appendChild(img);
-
-        const span = document.createElement("span");
-        span.textContent=tenant.name;
-        container.appendChild(span);
-
-        logosDiv.appendChild(container);
-      });
-    } else {
-      const span = document.createElement("span");
-      span.textContent="No tenants";
-      span.style.color="#ff6a00";
-      logosDiv.appendChild(span);
-    }
-
-    floorDiv.appendChild(logosDiv);
-    directoryIntro.appendChild(floorDiv);
-  }
-
-  // After 5 seconds, hide intro and show main content
-  setTimeout(()=>{
-    directoryIntro.style.display="none";
-    document.getElementById("mainContent").style.display="block";
-
-    // Populate main content table
-    floorsContainer.innerHTML="";
-    for(const floor in data){
-      const tenantsObj = data[floor].tenants;
-      let row = `<tr><td class="floor">${floor}</td><td class="company">`;
-      if(tenantsObj && Object.keys(tenantsObj).length>0){
-        Object.keys(tenantsObj).forEach((key,idx)=>{
-          const tenant=tenantsObj[key];
-          row+=`<div class="company-item" style="animation:fadeIn 1s ease ${idx*0.3}s forwards;"><img src="${tenant.logo}" alt="${tenant.name}"/><span>${tenant.name}</span></div>`;
+      if(floor && Object.keys(floor).length>0){
+        Object.keys(floor).forEach((key,idx)=>{
+          const tenant=floor[key];
+          const container=document.createElement("div");
+          container.className="company-item";
+          container.style.animation=`fadeIn 1s ease ${idx*0.2}s forwards`;
+          const img=document.createElement("img"); img.src=tenant.logo;
+          container.appendChild(img);
+          const span=document.createElement("span"); span.textContent=tenant.name;
+          container.appendChild(span);
+          logosDiv.appendChild(container);
         });
       } else {
-        row+=`<span style="color:#ff6a00; font-weight:600;">No tenants</span>`;
+        const span=document.createElement("span"); span.textContent="No tenants"; span.style.color="#ff6a00";
+        logosDiv.appendChild(span);
       }
-      row+=`</td></tr>`;
-      floorsContainer.innerHTML+=row;
-    }
-  },5000);
 
+      floorDiv.appendChild(logosDiv);
+      directoryIntro.appendChild(floorDiv);
+      currentIndex++;
+      setTimeout(showNextFloor,5000); // Next floor after 5 sec
+    } else {
+      // After all floors, show full directory
+      directoryIntro.style.display="none";
+      document.getElementById("mainContent").style.display="block";
+
+      // Populate main content table
+      floorsContainer.innerHTML="";
+      floorKeys.forEach(floorKey=>{
+        const tenantsObj=data[floorKey].tenants;
+        let row=`<tr><td class="floor">${floorKey}</td><td class="company">`;
+        if(tenantsObj && Object.keys(tenantsObj).length>0){
+          Object.keys(tenantsObj).forEach((key,idx)=>{
+            const tenant=tenantsObj[key];
+            row+=`<div class="company-item" style="animation:fadeIn 1s ease ${idx*0.3}s forwards;"><img src="${tenant.logo}" alt="${tenant.name}"/><span>${tenant.name}</span></div>`;
+          });
+        } else {
+          row+=`<span style="color:#ff6a00; font-weight:600;">No tenants</span>`;
+        }
+        row+=`</td></tr>`;
+        floorsContainer.innerHTML+=row;
+      });
+    }
+  }
+
+  showNextFloor(); // Start sequence
 });
 </script>
 
