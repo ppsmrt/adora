@@ -7,29 +7,33 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-900 text-white p-6">
-  <h1 class="text-3xl font-extrabold mb-6 text-orange-400">Admin - Manage Clients</h1>
+  <h1 class="text-3xl font-extrabold mb-6 text-orange-400 text-center">Admin - Manage Clients</h1>
 
   <!-- Add/Edit Tenant Form -->
-  <form id="addForm" class="space-y-4 mb-8 bg-gray-800 p-6 rounded-lg shadow-lg max-w-md mx-auto">
+  <form id="addForm" class="space-y-4 mb-8 bg-gray-800 p-6 rounded-lg shadow-lg max-w-4xl mx-auto">
     <h2 class="text-xl font-bold mb-4 text-white">Add / Edit Tenant</h2>
 
-    <select id="block" class="p-3 bg-gray-700 rounded w-full text-white">
-      <option value="">Select Block</option>
-      <option value="A">Block A</option>
-      <option value="B">Block B</option>
-      <option value="C">Block C</option>
-    </select>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <select id="block" class="p-3 bg-gray-700 rounded w-full text-white">
+        <option value="">Select Block</option>
+        <option value="A">Block A</option>
+        <option value="B">Block B</option>
+        <option value="C">Block C</option>
+      </select>
 
-    <input id="floor" type="number" placeholder="Floor Number" class="p-3 bg-gray-700 rounded w-full text-white"/>
+      <input id="floor" type="number" placeholder="Floor Number" class="p-3 bg-gray-700 rounded w-full text-white"/>
 
-    <input id="name" type="text" placeholder="Tenant Name" class="p-3 bg-gray-700 rounded w-full text-white"/>
-    <input id="logoUrl" type="url" placeholder="Logo Image URL" class="p-3 bg-gray-700 rounded w-full text-white"/>
-    <input id="core" type="text" placeholder="Core" class="p-3 bg-gray-700 rounded w-full text-white"/>
-    <textarea id="description" placeholder="Description" class="p-3 bg-gray-700 rounded w-full text-white"></textarea>
-    <input id="contact" type="text" placeholder="Contact Number" class="p-3 bg-gray-700 rounded w-full text-white"/>
-    <input id="email" type="email" placeholder="Email" class="p-3 bg-gray-700 rounded w-full text-white"/>
+      <input id="name" type="text" placeholder="Tenant Name" class="p-3 bg-gray-700 rounded w-full text-white"/>
+      <input id="logoUrl" type="url" placeholder="Logo Image URL" class="p-3 bg-gray-700 rounded w-full text-white"/>
 
-    <div class="flex gap-2">
+      <input id="core" type="text" placeholder="Core" class="p-3 bg-gray-700 rounded w-full text-white"/>
+      <input id="contact" type="text" placeholder="Contact Number" class="p-3 bg-gray-700 rounded w-full text-white"/>
+
+      <input id="email" type="email" placeholder="Email" class="p-3 bg-gray-700 rounded w-full text-white"/>
+      <textarea id="description" placeholder="Description" class="p-3 bg-gray-700 rounded w-full text-white resize-none"></textarea>
+    </div>
+
+    <div class="flex gap-2 mt-4">
       <button type="submit" class="bg-green-500 hover:bg-green-600 px-6 py-2 rounded font-semibold w-full">Save Tenant</button>
       <button type="button" id="cancelEdit" class="bg-gray-600 hover:bg-gray-700 px-6 py-2 rounded font-semibold w-full hidden">Cancel</button>
     </div>
@@ -37,7 +41,7 @@
 
   <!-- Tenant List -->
   <h2 class="text-2xl font-bold mb-4 text-orange-400 text-center">Existing Tenants</h2>
-  <div id="tenantList" class="space-y-4 max-w-3xl mx-auto"></div>
+  <div id="tenantList" class="space-y-4 max-w-4xl mx-auto"></div>
 
   <!-- Firebase + Script -->
   <script type="module">
@@ -68,7 +72,7 @@
       const addForm = document.getElementById("addForm");
       const cancelEditBtn = document.getElementById("cancelEdit");
 
-      let editTenantId = null; // Track tenant being edited
+      let editTenantId = null;
 
       // Add/Edit Tenant
       addForm.addEventListener("submit", async (e) => {
