@@ -8,12 +8,12 @@
 body {
   margin:0;
   font-family:"Poppins",sans-serif;
-  background: linear-gradient(135deg,#fff6e5,#ff9e42);
+  background:#000;
   min-height:100vh;
   overflow:hidden;
-  color:#222;
+  color:#fff;
 }
-#tenantIntro {
+#tenantIntro, #tenantDirectory {
   position:fixed;
   top:0; left:0; width:100%; height:100%;
   display:flex;
@@ -25,6 +25,26 @@ body {
   overflow:auto;
   transition:opacity 0.8s ease;
 }
+#tenantDirectory {
+  flex-direction:column;
+  display:none;
+}
+.directory-row {
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:12px 0;
+  border-bottom:2px solid orange;
+  gap:40px;
+}
+.directory-row img {
+  height:70px;
+  object-contain:contain;
+  background:#fff;
+  border-radius:12px;
+  padding:8px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.3);
+}
 .intro-card {
   max-width:600px;
   width:100%;
@@ -35,6 +55,7 @@ body {
   flex-direction:column;
   text-align:center;
   animation:fadeInUp 0.8s ease forwards;
+  color:#fff;
 }
 .top-section {
   display:flex;
@@ -64,34 +85,32 @@ body {
   padding:10px;
   background:#fff;
   box-shadow:0 6px 20px rgba(0,0,0,0.3);
-  transition:transform 0.5s ease;
 }
-.middle-section img.company-logo:hover {
-  transform:scale(1.05);
-}
-.bottom-section {
-  padding:20px;
-  text-align:left;
-  font-size:16px;
-}
-.bottom-section h2 {
-  font-size:24px;
-  font-weight:800;
-  margin-bottom:10px;
-  text-shadow:0 0 8px rgba(0,0,0,0.4);
-}
-.bottom-section p {margin:6px 0;}
+.bottom-section {padding:20px; text-align:left; font-size:16px;}
+.bottom-section h2 {font-size:24px; font-weight:800; margin-bottom:10px;}
 @keyframes fadeInUp {0%{opacity:0; transform:translateY(40px);}100%{opacity:1; transform:translateY(0);}}
+/* particles canvas */
+#particles-js {
+  position:fixed;
+  top:0; left:0;
+  width:100%; height:100%;
+  z-index:0;
+  background:#000;
+}
 </style>
 </head>
 <body>
-
-<!-- Background Music -->
-<audio id="bgMusic" autoplay loop>
-  <source src="https://www.no-copyright-music.com/wp-content/uploads/2021/09/DeeperMeaning.mp3" type="audio/mpeg">
-</audio>
-
+<div id="particles-js"></div>
 <div id="tenantIntro"></div>
+<div id="tenantDirectory"></div>
+
+<!-- Particles.js -->
+<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+<script>
+particlesJS("particles-js", {
+  particles:{number:{value:80},size:{value:3},move:{speed:2},line_linked:{enable:true,color:"#ff9e42"}}
+});
+</script>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -107,61 +126,29 @@ const firebaseConfig = {
   appId: "1:550034277527:web:966b16ce942a161e8955d2",
   measurementId: "G-QW5Y41EKLR"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const floorsRef = ref(db,"blocks/A/floors");
+
 const tenantIntro = document.getElementById("tenantIntro");
-
-// Set background music volume low
-const bgMusic = document.getElementById("bgMusic");
-bgMusic.volume = 0.2;  // mild volume
-
-function ordinal(n){
-  const s=["th","st","nd","rd"], v=n%100;
-  return n+(s[(v-20)%10]||s[v]||s[0]);
-}
-
-// Get dominant color from image
-function getDominantColor(img) {
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
-  canvas.width = 50; canvas.height = 50;
-  ctx.drawImage(img, 0, 0, 50, 50);
-  const data = ctx.getImageData(0,0,50,50).data;
-  let r=0,g=0,b=0,count=0;
-  for(let i=0;i<data.length;i+=4){
-    r += data[i]; g += data[i+1]; b += data[i+2]; count++;
-  }
-  r = Math.floor(r/count); g = Math.floor(g/count); b = Math.floor(b/count);
-  return {rgb:`rgb(${r},${g},${b})`, values:[r,g,b]};
-}
-
-// Lighten color for gradient
-function lightenColor(rgb, percent){
-  const vals = rgb.match(/\d+/g).map(Number);
-  return `rgb(${Math.min(255, vals[0]+percent)},${Math.min(255, vals[1]+percent)},${Math.min(255, vals[2]+percent)})`;
-}
-
-// Decide best text color (black or white) based on brightness
-function getTextColor(r,g,b){
-  const brightness = (r*299 + g*587 + b*114) / 1000;
-  return brightness > 150 ? "#000" : "#fff";
-}
+const tenantDirectory = document.getElementById("tenantDirectory");
 
 onValue(floorsRef,(snapshot)=>{
   const data = snapshot.val();
   const tenantsSequence = [];
+  const tenantsByFloor = {};
+
   Object.keys(data).forEach(floor=>{
     const tenantsObj = data[floor].tenants;
     if(tenantsObj){
+      tenantsByFloor[floor] = [];
       Object.keys(tenantsObj).forEach(key=>{
         tenantsSequence.push({
           name: tenantsObj[key].name,
           logo: tenantsObj[key].logo,
-          floor: ordinal(Number(floor)),
-          description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur vitae."
+          floor
         });
+        tenantsByFloor[floor].push(tenantsObj[key].logo);
       });
     }
   });
@@ -169,13 +156,16 @@ onValue(floorsRef,(snapshot)=>{
   let currentIndex = 0;
 
   function showNextTenant(){
-    tenantIntro.innerHTML = "";
+    tenantDirectory.style.display="none";
+    tenantIntro.style.display="flex";
+    tenantIntro.style.opacity=1;
+    tenantIntro.innerHTML="";
+
     if(currentIndex < tenantsSequence.length){
       const tenant = tenantsSequence[currentIndex];
       const card = document.createElement("div");
       card.className = "intro-card";
 
-      // Top section
       const top = document.createElement("div");
       top.className = "top-section";
       const logoImg = document.createElement("img");
@@ -184,11 +174,9 @@ onValue(floorsRef,(snapshot)=>{
       const tName = document.createElement("div");
       tName.className = "tenant-name";
       tName.textContent = tenant.name;
-      top.appendChild(logoImg);
-      top.appendChild(tName);
+      top.appendChild(logoImg); top.appendChild(tName);
       card.appendChild(top);
 
-      // Middle section
       const middle = document.createElement("div");
       middle.className = "middle-section";
       const companyLogo = document.createElement("img");
@@ -197,47 +185,49 @@ onValue(floorsRef,(snapshot)=>{
       middle.appendChild(companyLogo);
       card.appendChild(middle);
 
-      // Bottom section
       const bottom = document.createElement("div");
       bottom.className = "bottom-section";
       bottom.innerHTML = `
         <h2>About ${tenant.name}</h2>
-        <p><strong>Description:</strong> ${tenant.description}</p>
+        <p><strong>Description:</strong> Lorem ipsum dolor sit amet.</p>
         <p><strong>Floor:</strong> ${tenant.floor}</p>
         <p><strong>Core:</strong> Core A</p>
         <p><strong>Mail:</strong> info@${tenant.name.replace(/\s/g,'').toLowerCase()}.com</p>
       `;
       card.appendChild(bottom);
 
-      // Wait for image to load to extract color
-      const tempImg = new Image();
-      tempImg.crossOrigin = "Anonymous";
-      tempImg.src = tenant.logo;
-      tempImg.onload = ()=>{
-        const {rgb, values} = getDominantColor(tempImg);
-        const gradient = `linear-gradient(135deg, ${rgb}, ${lightenColor(rgb, 80)})`;
-        card.style.background = gradient;
-
-        // adjust text colors dynamically
-        const textColor = getTextColor(values[0], values[1], values[2]);
-        card.querySelectorAll("*").forEach(el=>{
-          el.style.color = textColor;
-        });
-
-        tenantIntro.appendChild(card);
-      };
+      tenantIntro.appendChild(card);
 
       currentIndex++;
-      setTimeout(showNextTenant,5000);
+      setTimeout(showNextTenant,10000); // 10s per tenant
     } else {
-      tenantIntro.style.opacity=0;
-      setTimeout(()=>{tenantIntro.style.display="none";},800);
+      showDirectory();
     }
+  }
+
+  function showDirectory(){
+    tenantIntro.style.display="none";
+    tenantDirectory.style.display="flex";
+    tenantDirectory.innerHTML="";
+    Object.keys(tenantsByFloor).forEach(floor=>{
+      const row = document.createElement("div");
+      row.className = "directory-row";
+      tenantsByFloor[floor].forEach(logo=>{
+        const img = document.createElement("img");
+        img.src = logo;
+        row.appendChild(img);
+      });
+      tenantDirectory.appendChild(row);
+    });
+
+    setTimeout(()=>{
+      currentIndex = 0;
+      showNextTenant();
+    },20000); // directory visible 20s
   }
 
   showNextTenant();
 });
 </script>
-
 </body>
 </html>
