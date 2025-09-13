@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Global InfoCity Park Chennai - Block A</title>
   <style>
-    /* Background Gradient + Animation */
     body {
       margin: 0;
       font-family: "Poppins", sans-serif;
@@ -16,23 +15,21 @@
       min-height: 100vh;
     }
 
-    /* Container */
     .container {
       width: 100%;
       max-width: 520px;
       margin: 0 auto;
       position: relative;
       z-index: 2;
+      padding-bottom: 40px;
     }
 
-    /* Logo */
     .logo img {
       width: 100%;
       height: auto;
       animation: fadeInDown 1.2s ease-in-out;
     }
 
-    /* Header */
     .title {
       display: flex;
       justify-content: space-between;
@@ -50,12 +47,10 @@
       color: #ff6a00;
     }
 
-    /* Table */
-    table { width: 100%; border-collapse: collapse; }
+    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
     tr { border-top: 1px solid rgba(0,0,0,0.1); }
     td { padding: 14px; text-align: center; }
 
-    /* Floor Label */
     td.floor {
       font-weight: bold;
       font-size: 20px;
@@ -63,12 +58,13 @@
       color: #ff6a00;
     }
 
-    /* Company Grid */
     td.company {
       display: flex;
       justify-content: center;
       gap: 20px;
       flex-wrap: wrap;
+      min-height: 60px;
+      align-items: center;
     }
 
     .company-item {
@@ -77,9 +73,10 @@
       align-items: center;
       margin: 6px 12px;
       opacity: 0;
+      transition: transform 0.3s ease;
+      cursor: pointer;
     }
 
-    /* Logo Styling */
     .company-item img {
       max-height: 60px;
       max-width: 140px;
@@ -88,9 +85,14 @@
       border-radius: 12px;
       background: white;
       padding: 6px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
 
-    /* Company Name */
+    .company-item:hover img {
+      transform: scale(1.1);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.35);
+    }
+
     .company-item span {
       font-size: 16px;
       font-weight: 600;
@@ -99,72 +101,43 @@
       letter-spacing: 0.5px;
     }
 
-    /* Animations */
-    @keyframes fadeInDown {
-      0% { opacity: 0; transform: translateY(-50px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes fadeInDown { 0% { opacity:0; transform: translateY(-50px);} 100% { opacity:1; transform: translateY(0);} }
+    @keyframes pixelate { 0% { filter: blur(8px); opacity:0;} 50% { filter: blur(4px); opacity:0.5;} 100% { filter: blur(0); opacity:1;} }
+    @keyframes fadeInUp { 0% { opacity:0; transform: translateY(40px);} 100% { opacity:1; transform: translateY(0);} }
+    @keyframes fadeInLeft { 0% { opacity:0; transform: translateX(-50px);} 100% { opacity:1; transform: translateX(0);} }
+    @keyframes zoomIn { 0% { opacity:0; transform: scale(0.7);} 100% { opacity:1; transform: scale(1);} }
 
-    @keyframes pixelate {
-      0% { filter: blur(8px); opacity: 0; }
-      50% { filter: blur(4px); opacity: 0.5; }
-      100% { filter: blur(0); opacity: 1; }
-    }
-
-    @keyframes fadeInUp {
-      0% { opacity: 0; transform: translateY(40px); }
-      100% { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes fadeInLeft {
-      0% { opacity: 0; transform: translateX(-50px); }
-      100% { opacity: 1; transform: translateX(0); }
-    }
-
-    @keyframes zoomIn {
-      0% { opacity: 0; transform: scale(0.7); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-
-    /* Background Particle Canvas */
     #particles-js {
       position: fixed;
-      top: 0; left: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-      pointer-events: none;
+      top:0; left:0;
+      width: 100%; height: 100%;
+      z-index:0;
+      pointer-events:none;
     }
   </style>
 </head>
 <body>
-  <!-- Background Animation -->
   <div id="particles-js"></div>
 
   <div class="container">
-    <!-- Top Logo -->
     <div class="logo">
       <img src="https://i.ibb.co/MxMnGFvY/20250911-222515.jpg" alt="Global InfoCity Park Chennai Logo" />
     </div>
 
-    <!-- Header -->
     <div class="title">
       <span>FLOOR</span>
       <span>BLOCK-A</span>
     </div>
 
-    <!-- Directory Table -->
     <table id="directory">
       <tbody id="floors"></tbody>
     </table>
   </div>
 
-  <!-- Firebase + Animations -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
     import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-    // Firebase Config
     const firebaseConfig = {
       apiKey: "AIzaSyCrGIB_YK33p_2EPTpU-klZ_3xQ5TOPm4c",
       authDomain: "adora-ad.firebaseapp.com",
@@ -176,13 +149,10 @@
       measurementId: "G-QW5Y41EKLR"
     };
 
-    // Init Firebase
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const floorsRef = ref(db, "blocks/A/floors");
     const floorsContainer = document.getElementById("floors");
-
-    // Random animations
     const animations = ["fadeInUp", "fadeInLeft", "zoomIn"];
 
     onValue(floorsRef, (snapshot) => {
@@ -190,21 +160,25 @@
       floorsContainer.innerHTML = "";
 
       for (const floor in data) {
-        const tenants = data[floor];
-
+        const tenantsObj = data[floor].tenants;
         let row = `<tr>
           <td class="floor">${floor}</td>
           <td class="company">`;
 
-        tenants.forEach((tenant, idx) => {
-          const anim = animations[Math.floor(Math.random() * animations.length)];
-          row += `
-            <div class="company-item" style="animation:${anim} 1s ease ${idx * 0.3}s forwards;">
-              <img src="${tenant.logo}" alt="${tenant.name}"/>
-              <span>${tenant.name}</span>
-            </div>
-          `;
-        });
+        if (tenantsObj && Object.keys(tenantsObj).length > 0) {
+          Object.keys(tenantsObj).forEach((key, idx) => {
+            const tenant = tenantsObj[key];
+            const anim = animations[Math.floor(Math.random() * animations.length)];
+            row += `
+              <div class="company-item" style="animation:${anim} 1s ease ${idx * 0.3}s forwards;">
+                <img src="${tenant.logo}" alt="${tenant.name}"/>
+                <span>${tenant.name}</span>
+              </div>
+            `;
+          });
+        } else {
+          row += `<span style="color:#ff6a00; font-weight:600;">No tenants</span>`;
+        }
 
         row += `</td></tr>`;
         floorsContainer.innerHTML += row;
@@ -212,7 +186,6 @@
     });
   </script>
 
-  <!-- Particles.js Background -->
   <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
   <script>
     particlesJS("particles-js", {
