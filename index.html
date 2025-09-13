@@ -3,119 +3,135 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Tenant Intro - Premium</title>
+<title>Tenant Intro + Directory Loop</title>
 <style>
-body {
-  margin:0;
-  font-family:"Poppins",sans-serif;
-  background:#000;
-  min-height:100vh;
-  overflow:hidden;
-  color:#fff;
-}
-#tenantIntro, #tenantDirectory {
-  position:fixed;
-  top:0; left:0; width:100%; height:100%;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  padding:20px;
-  box-sizing:border-box;
-  z-index:5;
-  overflow:auto;
-  transition:opacity 0.8s ease;
-}
-#tenantDirectory {
-  flex-direction:column;
-  display:none;
-}
-.directory-row {
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:12px 0;
-  border-bottom:2px solid orange;
-  gap:40px;
-}
-.directory-row img {
-  height:70px;
-  object-contain:contain;
-  background:#fff;
-  border-radius:12px;
-  padding:8px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.3);
-}
-.intro-card {
-  max-width:600px;
-  width:100%;
-  border-radius:16px;
-  box-shadow:0 12px 36px rgba(0,0,0,0.2);
-  overflow:hidden;
-  display:flex;
-  flex-direction:column;
-  text-align:center;
-  animation:fadeInUp 0.8s ease forwards;
-  color:#fff;
-}
-.top-section {
-  display:flex;
-  align-items:center;
-  justify-content:flex-start;
-  padding:20px;
-  gap:20px;
-}
-.top-section img.logo {
-  height:60px;
-  width:60px;
-  border-radius:12px;
-  background:#fff;
-  padding:6px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.25);
-}
-.top-section .tenant-name {
-  font-size:28px;
-  font-weight:800;
-  text-shadow:0 0 8px rgba(0,0,0,0.4);
-}
-.middle-section img.company-logo {
-  width:80%;
-  max-height:220px;
-  margin:20px auto;
-  border-radius:12px;
-  padding:10px;
-  background:#fff;
-  box-shadow:0 6px 20px rgba(0,0,0,0.3);
-}
-.bottom-section {padding:20px; text-align:left; font-size:16px;}
-.bottom-section h2 {font-size:24px; font-weight:800; margin-bottom:10px;}
-@keyframes fadeInUp {0%{opacity:0; transform:translateY(40px);}100%{opacity:1; transform:translateY(0);}}
-/* particles canvas */
-#particles-js {
-  position:fixed;
-  top:0; left:0;
-  width:100%; height:100%;
-  z-index:0;
-  background:#000;
-}
+  body {
+    margin: 0;
+    font-family: "Poppins", sans-serif;
+    background: #fff;
+    overflow: hidden;
+  }
+  canvas#particles {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 0;
+  }
+  #tenantIntro, #directoryView {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    z-index: 1;
+    overflow: auto;
+    transition: opacity 0.8s ease;
+  }
+  .intro-card {
+    max-width: 600px;
+    width: 100%;
+    border-radius: 16px;
+    box-shadow: 0 12px 36px rgba(0,0,0,0.2);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    animation: fadeInUp 0.8s ease forwards;
+    color: #fff;
+  }
+  .top-section {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 20px;
+    gap: 20px;
+  }
+  .top-section img.logo {
+    height: 60px;
+    width: 60px;
+    border-radius: 12px;
+    background: #fff;
+    padding: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  }
+  .top-section .tenant-name {
+    font-size: 28px;
+    font-weight: 800;
+    color: #fff;
+    text-shadow: 0 0 8px rgba(0,0,0,0.4);
+  }
+  .middle-section img.company-logo {
+    width: 80%;
+    max-height: 220px;
+    margin: 20px auto;
+    border-radius: 12px;
+    padding: 10px;
+    background: #fff;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.3);
+  }
+  .bottom-section {
+    padding: 20px;
+    text-align: left;
+    font-size: 16px;
+  }
+  .bottom-section h2 {
+    font-size: 24px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    color: #fff;
+    text-shadow: 0 0 8px rgba(0,0,0,0.4);
+  }
+  .directory-container {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    padding: 40px;
+    box-sizing: border-box;
+    color: #222;
+  }
+  .directory-title {
+    font-size: 32px;
+    font-weight: bold;
+    margin-bottom: 20px;
+  }
+  .floor-section {
+    margin-bottom: 30px;
+  }
+  .floor-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  .tenant-logos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+  }
+  .tenant-logos img {
+    height: 70px;
+    width: 70px;
+    border-radius: 12px;
+    background: #fff;
+    padding: 5px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  }
+  @keyframes fadeInUp {
+    0%{opacity:0; transform:translateY(40px);}
+    100%{opacity:1; transform:translateY(0);}
+  }
 </style>
 </head>
 <body>
-<div id="particles-js"></div>
+<canvas id="particles"></canvas>
 <div id="tenantIntro"></div>
-<div id="tenantDirectory"></div>
-
-<!-- Particles.js -->
-<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-<script>
-particlesJS("particles-js", {
-  particles:{number:{value:80},size:{value:3},move:{speed:2},line_linked:{enable:true,color:"#ff9e42"}}
-});
-</script>
+<div id="directoryView" style="display:none;"></div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
+// Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyCrGIB_YK33p_2EPTpU-klZ_3xQ5TOPm4c",
   authDomain: "adora-ad.firebaseapp.com",
@@ -131,24 +147,34 @@ const db = getDatabase(app);
 const floorsRef = ref(db,"blocks/A/floors");
 
 const tenantIntro = document.getElementById("tenantIntro");
-const tenantDirectory = document.getElementById("tenantDirectory");
+const directoryView = document.getElementById("directoryView");
+
+const gradients = [
+  ["#ff9e42","#fff"], 
+  ["#42ff90","#fff"], 
+  ["#ff4242","#fff"]
+];
+let gradientIndex = 0;
+
+// Ordinal floor
+function ordinal(n){
+  const s=["th","st","nd","rd"], v=n%100;
+  return n+(s[(v-20)%10]||s[v]||s[0]);
+}
 
 onValue(floorsRef,(snapshot)=>{
   const data = snapshot.val();
   const tenantsSequence = [];
-  const tenantsByFloor = {};
-
   Object.keys(data).forEach(floor=>{
     const tenantsObj = data[floor].tenants;
     if(tenantsObj){
-      tenantsByFloor[floor] = [];
       Object.keys(tenantsObj).forEach(key=>{
         tenantsSequence.push({
           name: tenantsObj[key].name,
           logo: tenantsObj[key].logo,
-          floor
+          floor: ordinal(Number(floor)),
+          description: tenantsObj[key].description || "Welcome to our company."
         });
-        tenantsByFloor[floor].push(tenantsObj[key].logo);
       });
     }
   });
@@ -156,16 +182,16 @@ onValue(floorsRef,(snapshot)=>{
   let currentIndex = 0;
 
   function showNextTenant(){
-    tenantDirectory.style.display="none";
     tenantIntro.style.display="flex";
-    tenantIntro.style.opacity=1;
-    tenantIntro.innerHTML="";
-
+    directoryView.style.display="none";
+    tenantIntro.innerHTML = "";
     if(currentIndex < tenantsSequence.length){
       const tenant = tenantsSequence[currentIndex];
       const card = document.createElement("div");
       card.className = "intro-card";
+      card.style.background = `linear-gradient(135deg, ${gradients[gradientIndex][0]}, ${gradients[gradientIndex][1]})`;
 
+      // Top
       const top = document.createElement("div");
       top.className = "top-section";
       const logoImg = document.createElement("img");
@@ -174,9 +200,11 @@ onValue(floorsRef,(snapshot)=>{
       const tName = document.createElement("div");
       tName.className = "tenant-name";
       tName.textContent = tenant.name;
-      top.appendChild(logoImg); top.appendChild(tName);
+      top.appendChild(logoImg);
+      top.appendChild(tName);
       card.appendChild(top);
 
+      // Middle
       const middle = document.createElement("div");
       middle.className = "middle-section";
       const companyLogo = document.createElement("img");
@@ -185,49 +213,119 @@ onValue(floorsRef,(snapshot)=>{
       middle.appendChild(companyLogo);
       card.appendChild(middle);
 
+      // Bottom
       const bottom = document.createElement("div");
       bottom.className = "bottom-section";
       bottom.innerHTML = `
         <h2>About ${tenant.name}</h2>
-        <p><strong>Description:</strong> Lorem ipsum dolor sit amet.</p>
+        <p><strong>Description:</strong> ${tenant.description}</p>
         <p><strong>Floor:</strong> ${tenant.floor}</p>
-        <p><strong>Core:</strong> Core A</p>
-        <p><strong>Mail:</strong> info@${tenant.name.replace(/\s/g,'').toLowerCase()}.com</p>
       `;
       card.appendChild(bottom);
 
       tenantIntro.appendChild(card);
 
       currentIndex++;
-      setTimeout(showNextTenant,10000); // 10s per tenant
+      setTimeout(showNextTenant,10000);
     } else {
+      // Show directory after intros
       showDirectory();
     }
   }
 
   function showDirectory(){
     tenantIntro.style.display="none";
-    tenantDirectory.style.display="flex";
-    tenantDirectory.innerHTML="";
-    Object.keys(tenantsByFloor).forEach(floor=>{
-      const row = document.createElement("div");
-      row.className = "directory-row";
-      tenantsByFloor[floor].forEach(logo=>{
-        const img = document.createElement("img");
-        img.src = logo;
-        row.appendChild(img);
-      });
-      tenantDirectory.appendChild(row);
+    directoryView.style.display="block";
+    directoryView.innerHTML = "";
+
+    const container = document.createElement("div");
+    container.className = "directory-container";
+    container.style.background = `linear-gradient(135deg, ${gradients[gradientIndex][0]}, ${gradients[gradientIndex][1]})`;
+
+    const title = document.createElement("div");
+    title.className = "directory-title";
+    title.textContent = "Tenant Directory - Block A";
+    container.appendChild(title);
+
+    Object.keys(data).forEach(floor=>{
+      const floorSection = document.createElement("div");
+      floorSection.className = "floor-section";
+      const floorTitle = document.createElement("div");
+      floorTitle.className = "floor-title";
+      floorTitle.textContent = `Floor ${ordinal(Number(floor))}`;
+      floorSection.appendChild(floorTitle);
+
+      const logosDiv = document.createElement("div");
+      logosDiv.className = "tenant-logos";
+
+      const tenantsObj = data[floor].tenants;
+      if(tenantsObj){
+        Object.keys(tenantsObj).forEach(key=>{
+          const logoImg = document.createElement("img");
+          logoImg.src = tenantsObj[key].logo;
+          logosDiv.appendChild(logoImg);
+        });
+      }
+      floorSection.appendChild(logosDiv);
+      container.appendChild(floorSection);
     });
 
+    directoryView.appendChild(container);
+
+    // Auto scroll
+    container.scrollTo({top:0});
+    let scrollAmount = 0;
+    const scrollStep = container.scrollHeight / 100; 
+    const scrollInterval = setInterval(()=>{
+      scrollAmount += scrollStep;
+      container.scrollTo({top:scrollAmount, behavior:"smooth"});
+    },200);
+
     setTimeout(()=>{
+      clearInterval(scrollInterval);
+      gradientIndex = (gradientIndex+1)%gradients.length;
       currentIndex = 0;
       showNextTenant();
-    },20000); // directory visible 20s
+    },20000);
   }
 
   showNextTenant();
 });
+
+// Simple particles background
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+let particlesArray = [];
+function initParticles(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  particlesArray=[];
+  for(let i=0;i<100;i++){
+    particlesArray.push({
+      x: Math.random()*canvas.width,
+      y: Math.random()*canvas.height,
+      r: Math.random()*2+1,
+      dx: (Math.random()-0.5)*0.5,
+      dy: (Math.random()-0.5)*0.5
+    });
+  }
+}
+function animateParticles(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="#ccc";
+  particlesArray.forEach(p=>{
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fill();
+    p.x+=p.dx; p.y+=p.dy;
+    if(p.x<0||p.x>canvas.width) p.dx*=-1;
+    if(p.y<0||p.y>canvas.height) p.dy*=-1;
+  });
+  requestAnimationFrame(animateParticles);
+}
+window.addEventListener("resize",initParticles);
+initParticles();
+animateParticles();
 </script>
 </body>
 </html>
