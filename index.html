@@ -3,100 +3,103 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Global InfoCity Park Chennai</title>
+<title>Tenant Intro - Premium</title>
 <style>
 body {
   margin:0;
   font-family:"Poppins",sans-serif;
-  background:linear-gradient(135deg,#fff6e5,#ff9e42);
+  background: linear-gradient(135deg,#fff6e5,#ff9e42);
   min-height:100vh;
-  overflow-x:hidden;
+  overflow:hidden;
   color:#222;
-  position:relative;
 }
-#particles-js {position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
-
-/* Tenant Intro */
 #tenantIntro {
   position:fixed;
-  top:0; left:0;
-  width:100%; height:100%;
-  background:rgba(255,255,255,0.95);
-  z-index:5;
+  top:0; left:0; width:100%; height:100%;
+  background:#fff;
   display:flex;
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  text-align:center;
-  overflow:hidden;
+  padding:20px;
+  box-sizing:border-box;
+  z-index:5;
+  overflow:auto;
   transition:opacity 0.8s ease;
 }
-.floor-label {font-size:32px;color:#ff6a00;margin-bottom:20px; text-shadow:0 0 8px #ffd36e;}
-.tenant-name {
-  font-size:64px;
-  font-weight:900;
-  color:#ff6a00;
-  letter-spacing:3px;
-  margin-bottom:30px;
-  background:linear-gradient(90deg,#ff6a00,#ffd36e);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-  text-shadow:0 0 16px #ffd36e, 0 0 24px #ff6a00;
-  animation:glowText 2s ease-in-out infinite alternate;
+.intro-card {
+  background:#fff;
+  max-width:600px;
+  width:100%;
+  border-radius:16px;
+  box-shadow:0 12px 36px rgba(0,0,0,0.2);
+  overflow:hidden;
+  display:flex;
+  flex-direction:column;
+  text-align:center;
+  animation:fadeInUp 0.8s ease forwards;
 }
-.tenant-logo {
-  height:140px;
+.top-section {
+  display:flex;
+  align-items:center;
+  justify-content:flex-start;
+  padding:20px;
+  gap:20px;
+}
+.top-section img.logo {
+  height:60px;
+  width:60px;
   border-radius:12px;
-  background:white;
-  padding:12px;
-  filter:drop-shadow(0 6px 16px rgba(0,0,0,0.35));
-  transition: transform 0.5s ease;
+  background:#fff;
+  padding:6px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.25);
 }
-.tenant-logo.show {transform:scale(1.1);}
-
-/* Main Home Content */
-#mainContent {display:none; position:relative; z-index:2; text-align:center; padding-bottom:40px;}
-.heading {
-  font-size:40px;
-  font-weight:900;
+.top-section .tenant-name {
+  font-size:28px;
+  font-weight:800;
   color:#ff6a00;
-  text-transform:uppercase;
-  letter-spacing:2px;
-  margin:20px 0;
   background:linear-gradient(90deg,#ff6a00,#ffd36e);
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
-  text-shadow:0 0 16px #ffd36e,0 0 32px #ff6a00;
-  animation:glowText 2s ease-in-out infinite alternate;
+  text-shadow:0 0 8px #ffd36e;
 }
-.title {display:flex;justify-content:space-between; padding:10px 14px; border-top:3px solid #ff6a00; border-bottom:3px solid #ff6a00; font-weight:bold; font-style:italic; font-size:22px; text-transform:uppercase; margin-bottom:10px;}
-.title span {text-decoration:underline;color:#ff6a00;}
-table {width:100%; border-collapse:collapse; margin-top:10px;}
-tr.floor-row td {padding:10px;}
-td.floor {font-weight:bold;font-size:20px;width:70px;color:#ff6a00; border-bottom:2px solid #ff6a00;}
-td.company {display:flex;justify-content:center;gap:20px;flex-wrap:wrap; min-height:80px;align-items:center;}
-.company-item {display:flex;flex-direction:column;align-items:center;margin:6px 12px;opacity:0; transition:transform 0.3s ease; cursor:pointer;}
-.company-item img {max-height:60px;max-width:140px;margin-bottom:10px;border-radius:12px;background:white;padding:6px;transition:transform 0.3s ease, box-shadow 0.3s ease;}
-.company-item img:hover {transform:scale(1.1); box-shadow:0 6px 16px rgba(0,0,0,0.35);}
-.company-item span {font-size:18px;font-weight:700;color:#ff6a00;text-shadow:0 0 12px #ffd36e;letter-spacing:0.5px;}
 
-/* Animations */
-@keyframes glowText {0%{text-shadow:0 0 16px #ff6a00,0 0 32px #ffd36e;}100%{text-shadow:0 0 32px #ff6a00,0 0 48px #ffd36e;}}
+.middle-section img.company-logo {
+  width:80%;
+  max-height:220px;
+  margin:20px auto;
+  border-radius:12px;
+  padding:10px;
+  background:#fff;
+  box-shadow:0 6px 20px rgba(0,0,0,0.3);
+  transition:transform 0.5s ease;
+}
+.middle-section img.company-logo:hover {
+  transform:scale(1.05);
+}
+
+.bottom-section {
+  padding:20px;
+  text-align:left;
+  font-size:16px;
+  color:#333;
+}
+.bottom-section h2 {
+  font-size:24px;
+  font-weight:800;
+  margin-bottom:10px;
+  background:linear-gradient(90deg,#ff6a00,#ffd36e);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+  text-shadow:0 0 8px #ffd36e;
+}
+.bottom-section p {margin:6px 0;}
 @keyframes fadeInUp {0%{opacity:0; transform:translateY(40px);}100%{opacity:1; transform:translateY(0);}}
 </style>
 </head>
 <body>
-<div id="particles-js"></div>
 
-<!-- Full Page Tenant Intro -->
 <div id="tenantIntro"></div>
-
-<!-- Main Content -->
-<div id="mainContent" class="container">
-  <div class="heading">Tenant Directory</div>
-  <div class="title"><span>FLOOR</span><span>BLOCK-A</span></div>
-  <table id="directory"><tbody id="floors"></tbody></table>
-</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -116,9 +119,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const floorsRef = ref(db,"blocks/A/floors");
-
 const tenantIntro = document.getElementById("tenantIntro");
-const floorsContainer = document.getElementById("floors");
 
 function ordinal(n){
   const s=["th","st","nd","rd"], v=n%100;
@@ -127,83 +128,73 @@ function ordinal(n){
 
 onValue(floorsRef,(snapshot)=>{
   const data = snapshot.val();
-  const tenantsSequence=[];
+  const tenantsSequence = [];
   Object.keys(data).forEach(floor=>{
-    const tenantsObj=data[floor].tenants;
+    const tenantsObj = data[floor].tenants;
     if(tenantsObj){
       Object.keys(tenantsObj).forEach(key=>{
         tenantsSequence.push({
           name: tenantsObj[key].name,
           logo: tenantsObj[key].logo,
-          floor: ordinal(Number(floor))
+          floor: ordinal(Number(floor)),
+          description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur vitae."
         });
       });
     }
   });
 
-  let currentIndex=0;
+  let currentIndex = 0;
 
   function showNextTenant(){
-    tenantIntro.innerHTML="";
-    if(currentIndex<tenantsSequence.length){
-      const tenant=tenantsSequence[currentIndex];
+    tenantIntro.innerHTML = "";
+    if(currentIndex < tenantsSequence.length){
+      const tenant = tenantsSequence[currentIndex];
 
-      const floorLabel=document.createElement("div");
-      floorLabel.className="floor-label";
-      floorLabel.textContent=`${tenant.floor} Floor`;
-      tenantIntro.appendChild(floorLabel);
+      const card = document.createElement("div");
+      card.className = "intro-card";
 
-      const tenantName=document.createElement("div");
-      tenantName.className="tenant-name";
-      tenantName.textContent=tenant.name;
-      tenantIntro.appendChild(tenantName);
+      // Top section
+      const top = document.createElement("div");
+      top.className = "top-section";
+      const logoImg = document.createElement("img");
+      logoImg.src = tenant.logo;
+      logoImg.className = "logo";
+      const tName = document.createElement("div");
+      tName.className = "tenant-name";
+      tName.textContent = tenant.name;
+      top.appendChild(logoImg);
+      top.appendChild(tName);
+      card.appendChild(top);
 
-      const logoImg=document.createElement("img");
-      logoImg.className="tenant-logo";
-      logoImg.src=tenant.logo;
-      tenantIntro.appendChild(logoImg);
+      // Middle section
+      const middle = document.createElement("div");
+      middle.className = "middle-section";
+      const companyLogo = document.createElement("img");
+      companyLogo.src = tenant.logo;
+      companyLogo.className = "company-logo";
+      middle.appendChild(companyLogo);
+      card.appendChild(middle);
 
-      // Smooth fade/zoom
-      setTimeout(()=>{logoImg.classList.add("show");},200);
+      // Bottom section
+      const bottom = document.createElement("div");
+      bottom.className = "bottom-section";
+      bottom.innerHTML = `
+        <h2>About ${tenant.name}</h2>
+        <p><strong>Description:</strong> ${tenant.description}</p>
+        <p><strong>Floor:</strong> ${tenant.floor}</p>
+        <p><strong>Core:</strong> Core A</p>
+        <p><strong>Mail:</strong> info@${tenant.name.replace(/\s/g,'').toLowerCase()}.com</p>
+      `;
+      card.appendChild(bottom);
+
+      tenantIntro.appendChild(card);
 
       currentIndex++;
       setTimeout(showNextTenant,5000);
     } else {
+      // Hide intro
       tenantIntro.style.opacity=0;
-      setTimeout(()=>{
-        tenantIntro.style.display="none";
-        document.getElementById("mainContent").style.display="block";
-
-        // Populate full directory table
-        floorsContainer.innerHTML="";
-        Object.keys(data).forEach(floorKey=>{
-          const tenantsObj=data[floorKey].tenants;
-          let row=`<tr class="floor-row"><td class="floor">${floorKey}</td><td class="company">`;
-          if(tenantsObj && Object.keys(tenantsObj).length>0){
-            Object.keys(tenantsObj).forEach((key,idx)=>{
-              const tenant=tenantsObj[key];
-              row+=`<div class="company-item" style="animation:fadeInUp 1s ease ${idx*0.2}s forwards;"><img src="${tenant.logo}" alt="${tenant.name}"/><span>${tenant.name}</span></div>`;
-            });
-          } else {
-            row+=`<span style="color:#ff6a00; font-weight:600;">No tenants</span>`;
-          }
-          row+=`</td></tr>`;
-          floorsContainer.innerHTML+=row;
-        });
-
-        // Auto-scroll table if content overflows
-        const table = document.getElementById("directory");
-        let scrollAmount=0;
-        const scrollInterval=setInterval(()=>{
-          if(scrollAmount < table.scrollHeight - table.clientHeight){
-            scrollAmount+=1;
-            table.scrollTop=scrollAmount;
-          } else {
-            scrollAmount=0;
-          }
-        },50);
-
-      },800);
+      setTimeout(()=>{tenantIntro.style.display="none";},800);
     }
   }
 
@@ -211,17 +202,5 @@ onValue(floorsRef,(snapshot)=>{
 });
 </script>
 
-<script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-<script>
-particlesJS("particles-js",{
-  "particles":{
-    "number":{"value":60},
-    "size":{"value":3},
-    "move":{"speed":2},
-    "line_linked":{"enable":true,"color":"#ff6a00"},
-    "color":{"value":"#ff6a00"}
-  }
-});
-</script>
 </body>
 </html>
