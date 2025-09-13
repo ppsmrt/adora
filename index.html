@@ -9,7 +9,7 @@
     margin: 0;
     font-family: "Poppins", sans-serif;
     overflow: hidden;
-    background: #fff;
+    background: #000; /* fallback for particles */
     color: #fff;
   }
   canvas#particles {
@@ -29,7 +29,7 @@
     overflow: auto;
     transition: opacity 0.8s ease;
   }
-  /* Fullscreen intro */
+  /* Fullscreen intro transparent */
   .intro-fullscreen {
     width: 100%;
     height: 100%;
@@ -41,6 +41,7 @@
     text-align: center;
     animation: fadeInUp 0.8s ease forwards;
     color: #fff;
+    background: transparent;
   }
   /* Force readable text */
   .intro-fullscreen * {
@@ -147,11 +148,6 @@ const floorsRef = ref(db,"blocks/A/floors");
 const tenantIntro = document.getElementById("tenantIntro");
 const directoryView = document.getElementById("directoryView");
 
-const gradients = [
-  ["#ff9e42","#ff7042"], 
-  ["#42ff90","#42d4ff"], 
-  ["#ff4242","#ff42a1"]
-];
 let gradientIndex = 0;
 
 // Ordinal floor
@@ -191,7 +187,6 @@ onValue(floorsRef,(snapshot)=>{
       const tenant = tenantsSequence[currentIndex];
       const wrapper = document.createElement("div");
       wrapper.className = "intro-fullscreen";
-      wrapper.style.background = `linear-gradient(135deg, ${gradients[gradientIndex][0]}, ${gradients[gradientIndex][1]})`;
 
       // Header
       const header = document.createElement("div");
@@ -237,7 +232,7 @@ onValue(floorsRef,(snapshot)=>{
 
     const container = document.createElement("div");
     container.className = "directory-container";
-    container.style.background = `linear-gradient(135deg, ${gradients[gradientIndex][0]}, ${gradients[gradientIndex][1]})`;
+    container.style.background = `linear-gradient(135deg, #ff9e42, #ff7042)`; // optional
 
     const title = document.createElement("div");
     title.className = "directory-title";
@@ -280,7 +275,6 @@ onValue(floorsRef,(snapshot)=>{
 
     setTimeout(()=>{
       clearInterval(scrollInterval);
-      gradientIndex = (gradientIndex+1)%gradients.length;
       currentIndex = 0;
       showNextTenant();
     },20000);
@@ -289,7 +283,7 @@ onValue(floorsRef,(snapshot)=>{
   showNextTenant();
 });
 
-// Simple particles background
+// Particles
 const canvas = document.getElementById("particles");
 const ctx = canvas.getContext("2d");
 let particlesArray = [];
