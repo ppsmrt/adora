@@ -16,12 +16,11 @@ body {
 }
 #particles-js {position:fixed;top:0;left:0;width:100%;height:100%;z-index:0;pointer-events:none;}
 
-/* Full page tenant intro */
+/* Tenant Intro */
 #tenantIntro {
   position:fixed;
-  top:0;left:0;
-  width:100%;
-  height:100%;
+  top:0; left:0;
+  width:100%; height:100%;
   background:rgba(255,255,255,0.95);
   z-index:5;
   display:flex;
@@ -30,27 +29,36 @@ body {
   align-items:center;
   text-align:center;
   overflow:hidden;
+  transition:opacity 0.8s ease;
 }
-.floor-label {font-size:28px;color:#ff6a00;margin-bottom:20px;}
+.floor-label {font-size:32px;color:#ff6a00;margin-bottom:20px; text-shadow:0 0 8px #ffd36e;}
 .tenant-name {
-  font-size:48px;
+  font-size:64px;
   font-weight:900;
   color:#ff6a00;
-  letter-spacing:2px;
-  margin-bottom:20px;
+  letter-spacing:3px;
+  margin-bottom:30px;
   background:linear-gradient(90deg,#ff6a00,#ffd36e);
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
-  text-shadow:0 0 12px #ffd36e;
+  text-shadow:0 0 16px #ffd36e, 0 0 24px #ff6a00;
   animation:glowText 2s ease-in-out infinite alternate;
 }
-.tenant-logo {height:120px; border-radius:12px; background:white; padding:12px; filter:drop-shadow(0 4px 12px rgba(0,0,0,0.25));}
+.tenant-logo {
+  height:140px;
+  border-radius:12px;
+  background:white;
+  padding:12px;
+  filter:drop-shadow(0 6px 16px rgba(0,0,0,0.35));
+  transition: transform 0.5s ease;
+}
+.tenant-logo.show {transform:scale(1.1);}
 
 /* Main Home Content */
 #mainContent {display:none; position:relative; z-index:2; text-align:center; padding-bottom:40px;}
 .heading {
-  font-size:36px;
-  font-weight:800;
+  font-size:40px;
+  font-weight:900;
   color:#ff6a00;
   text-transform:uppercase;
   letter-spacing:2px;
@@ -58,19 +66,23 @@ body {
   background:linear-gradient(90deg,#ff6a00,#ffd36e);
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
+  text-shadow:0 0 16px #ffd36e,0 0 32px #ff6a00;
   animation:glowText 2s ease-in-out infinite alternate;
 }
 .title {display:flex;justify-content:space-between; padding:10px 14px; border-top:3px solid #ff6a00; border-bottom:3px solid #ff6a00; font-weight:bold; font-style:italic; font-size:22px; text-transform:uppercase; margin-bottom:10px;}
 .title span {text-decoration:underline;color:#ff6a00;}
 table {width:100%; border-collapse:collapse; margin-top:10px;}
-td.floor {font-weight:bold;font-size:20px;width:70px;color:#ff6a00;}
-td.company {display:flex;justify-content:center;gap:20px;flex-wrap:wrap; min-height:60px;align-items:center;}
+tr.floor-row td {padding:10px;}
+td.floor {font-weight:bold;font-size:20px;width:70px;color:#ff6a00; border-bottom:2px solid #ff6a00;}
+td.company {display:flex;justify-content:center;gap:20px;flex-wrap:wrap; min-height:80px;align-items:center;}
 .company-item {display:flex;flex-direction:column;align-items:center;margin:6px 12px;opacity:0; transition:transform 0.3s ease; cursor:pointer;}
 .company-item img {max-height:60px;max-width:140px;margin-bottom:10px;border-radius:12px;background:white;padding:6px;transition:transform 0.3s ease, box-shadow 0.3s ease;}
 .company-item img:hover {transform:scale(1.1); box-shadow:0 6px 16px rgba(0,0,0,0.35);}
-.company-item span {font-size:16px;font-weight:600;color:#ff6a00;text-shadow:0 0 8px #ffd36e;letter-spacing:0.5px;}
+.company-item span {font-size:18px;font-weight:700;color:#ff6a00;text-shadow:0 0 12px #ffd36e;letter-spacing:0.5px;}
 
-@keyframes glowText {0%{text-shadow:0 0 8px #ff6a00,0 0 16px #ffd36e;}100%{text-shadow:0 0 16px #ff6a00,0 0 32px #ffd36e;}}
+/* Animations */
+@keyframes glowText {0%{text-shadow:0 0 16px #ff6a00,0 0 32px #ffd36e;}100%{text-shadow:0 0 32px #ff6a00,0 0 48px #ffd36e;}}
+@keyframes fadeInUp {0%{opacity:0; transform:translateY(40px);}100%{opacity:1; transform:translateY(0);}}
 </style>
 </head>
 <body>
@@ -108,7 +120,6 @@ const floorsRef = ref(db,"blocks/A/floors");
 const tenantIntro = document.getElementById("tenantIntro");
 const floorsContainer = document.getElementById("floors");
 
-// Helper for ordinal floor names
 function ordinal(n){
   const s=["th","st","nd","rd"], v=n%100;
   return n+(s[(v-20)%10]||s[v]||s[0]);
@@ -116,8 +127,7 @@ function ordinal(n){
 
 onValue(floorsRef,(snapshot)=>{
   const data = snapshot.val();
-  const tenantsSequence=[]; // Flatten all tenants with floor info
-
+  const tenantsSequence=[];
   Object.keys(data).forEach(floor=>{
     const tenantsObj=data[floor].tenants;
     if(tenantsObj){
@@ -153,28 +163,47 @@ onValue(floorsRef,(snapshot)=>{
       logoImg.src=tenant.logo;
       tenantIntro.appendChild(logoImg);
 
+      // Smooth fade/zoom
+      setTimeout(()=>{logoImg.classList.add("show");},200);
+
       currentIndex++;
       setTimeout(showNextTenant,5000);
     } else {
-      tenantIntro.style.display="none";
-      document.getElementById("mainContent").style.display="block";
+      tenantIntro.style.opacity=0;
+      setTimeout(()=>{
+        tenantIntro.style.display="none";
+        document.getElementById("mainContent").style.display="block";
 
-      // Populate full directory table
-      floorsContainer.innerHTML="";
-      Object.keys(data).forEach(floorKey=>{
-        const tenantsObj=data[floorKey].tenants;
-        let row=`<tr><td class="floor">${floorKey}</td><td class="company">`;
-        if(tenantsObj && Object.keys(tenantsObj).length>0){
-          Object.keys(tenantsObj).forEach((key,idx)=>{
-            const tenant=tenantsObj[key];
-            row+=`<div class="company-item" style="animation:fadeInUp 1s ease ${idx*0.3}s forwards;"><img src="${tenant.logo}" alt="${tenant.name}"/><span>${tenant.name}</span></div>`;
-          });
-        } else {
-          row+=`<span style="color:#ff6a00; font-weight:600;">No tenants</span>`;
-        }
-        row+=`</td></tr>`;
-        floorsContainer.innerHTML+=row;
-      });
+        // Populate full directory table
+        floorsContainer.innerHTML="";
+        Object.keys(data).forEach(floorKey=>{
+          const tenantsObj=data[floorKey].tenants;
+          let row=`<tr class="floor-row"><td class="floor">${floorKey}</td><td class="company">`;
+          if(tenantsObj && Object.keys(tenantsObj).length>0){
+            Object.keys(tenantsObj).forEach((key,idx)=>{
+              const tenant=tenantsObj[key];
+              row+=`<div class="company-item" style="animation:fadeInUp 1s ease ${idx*0.2}s forwards;"><img src="${tenant.logo}" alt="${tenant.name}"/><span>${tenant.name}</span></div>`;
+            });
+          } else {
+            row+=`<span style="color:#ff6a00; font-weight:600;">No tenants</span>`;
+          }
+          row+=`</td></tr>`;
+          floorsContainer.innerHTML+=row;
+        });
+
+        // Auto-scroll table if content overflows
+        const table = document.getElementById("directory");
+        let scrollAmount=0;
+        const scrollInterval=setInterval(()=>{
+          if(scrollAmount < table.scrollHeight - table.clientHeight){
+            scrollAmount+=1;
+            table.scrollTop=scrollAmount;
+          } else {
+            scrollAmount=0;
+          }
+        },50);
+
+      },800);
     }
   }
 
