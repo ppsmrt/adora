@@ -34,8 +34,9 @@ body {
 .intro-floor {margin:20px 0; text-align:center;}
 .intro-floor h2 {color:#ff6a00;font-size:28px;margin-bottom:20px;}
 .intro-logos {display:flex;justify-content:center;gap:20px;flex-wrap:wrap;}
-.intro-logos img {height:60px;border-radius:10px;animation:fadeIn 1s ease forwards;}
-.intro-logos span {display:block;color:#ff6a00;font-weight:700;text-shadow:0 0 6px #ffd36e; animation:fadeIn 1s ease forwards; margin-top:5px;}
+.intro-logos .company-item {opacity:0; display:flex; flex-direction:column; align-items:center; margin:6px 12px;}
+.intro-logos .company-item img {height:60px;border-radius:10px;background:white;padding:6px;transition:transform 0.3s ease, box-shadow 0.3s ease;}
+.intro-logos .company-item span {display:block;color:#ff6a00;font-weight:700;text-shadow:0 0 6px #ffd36e;margin-top:5px; opacity:0;}
 
 /* Main Home Content */
 #mainContent {display:none; position:relative; z-index:2; text-align:center; padding-bottom:40px;}
@@ -61,7 +62,9 @@ td.company {display:flex;justify-content:center;gap:20px;flex-wrap:wrap; min-hei
 .company-item img:hover {transform:scale(1.1); box-shadow:0 6px 16px rgba(0,0,0,0.35);}
 .company-item span {font-size:16px;font-weight:600;color:#ff6a00;text-shadow:0 0 8px #ffd36e;letter-spacing:0.5px;}
 
-@keyframes fadeIn {0%{opacity:0;transform:translateY(20px);}100%{opacity:1;transform:translateY(0);}}
+@keyframes fadeInLeft {0%{opacity:0;transform:translateX(-50px);}100%{opacity:1;transform:translateX(0);}}
+@keyframes fadeInRight {0%{opacity:0;transform:translateX(50px);}100%{opacity:1;transform:translateX(0);}}
+@keyframes fadeInUp {0%{opacity:0;transform:translateY(20px);}100%{opacity:1;transform:translateY(0);}}
 @keyframes glowText {0%{text-shadow:0 0 8px #ff6a00,0 0 16px #ffd36e;}100%{text-shadow:0 0 16px #ff6a00,0 0 32px #ffd36e;}}
 </style>
 </head>
@@ -100,13 +103,12 @@ const floorsRef = ref(db,"blocks/A/floors");
 const directoryIntro = document.getElementById("directoryIntro");
 const floorsContainer = document.getElementById("floors");
 
-// Fetch all floors and tenants
+// Floor-by-floor intro with alternating animation
 onValue(floorsRef,(snapshot)=>{
   const data = snapshot.val();
   const floorKeys = Object.keys(data);
   let currentIndex=0;
 
-  // Show floor by floor
   function showNextFloor(){
     directoryIntro.innerHTML="";
     if(currentIndex<floorKeys.length){
@@ -121,15 +123,18 @@ onValue(floorsRef,(snapshot)=>{
       const logosDiv=document.createElement("div");
       logosDiv.className="intro-logos";
 
+      const direction=(currentIndex%2===0)?"fadeInLeft":"fadeInRight";
+
       if(floor && Object.keys(floor).length>0){
         Object.keys(floor).forEach((key,idx)=>{
           const tenant=floor[key];
           const container=document.createElement("div");
           container.className="company-item";
-          container.style.animation=`fadeIn 1s ease ${idx*0.2}s forwards`;
+          container.style.animation=`${direction} 1s ease ${idx*0.2}s forwards`;
           const img=document.createElement("img"); img.src=tenant.logo;
           container.appendChild(img);
           const span=document.createElement("span"); span.textContent=tenant.name;
+          span.style.animation=`fadeInUp 0.8s ease ${idx*0.25+0.5}s forwards`;
           container.appendChild(span);
           logosDiv.appendChild(container);
         });
@@ -141,13 +146,12 @@ onValue(floorsRef,(snapshot)=>{
       floorDiv.appendChild(logosDiv);
       directoryIntro.appendChild(floorDiv);
       currentIndex++;
-      setTimeout(showNextFloor,5000); // Next floor after 5 sec
+      setTimeout(showNextFloor,5000);
     } else {
       // After all floors, show full directory
       directoryIntro.style.display="none";
       document.getElementById("mainContent").style.display="block";
 
-      // Populate main content table
       floorsContainer.innerHTML="";
       floorKeys.forEach(floorKey=>{
         const tenantsObj=data[floorKey].tenants;
@@ -155,7 +159,7 @@ onValue(floorsRef,(snapshot)=>{
         if(tenantsObj && Object.keys(tenantsObj).length>0){
           Object.keys(tenantsObj).forEach((key,idx)=>{
             const tenant=tenantsObj[key];
-            row+=`<div class="company-item" style="animation:fadeIn 1s ease ${idx*0.3}s forwards;"><img src="${tenant.logo}" alt="${tenant.name}"/><span>${tenant.name}</span></div>`;
+            row+=`<div class="company-item" style="animation:fadeInUp 1s ease ${idx*0.3}s forwards;"><img src="${tenant.logo}" alt="${tenant.name}"/><span>${tenant.name}</span></div>`;
           });
         } else {
           row+=`<span style="color:#ff6a00; font-weight:600;">No tenants</span>`;
@@ -166,7 +170,7 @@ onValue(floorsRef,(snapshot)=>{
     }
   }
 
-  showNextFloor(); // Start sequence
+  showNextFloor();
 });
 </script>
 
