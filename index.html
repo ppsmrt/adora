@@ -3,164 +3,166 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
-<title>Tenant Intro + Directory Loop (Portrait TV)</title>
+<title>Tenant Intro + Directory Loop (Premium Corporate)</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
-  html, body {
-    margin: 0;
-    padding: 0;
-    width: 100vw;
-    height: 100vh;
-    overflow: hidden;
-    font-family: "Poppins", sans-serif;
-    background: #ffffff;
-    color: #222;
-  }
+html, body {
+  margin:0; padding:0;
+  width:100vw; height:100vh;
+  overflow:hidden;
+  font-family:"Inter","Roboto",sans-serif;
+  background:#0a0c14;
+  color:#fff;
+}
 
-  canvas#particles {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: 0;
-  }
+/* --- Background Animation --- */
+canvas#particles {
+  position:fixed; top:0; left:0;
+  width:100%; height:100%;
+  z-index:0;
+  background: linear-gradient(135deg,#0a0c14,#11141e);
+}
 
-  #tenantIntro, #directoryView {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 0;
-    box-sizing: border-box;
-    z-index: 1;
-    overflow: hidden;
-    transition: opacity 0.8s ease;
-  }
+/* --- Main Containers --- */
+#tenantIntro, #directoryView {
+  position:fixed; top:0; left:0;
+  width:100%; height:100%;
+  display:flex; justify-content:center; align-items:center;
+  z-index:1;
+  overflow:hidden;
+}
 
-  /* Transparent fullscreen intro */
-  .intro-fullscreen {
-    width: 100%;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: stretch;
-    animation: fadeInUp 0.8s ease forwards;
-    background: rgba(255,255,255,0);
-    color: #222;
-    padding: 2vh 2vw;
-    box-sizing: border-box;
-  }
+/* --- Cinematic Card --- */
+.cinematic-card {
+  width:70vw; max-width:1100px;
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(18px) saturate(180%);
+  border-radius: 24px;
+  padding: 4vh 4vw;
+  display:flex; flex-direction:column; align-items:center;
+  gap:3vh;
+  transform:translateY(50px);
+  opacity:0;
+  animation:slideUp 1.2s forwards;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
 
-  /* Top bar: logo left, tenant name right */
-  .intro-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    padding: 1vh 1vw;
-    margin-bottom: 4vh;
-  }
+/* --- Header --- */
+.cinematic-card .header {
+  width:100%;
+  display:flex; justify-content:space-between; align-items:center;
+  padding-bottom:2vh;
+  border-bottom:1px solid rgba(255,255,255,0.12);
+}
 
-  .intro-header img {
-    height: 12vh;
-    width: 12vh;
-    border-radius: 16px;
-    background: #fff;
-    padding: 0.5vh;
-    object-fit: contain;
-  }
+.cinematic-card .header img {
+  height:10vh; width:10vh;
+  border-radius:16px; object-fit:contain;
+  box-shadow:0 6px 20px rgba(0,0,0,0.3);
+  animation:floatLogo 4s ease-in-out infinite;
+}
 
-  .intro-header .tenant-name {
-    font-size: 5vh;
-    font-weight: 800;
-    text-align: right;
-    flex: 1;
-    padding-left: 2vw;
-  }
+.cinematic-card .header .tenant-name {
+  font-size:4.5vh; font-weight:800;
+  text-align:right; flex:1; padding-left:2vw;
+  background: linear-gradient(90deg,#00c3ff,#005bea);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  position:relative;
+}
 
-  .intro-logo {
-    max-width: 90vw;
-    max-height: 35vh;
-    margin: 0 auto 2vh auto;
-    object-fit: contain;
-  }
+.cinematic-card .header .tenant-name::after {
+  content:"";
+  position:absolute; bottom:-5px; left:0;
+  width:0%; height:3px;
+  background: linear-gradient(90deg,#00c3ff,#005bea);
+  animation:underline 1s ease forwards;
+  animation-delay:0.3s;
+}
 
-  .intro-details {
-    font-size: 2.5vh;
-    line-height: 1.5;
-    text-align: left;
-    max-width: 90vw;
-    margin: 0 auto;
-  }
+/* --- Logo --- */
+.cinematic-card .logo {
+  width:25vw; max-width:350px; height:auto;
+  object-fit:contain; border-radius:16px;
+  box-shadow:0 12px 40px rgba(0,0,0,0.45);
+  transform:scale(0.75); opacity:0;
+  animation:zoomLogo 1s forwards 0.3s;
+}
 
-  /* Transparent directory overlay */
-  .directory-container {
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-    padding: 2vh 2vw;
-    box-sizing: border-box;
-    background: rgba(255,255,255,0);
-    color: #222;
-  }
+/* --- Details --- */
+.cinematic-card .details {
+  width:100%;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(15px);
+  border-radius:16px;
+  padding:2vh 2vw;
+  display:flex; flex-direction:column; gap:1.5vh;
+  transform:translateY(40px);
+  opacity:0;
+  animation:fadeUp 1s forwards 0.6s;
+}
 
-  .directory-title {
-    font-size: 4vh;
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 2vh;
-  }
+.cinematic-card .details h2 { font-size:3vh; color:#00c3ff; margin:0; }
+.cinematic-card .details p { font-size:2vh; color:#dbe3f0; margin:0; }
 
-  .directory-header {
-    display: flex;
-    justify-content: space-between;
-    font-weight: bold;
-    margin-bottom: 1vh;
-    font-size: 3vh;
-    border-bottom: 2px solid #222;
-    padding-bottom: 0.5vh;
-  }
+/* --- Directory --- */
+.directory-container {
+  width:85%; max-width:1200px;
+  padding:3vh 2vw;
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(20px);
+  border-radius:24px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.45);
+  display:flex; flex-direction:column; gap:2.5vh;
+  overflow:hidden;
+}
 
-  .floor-section {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 2vh;
-    flex-wrap: wrap;
-  }
+.directory-title {
+  font-size:5vh; font-weight:800; text-align:center;
+  background: linear-gradient(90deg,#00c3ff,#005bea);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  margin-bottom:2vh;
+}
 
-  .floor-section div:first-child {
-    font-size: 3vh;
-    min-width: 80px;
-  }
+.floor-section {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:2vh 1vw; background: rgba(255,255,255,0.04);
+  border-radius:16px; gap:1vw;
+  opacity:0; transform:translateY(60px);
+  animation:floorFade 0.8s forwards;
+}
 
-  .tenant-logos {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1vw;
-    overflow: hidden;
-    max-width: 80vw;
-  }
+.floor-section .floor-num { font-size:3vh; font-weight:600; color:#00c3ff; }
 
-  .tenant-logos img {
-    height: 8vh;
-    width: auto;
-    object-fit: contain;
-  }
+.tenant-logos { display:flex; flex-wrap:wrap; gap:1vw; }
 
-  @keyframes fadeInUp {
-    0%{opacity:0; transform:translateY(4vh);}
-    100%{opacity:1; transform:translateY(0);}
-  }
+.tenant-logos img {
+  height:7vh; width:auto; object-fit:contain;
+  border-radius:12px; background:rgba(255,255,255,0.1);
+  padding:4px; box-shadow:0 4px 18px rgba(0,0,0,0.25);
+  transition:all 0.3s ease;
+}
+.tenant-logos img:hover {
+  transform:scale(1.15) rotate(-2deg);
+  box-shadow:0 10px 30px rgba(0,0,0,0.35);
+}
 
-  @media (max-width: 768px){
-    .intro-header .tenant-name { font-size: 5vw; }
-    .intro-details { font-size: 3vw; }
-    .directory-title { font-size: 5vw; }
-    .directory-header { font-size: 3.5vw; }
-    .tenant-logos img { height: 10vw; }
-  }
+/* --- Animations --- */
+@keyframes slideUp { to{transform:translateY(0); opacity:1;} }
+@keyframes zoomLogo { to{transform:scale(1); opacity:1;} }
+@keyframes floatLogo { 0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);} }
+@keyframes fadeUp { to{transform:translateY(0); opacity:1;} }
+@keyframes underline { from{width:0;} to{width:100%;} }
+@keyframes floorFade { to{opacity:1; transform:translateY(0);} }
+@keyframes fadeOut { to{opacity:0; transform:translateY(-40px);} }
+.fade-out { animation:fadeOut 0.8s ease forwards; }
+
+@media(max-width:768px){
+  .cinematic-card .header .tenant-name{font-size:6vw;}
+  .cinematic-card .details p{font-size:3vw;}
+  .directory-title{font-size:6vw;}
+  .floor-section .floor-num{font-size:4vw;}
+  .tenant-logos img{height:12vw;}
+}
 </style>
 </head>
 <body>
@@ -172,7 +174,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-// Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyCrGIB_YK33p_2EPTpU-klZ_3xQ5TOPm4c",
   authDomain: "adora-ad.firebaseapp.com",
@@ -181,8 +182,8 @@ const firebaseConfig = {
   storageBucket: "adora-ad.appspot.com",
   messagingSenderId: "550034277527",
   appId: "1:550034277527:web:966b16ce942a161e8955d2",
-  measurementId: "G-QW5Y41EKLR"
 };
+
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const floorsRef = ref(db,"blocks/A/floors");
@@ -190,10 +191,7 @@ const floorsRef = ref(db,"blocks/A/floors");
 const tenantIntro = document.getElementById("tenantIntro");
 const directoryView = document.getElementById("directoryView");
 
-function ordinal(n){
-  const s=["th","st","nd","rd"], v=n%100;
-  return n+(s[(v-20)%10]||s[v]||s[0]);
-}
+function ordinal(n){ const s=["th","st","nd","rd"], v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
 
 onValue(floorsRef,(snapshot)=>{
   const data = snapshot.val();
@@ -209,7 +207,8 @@ onValue(floorsRef,(snapshot)=>{
           description: tenantsObj[key].description || "Welcome to our company.",
           core: tenantsObj[key].core || "N/A",
           contact: tenantsObj[key].contact || "N/A",
-          email: tenantsObj[key].email || "N/A"
+          email: tenantsObj[key].email || "N/A",
+          theme: tenantsObj[key].theme || "#0f1117,#1a1c25"
         });
       });
     }
@@ -225,26 +224,20 @@ onValue(floorsRef,(snapshot)=>{
     if(currentIndex < tenantsSequence.length){
       const tenant = tenantsSequence[currentIndex];
       const wrapper = document.createElement("div");
-      wrapper.className = "intro-fullscreen";
+      wrapper.className="cinematic-card";
+      wrapper.style.background = `linear-gradient(135deg,${tenant.theme})`;
 
-      // Top header: logo left, name right
       const header = document.createElement("div");
-      header.className = "intro-header";
-      header.innerHTML = `
-        <img src="${tenant.logo}" alt="logo"/>
-        <div class="tenant-name">${tenant.name}</div>
-      `;
+      header.className="header";
+      header.innerHTML = `<img src="${tenant.logo}" alt="logo"/><div class="tenant-name">${tenant.name}</div>`;
       wrapper.appendChild(header);
 
-      // Big logo centered
-      const bigLogo = document.createElement("img");
-      bigLogo.src = tenant.logo;
-      bigLogo.className = "intro-logo";
-      wrapper.appendChild(bigLogo);
+      const logo = document.createElement("img");
+      logo.src = tenant.logo; logo.className="logo";
+      wrapper.appendChild(logo);
 
-      // Details
       const details = document.createElement("div");
-      details.className = "intro-details";
+      details.className="details";
       details.innerHTML = `
         <h2>About ${tenant.name}</h2>
         <p><strong>Description:</strong> ${tenant.description}</p>
@@ -256,113 +249,89 @@ onValue(floorsRef,(snapshot)=>{
       wrapper.appendChild(details);
 
       tenantIntro.appendChild(wrapper);
-
       currentIndex++;
-      setTimeout(showNextTenant,10000);
-    } else {
-      showDirectory();
-    }
+      setTimeout(()=>{ wrapper.classList.add("fade-out"); setTimeout(showNextTenant,800); },9000);
+    } else { showDirectory(); }
   }
 
   function showDirectory(){
     tenantIntro.style.display="none";
-    directoryView.style.display="block";
+    directoryView.style.display="flex";
     directoryView.innerHTML = "";
 
     const container = document.createElement("div");
-    container.className = "directory-container";
+    container.className="directory-container";
 
     const title = document.createElement("div");
-    title.className = "directory-title";
-    title.textContent = "Tenant Directory";
+    title.className="directory-title"; title.textContent="Tenant Directory";
     container.appendChild(title);
 
-    const headerRow = document.createElement("div");
-    headerRow.className = "directory-header";
-    headerRow.innerHTML = `<span>Floor</span><span>Block Name</span>`;
-    container.appendChild(headerRow);
-
-    Object.keys(data).forEach(floor=>{
+    Object.keys(data).forEach((floor,i)=>{
       const floorSection = document.createElement("div");
-      floorSection.className = "floor-section";
+      floorSection.className="floor-section";
+      floorSection.style.animationDelay=`${i*0.15}s`;
 
       const floorNum = document.createElement("div");
-      floorNum.textContent = ordinal(Number(floor));
-      const logosDiv = document.createElement("div");
-      logosDiv.className = "tenant-logos";
+      floorNum.className="floor-num"; floorNum.textContent=ordinal(Number(floor));
 
+      const logosDiv = document.createElement("div"); logosDiv.className="tenant-logos";
       const tenantsObj = data[floor].tenants;
-      if(tenantsObj){
-        Object.keys(tenantsObj).forEach(key=>{
-          const logoImg = document.createElement("img");
-          logoImg.src = tenantsObj[key].logo;
-          logosDiv.appendChild(logoImg);
-        });
-      }
+      if(tenantsObj) Object.keys(tenantsObj).forEach(key=>{
+        const logoImg = document.createElement("img"); logoImg.src=tenantsObj[key].logo; logosDiv.appendChild(logoImg);
+      });
 
-      floorSection.appendChild(floorNum);
-      floorSection.appendChild(logosDiv);
+      floorSection.appendChild(floorNum); floorSection.appendChild(logosDiv);
       container.appendChild(floorSection);
     });
 
     directoryView.appendChild(container);
 
-    // Auto scroll
-    let scrollAmount = 0;
+    let scrollAmount=0;
     const maxScroll = container.scrollHeight - container.clientHeight;
-    const scrollStep = maxScroll / 200;
+    const scrollStep = maxScroll / 240;
     const scrollInterval = setInterval(()=>{
       scrollAmount += scrollStep;
-      if(scrollAmount >= maxScroll){
-        scrollAmount = maxScroll;
-      }
+      if(scrollAmount >= maxScroll) scrollAmount = maxScroll;
       container.scrollTo({top: scrollAmount, behavior:"smooth"});
-    },50);
+    },60);
 
-    setTimeout(()=>{
-      clearInterval(scrollInterval);
-      currentIndex = 0;
-      showNextTenant();
-    },20000);
+    setTimeout(()=>{ clearInterval(scrollInterval); currentIndex=0; showNextTenant(); },22000);
   }
 
   showNextTenant();
 });
 
-// Green particles
+/* --- Particles --- */
 const canvas = document.getElementById("particles");
 const ctx = canvas.getContext("2d");
-let particlesArray = [];
+let particlesArray=[];
+
 function initParticles(){
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  canvas.width=window.innerWidth; canvas.height=window.innerHeight;
   particlesArray=[];
-  for(let i=0;i<100;i++){
-    particlesArray.push({
-      x: Math.random()*canvas.width,
-      y: Math.random()*canvas.height,
-      r: Math.random()*2+1,
-      dx: (Math.random()-0.5)*0.5,
-      dy: (Math.random()-0.5)*0.5
-    });
+  for(let i=0;i<140;i++){
+    particlesArray.push({x:Math.random()*canvas.width,y:Math.random()*canvas.height,r:Math.random()*2+1,dx:(Math.random()-0.5)*0.3,dy:(Math.random()-0.5)*0.3});
   }
 }
+
 function animateParticles(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle="#0f0";
-  particlesArray.forEach(p=>{
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-    ctx.fill();
+  ctx.fillStyle="rgba(0,195,255,0.8)";
+  particlesArray.forEach((p,i)=>{
+    ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill();
+    for(let j=i+1;j<particlesArray.length;j++){
+      const p2=particlesArray[j]; const dist=Math.hypot(p.x-p2.x,p.y-p2.y);
+      if(dist<120){ ctx.strokeStyle="rgba(0,195,255,0.12)"; ctx.lineWidth=1; ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(p2.x,p2.y); ctx.stroke(); }
+    }
     p.x+=p.dx; p.y+=p.dy;
-    if(p.x<0||p.x>canvas.width) p.dx*=-1;
-    if(p.y<0||p.y>canvas.height) p.dy*=-1;
+    if(p.x<0||p.x>canvas.width)p.dx*=-1;
+    if(p.y<0||p.y>canvas.height)p.dy*=-1;
   });
   requestAnimationFrame(animateParticles);
 }
-window.addEventListener("resize",()=>{ initParticles(); });
-initParticles();
-animateParticles();
+
+window.addEventListener("resize",initParticles);
+initParticles(); animateParticles();
 </script>
 </body>
 </html>
