@@ -44,22 +44,22 @@
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    align-items: center;
-    text-align: center;
+    align-items: stretch;
     animation: fadeInUp 0.8s ease forwards;
-    background: rgba(255,255,255,0); /* transparent */
+    background: rgba(255,255,255,0);
     color: #222;
     padding: 2vh 2vw;
     box-sizing: border-box;
   }
 
+  /* Top bar: logo left, tenant name right */
   .intro-header {
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    gap: 2vw;
-    margin-bottom: 2vh;
-    flex-wrap: wrap;
-    justify-content: center;
+    width: 100%;
+    padding: 1vh 1vw;
+    margin-bottom: 4vh;
   }
 
   .intro-header img {
@@ -72,23 +72,26 @@
   }
 
   .intro-header .tenant-name {
-    font-size: 4vh;
+    font-size: 5vh;
     font-weight: 800;
+    text-align: right;
+    flex: 1;
+    padding-left: 2vw;
   }
 
   .intro-logo {
     max-width: 90vw;
     max-height: 35vh;
-    margin: 2vh auto;
+    margin: 0 auto 2vh auto;
     object-fit: contain;
   }
 
   .intro-details {
     font-size: 2.5vh;
-    line-height: 1.4;
+    line-height: 1.5;
     text-align: left;
     max-width: 90vw;
-    margin: 1vh auto;
+    margin: 0 auto;
   }
 
   /* Transparent directory overlay */
@@ -98,7 +101,7 @@
     overflow: hidden;
     padding: 2vh 2vw;
     box-sizing: border-box;
-    background: rgba(255,255,255,0); /* transparent */
+    background: rgba(255,255,255,0);
     color: #222;
   }
 
@@ -224,16 +227,22 @@ onValue(floorsRef,(snapshot)=>{
       const wrapper = document.createElement("div");
       wrapper.className = "intro-fullscreen";
 
+      // Top header: logo left, name right
       const header = document.createElement("div");
       header.className = "intro-header";
-      header.innerHTML = `<img src="${tenant.logo}" alt="logo"/><div class="tenant-name">${tenant.name}</div>`;
+      header.innerHTML = `
+        <img src="${tenant.logo}" alt="logo"/>
+        <div class="tenant-name">${tenant.name}</div>
+      `;
       wrapper.appendChild(header);
 
+      // Big logo centered
       const bigLogo = document.createElement("img");
       bigLogo.src = tenant.logo;
       bigLogo.className = "intro-logo";
       wrapper.appendChild(bigLogo);
 
+      // Details
       const details = document.createElement("div");
       details.className = "intro-details";
       details.innerHTML = `
