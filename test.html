@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
+<title>Tenant Intro + Directory Loop (Portrait TV)</title>
+<style>
+  html, body {
+    margin: 0; padding: 0;
+    width: 100vw; height: 100vh;
+    overflow: hidden;
+    font-family: "Poppins", sans-serif;
+    background: #ffffff;
+    color: #222;
+  }
+
+  canvas#particles {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    z-index: 0;
+  }
+
+  #tenantIntro, #directoryView {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box;
+    z-index: 1;
+    overflow: hidden;
+    transition: opacity 0.8s ease;
+  }
+
+  /* Transparent fullscreen intro */
+  .intro-fullscreen {
+    width: 100%; height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    background: linear-gradient(135deg,#f8f9fa,#e9ecef);
+    color: #222;
+    padding: 2vh 2vw;
+    box-sizing: border-box;
+    animation: fadeIn 0.6s ease forwards;
+  }
+
+  /* Sticky glass header */
+  .intro-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 1vh 2vw;
+    backdrop-filter: blur(10px);
+    background: rgba(255,255,255,0.6);
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    margin-bottom: 4vh;
+    opacity: 0; transform: translateY(-20px);
+    animation: slideDown 0.8s ease forwards;
+  }
+
+  .intro-header img {
+    height: 10vh; width: 10vh;
+    border-radius: 12px;
+    background: #fff;
+    padding: 0.5vh;
+    object-fit: contain;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  }
+
+  .intro-header .tenant-name {
+    font-size: 4.5vh;
+    font-weight: 800;
+    text-align: right;
+    flex: 1;
+    padding-left: 2vw;
+    background: linear-gradient(90deg,#007bff,#00c6ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  /* Big logo */
+  .intro-logo {
+    max-width: 70vw;
+    max-height: 25vh;
+    margin: 2vh auto 3vh auto;
+    object-fit: contain;
+    opacity: 0; transform: scale(0.9);
+    animation: zoomIn 0.8s ease 0.3s forwards;
+  }
+
+  /* Details card */
+  .intro-details {
+    font-size: 2.3vh;
+    line-height: 1.6;
+    max-width: 90vw;
+    margin: 0 auto;
+    padding: 2vh 2vw;
+    background: rgba(255,255,255,0.9);
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    opacity: 0; transform: translateY(20px);
+    animation: fadeUp 0.8s ease 0.6s forwards;
+  }
+  .intro-details h2 {
+    margin-top: 0; font-size: 2.8vh; color: #007bff;
+  }
+
+  /* Directory view */
+  .directory-container {
+    width: 100%; height: 100%;
+    overflow: hidden;
+    padding: 2vh 2vw;
+    background: rgba(255,255,255,0.8);
+    color: #222;
+    border-radius: 16px;
+    box-sizing: border-box;
+  }
+
+  .directory-title {
+    font-size: 4vh;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 2vh;
+  }
+
+  .directory-header {
+    display: flex;
+    justify-content: space-between;
+    font-weight: bold;
+    margin-bottom: 1vh;
+    font-size: 3vh;
+    border-bottom: 2px solid #222;
+    padding-bottom: 0.5vh;
+  }
+
+  .floor-section {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2vh;
+    flex-wrap: wrap;
+  }
+
+  .floor-section div:first-child {
+    font-size: 3vh;
+    min-width: 80px;
+    font-weight: 600;
+  }
+
+  .tenant-logos {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1vw;
+    overflow: hidden;
+    max-width: 80vw;
+  }
+
+  .tenant-logos img {
+    height: 8vh; width: auto;
+    object-fit: contain;
+    transition: transform 0.3s;
+  }
+  .tenant-logos img:hover { transform: scale(1.1); }
+
+  /* Animations */
+  @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
+  @keyframes slideDown { to{opacity:1; transform:translateY(0);} }
+  @keyframes zoomIn { to{opacity:1; transform:scale(1);} }
+  @keyframes fadeUp { to{opacity:1; transform:translateY(0);} }
+  @keyframes fadeOut { to{opacity:0; transform:translateX(-40px);} }
+
+  .fade-out { animation: fadeOut 0.6s ease forwards; }
+
+  @media (max-width:768px){
+    .intro-header .tenant-name { font-size: 5vw; }
+    .intro-details { font-size: 3.5vw; }
+    .directory-title { font-size: 5vw; }
+    .directory-header { font-size: 3.5vw; }
+    .tenant-logos img { height: 10vw; }
+  }
+</style>
+</head>
+<body>
+<canvas id="particles"></canvas>
+<div id="tenantIntro"></div>
+<div id="directoryView" style="display:none;"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCrGIB_YK33p_2EPTpU-klZ_3xQ5TOPm4c",
+  authDomain: "adora-ad.firebaseapp.com",
+  databaseURL: "https://adora-ad-default-rtdb.asia-southeast1.firebasedatabase.app",
+  projectId: "adora-ad",
+  storageBucket: "adora-ad.appspot.com",
+  messagingSenderId: "550034277527",
+  appId: "1:550034277527:web:966b16ce942a161e8955d2",
+  measurementId: "G-QW5Y41EKLR"
+};
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const floorsRef = ref(db,"blocks/A/floors");
+
+const tenantIntro = document.getElementById("tenantIntro");
+const directoryView = document.getElementById("directoryView");
+
+function ordinal(n){
+  const s=["th","st","nd","rd"], v=n%100;
+  return n+(s[(v-20)%10]||s[v]||s[0]);
+}
+
+onValue(floorsRef,(snapshot)=>{
+  const data = snapshot.val();
+  const tenantsSequence = [];
+  Object.keys(data).forEach(floor=>{
+    const tenantsObj = data[floor].tenants;
+    if(tenantsObj){
+      Object.keys(tenantsObj).forEach(key=>{
+        tenantsSequence.push({
+          name: tenantsObj[key].name,
+          logo: tenantsObj[key].logo,
+          floor: ordinal(Number(floor)),
+          description: tenantsObj[key].description || "Welcome to our company.",
+          core: tenantsObj[key].core || "N/A",
+          contact: tenantsObj[key].contact || "N/A",
+          email: tenantsObj[key].email || "N/A",
+          theme: tenantsObj[key].theme || "#f8f9fa,#e9ecef"
+        });
+      });
+    }
+  });
+
+  let currentIndex = 0;
+
+  function showNextTenant(){
+    tenantIntro.style.display="flex";
+    directoryView.style.display="none";
+    tenantIntro.innerHTML = "";
+
+    if(currentIndex < tenantsSequence.length){
+      const tenant = tenantsSequence[currentIndex];
+      const wrapper = document.createElement("div");
+      wrapper.className = "intro-fullscreen";
+      wrapper.style.background = `linear-gradient(135deg,${tenant.theme})`;
+
+      const header = document.createElement("div");
+      header.className = "intro-header";
+      header.innerHTML = `
+        <img src="${tenant.logo}" alt="logo"/>
+        <div class="tenant-name">${tenant.name}</div>
+      `;
+      wrapper.appendChild(header);
+
+      const bigLogo = document.createElement("img");
+      bigLogo.src = tenant.logo;
+      bigLogo.className = "intro-logo";
+      wrapper.appendChild(bigLogo);
+
+      const details = document.createElement("div");
+      details.className = "intro-details";
+      details.innerHTML = `
+        <h2>About ${tenant.name}</h2>
+        <p><strong>Description:</strong> ${tenant.description}</p>
+        <p><strong>Floor:</strong> ${tenant.floor} Floor</p>
+        <p><strong>Core:</strong> ${tenant.core}</p>
+        <p><strong>Contact:</strong> ${tenant.contact}</p>
+        <p><strong>Email:</strong> ${tenant.email}</p>
+      `;
+      wrapper.appendChild(details);
+
+      tenantIntro.appendChild(wrapper);
+
+      currentIndex++;
+      setTimeout(()=>{
+        wrapper.classList.add("fade-out");
+        setTimeout(showNextTenant,600);
+      },9000);
+    } else {
+      showDirectory();
+    }
+  }
+
+  function showDirectory(){
+    tenantIntro.style.display="none";
+    directoryView.style.display="block";
+    directoryView.innerHTML = "";
+
+    const container = document.createElement("div");
+    container.className = "directory-container";
+
+    const title = document.createElement("div");
+    title.className = "directory-title";
+    title.textContent = "Tenant Directory";
+    container.appendChild(title);
+
+    const headerRow = document.createElement("div");
+    headerRow.className = "directory-header";
+    headerRow.innerHTML = `<span>Floor</span><span>Block Name</span>`;
+    container.appendChild(headerRow);
+
+    Object.keys(data).forEach(floor=>{
+      const floorSection = document.createElement("div");
+      floorSection.className = "floor-section";
+
+      const floorNum = document.createElement("div");
+      floorNum.textContent = ordinal(Number(floor));
+      const logosDiv = document.createElement("div");
+      logosDiv.className = "tenant-logos";
+
+      const tenantsObj = data[floor].tenants;
+      if(tenantsObj){
+        Object.keys(tenantsObj).forEach(key=>{
+          const logoImg = document.createElement("img");
+          logoImg.src = tenantsObj[key].logo;
+          logosDiv.appendChild(logoImg);
+        });
+      }
+
+      floorSection.appendChild(floorNum);
+      floorSection.appendChild(logosDiv);
+      container.appendChild(floorSection);
+    });
+
+    directoryView.appendChild(container);
+
+    let scrollAmount = 0;
+    const maxScroll = container.scrollHeight - container.clientHeight;
+    const scrollStep = maxScroll / 200;
+    const scrollInterval = setInterval(()=>{
+      scrollAmount += scrollStep;
+      if(scrollAmount >= maxScroll) scrollAmount = maxScroll;
+      container.scrollTo({top: scrollAmount, behavior:"smooth"});
+    },50);
+
+    setTimeout(()=>{
+      clearInterval(scrollInterval);
+      currentIndex = 0;
+      showNextTenant();
+    },20000);
+  }
+
+  showNextTenant();
+});
+
+// Green particles
+const canvas = document.getElementById("particles");
+const ctx = canvas.getContext("2d");
+let particlesArray = [];
+function initParticles(){
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  particlesArray=[];
+  for(let i=0;i<100;i++){
+    particlesArray.push({
+      x: Math.random()*canvas.width,
+      y: Math.random()*canvas.height,
+      r: Math.random()*2+1,
+      dx: (Math.random()-0.5)*0.5,
+      dy: (Math.random()-0.5)*0.5
+    });
+  }
+}
+function animateParticles(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle="#0f0";
+  particlesArray.forEach(p=>{
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fill();
+    p.x+=p.dx; p.y+=p.dy;
+    if(p.x<0||p.x>canvas.width) p.dx*=-1;
+    if(p.y<0||p.y>canvas.height) p.dy*=-1;
+  });
+  requestAnimationFrame(animateParticles);
+}
+window.addEventListener("resize",()=>{ initParticles(); });
+initParticles();
+animateParticles();
+</script>
+</body>
+</html>
