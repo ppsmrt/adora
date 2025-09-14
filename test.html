@@ -4,13 +4,15 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
 <title>Tenant Intro + Directory Loop (Premium Corporate)</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   html, body {
     margin: 0; padding: 0;
     width: 100vw; height: 100vh;
     overflow: hidden;
-    font-family: "Poppins", sans-serif;
-    background: #0e1117;
+    font-family: "Inter", "Poppins", sans-serif;
+    background: #0f1117;
     color: #222;
   }
 
@@ -19,6 +21,7 @@
     top: 0; left: 0;
     width: 100%; height: 100%;
     z-index: 0;
+    background: linear-gradient(135deg,#0f1117,#1a1c25);
   }
 
   #tenantIntro, #directoryView {
@@ -41,11 +44,12 @@
     flex-direction: column;
     justify-content: flex-start;
     align-items: stretch;
-    background: linear-gradient(135deg,#f8f9fa,#e9ecef);
+    background: linear-gradient(135deg,#f0f4f8,#e1e5eb);
     color: #222;
     padding: 2vh 2vw;
     box-sizing: border-box;
     animation: fadeIn 0.8s ease forwards;
+    border-radius: 12px;
   }
 
   /* --- Header --- */
@@ -54,36 +58,37 @@
     justify-content: space-between;
     align-items: center;
     width: 100%;
-    padding: 1vh 2vw;
-    backdrop-filter: blur(10px);
-    background: rgba(255,255,255,0.3);
-    border-radius: 12px;
-    box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+    padding: 1.2vh 2vw;
+    backdrop-filter: blur(14px);
+    background: rgba(255,255,255,0.2);
+    border-radius: 14px;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.15);
     margin-bottom: 4vh;
-    opacity: 0; transform: translateY(-30px);
+    opacity: 0; transform: translateY(-40px);
     animation: slideDown 0.8s ease forwards;
   }
 
   .intro-header img {
-    height: 9vh; width: 9vh;
-    border-radius: 12px;
+    height: 10vh; width: 10vh;
+    border-radius: 16px;
     background: #fff;
     padding: 0.5vh;
     object-fit: contain;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
     animation: floatLogo 4s ease-in-out infinite;
   }
 
   .intro-header .tenant-name {
-    font-size: 4.5vh;
+    font-size: 5vh;
     font-weight: 800;
     text-align: right;
     flex: 1;
     padding-left: 2vw;
-    background: linear-gradient(90deg,#007bff,#00c6ff);
+    background: linear-gradient(90deg,#0046b3,#00aaff);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     position: relative;
+    letter-spacing: 1px;
   }
 
   .intro-header .tenant-name::after {
@@ -91,19 +96,21 @@
     position: absolute;
     bottom: -4px; left: 0;
     width: 0%; height: 3px;
-    background: linear-gradient(90deg,#007bff,#00c6ff);
+    background: linear-gradient(90deg,#0046b3,#00aaff);
     animation: underline 1.2s ease forwards;
     animation-delay: 0.4s;
   }
 
   /* --- Big logo --- */
   .intro-logo {
-    max-width: 65vw;
-    max-height: 25vh;
+    max-width: 60vw;
+    max-height: 28vh;
     margin: 3vh auto 3vh auto;
     object-fit: contain;
-    opacity: 0; transform: scale(0.85);
+    opacity: 0; transform: scale(0.8);
     animation: zoomIn 0.9s ease 0.3s forwards;
+    box-shadow: 0 12px 35px rgba(0,0,0,0.18);
+    border-radius: 12px;
   }
 
   /* --- Details card --- */
@@ -112,15 +119,21 @@
     line-height: 1.6;
     max-width: 85vw;
     margin: 0 auto;
-    padding: 2vh 2vw;
-    background: rgba(255,255,255,0.75);
-    border-radius: 18px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+    padding: 2.5vh 2.5vw;
+    background: rgba(255,255,255,0.9);
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.18);
     opacity: 0; transform: translateY(25px);
     animation: fadeUp 1s ease 0.6s forwards;
+    transition: transform 0.4s ease;
   }
+  .intro-details:hover { transform: translateY(-5px); }
+
   .intro-details h2 {
-    margin-top: 0; font-size: 2.8vh; color: #007bff;
+    margin-top: 0; 
+    font-size: 3vh; 
+    color: #0046b3;
+    letter-spacing: 0.5px;
   }
 
   /* --- Directory --- */
@@ -128,71 +141,77 @@
     width: 100%; height: 100%;
     overflow: hidden;
     padding: 3vh 2vw;
-    background: rgba(255,255,255,0.8);
+    background: rgba(255,255,255,0.95);
     border-radius: 16px;
     box-sizing: border-box;
     animation: fadeIn 1s ease forwards;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
   }
 
   .directory-title {
-    font-size: 4.5vh;
+    font-size: 5vh;
     font-weight: 700;
     text-align: center;
     margin-bottom: 3vh;
-    background: linear-gradient(90deg,#007bff,#00c6ff);
+    background: linear-gradient(90deg,#0046b3,#00aaff);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
+    letter-spacing: 1px;
   }
 
   .directory-header {
     display: flex;
     justify-content: space-between;
-    font-weight: bold;
-    margin-bottom: 1.5vh;
-    font-size: 3vh;
+    font-weight: 700;
+    margin-bottom: 2vh;
+    font-size: 3.2vh;
     border-bottom: 2px solid #333;
-    padding-bottom: 0.5vh;
+    padding-bottom: 0.7vh;
   }
 
   .floor-section {
-    background: rgba(255,255,255,0.6);
-    border-radius: 12px;
-    padding: 1.2vh 1vw;
-    margin-bottom: 2vh;
-    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    background: rgba(255,255,255,0.85);
+    border-radius: 16px;
+    padding: 1.5vh 1.2vw;
+    margin-bottom: 2.5vh;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    transition: transform 0.3s ease;
+    transition: transform 0.35s ease, box-shadow 0.35s ease;
   }
-  .floor-section:hover { transform: scale(1.02); }
+  .floor-section:hover { 
+    transform: scale(1.03); 
+    box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+  }
 
   .floor-section div:first-child {
-    font-size: 2.8vh;
-    min-width: 80px;
+    font-size: 3vh;
+    min-width: 100px;
     font-weight: 600;
+    color: #0046b3;
   }
 
   .tenant-logos {
     display: flex;
     flex-wrap: wrap;
-    gap: 1vw;
+    gap: 1.2vw;
     max-width: 75vw;
   }
 
   .tenant-logos img {
-    height: 7vh; width: auto;
+    height: 8vh; width: auto;
     object-fit: contain;
-    transition: all 0.3s ease;
-    border-radius: 6px;
+    transition: all 0.4s ease;
+    border-radius: 8px;
     background: #fff;
-    padding: 3px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    padding: 4px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
   }
   .tenant-logos img:hover {
-    transform: scale(1.12);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+    transform: scale(1.15) rotate(-2deg);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
   }
 
   /* --- Animations --- */
@@ -202,18 +221,18 @@
   @keyframes fadeUp { to{opacity:1; transform:translateY(0);} }
   @keyframes floatLogo {
     0%,100% { transform: translateY(0); }
-    50% { transform: translateY(-8px); }
+    50% { transform: translateY(-10px); }
   }
   @keyframes underline { from{width:0;} to{width:100%;} }
   @keyframes fadeOut { to{opacity:0; transform:translateX(-40px);} }
   .fade-out { animation: fadeOut 0.6s ease forwards; }
 
   @media (max-width:768px){
-    .intro-header .tenant-name { font-size: 5vw; }
+    .intro-header .tenant-name { font-size: 6vw; }
     .intro-details { font-size: 3.5vw; }
-    .directory-title { font-size: 5.5vw; }
+    .directory-title { font-size: 6vw; }
     .directory-header { font-size: 4vw; }
-    .tenant-logos img { height: 10vw; }
+    .tenant-logos img { height: 12vw; }
   }
 </style>
 </head>
@@ -263,7 +282,7 @@ onValue(floorsRef,(snapshot)=>{
           core: tenantsObj[key].core || "N/A",
           contact: tenantsObj[key].contact || "N/A",
           email: tenantsObj[key].email || "N/A",
-          theme: tenantsObj[key].theme || "#f8f9fa,#e9ecef"
+          theme: tenantsObj[key].theme || "#f0f4f8,#e1e5eb"
         });
       });
     }
@@ -390,20 +409,20 @@ function initParticles(){
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   particlesArray=[];
-  for(let i=0;i<120;i++){
+  for(let i=0;i<140;i++){
     particlesArray.push({
       x: Math.random()*canvas.width,
       y: Math.random()*canvas.height,
       r: Math.random()*2+1,
-      dx: (Math.random()-0.5)*0.4,
-      dy: (Math.random()-0.5)*0.4
+      dx: (Math.random()-0.5)*0.3,
+      dy: (Math.random()-0.5)*0.3
     });
   }
 }
 
 function animateParticles(){
   ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle="rgba(0,200,255,0.8)";
+  ctx.fillStyle="rgba(0,170,255,0.8)";
   particlesArray.forEach((p,i)=>{
     ctx.beginPath();
     ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
@@ -414,7 +433,7 @@ function animateParticles(){
       const p2 = particlesArray[j];
       const dist = Math.hypot(p.x-p2.x,p.y-p2.y);
       if(dist<120){
-        ctx.strokeStyle="rgba(0,200,255,0.15)";
+        ctx.strokeStyle="rgba(0,170,255,0.12)";
         ctx.lineWidth=1;
         ctx.beginPath();
         ctx.moveTo(p.x,p.y);
