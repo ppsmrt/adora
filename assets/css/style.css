@@ -1,35 +1,154 @@
-body {
-  margin: 0;
-  padding: 0;
-  background: #000;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 100vh;
+html, body {
+  margin:0; padding:0;
+  width:100vw; height:100vh;
+  overflow:hidden;
+  font-family:"Inter","Roboto",sans-serif;
+  background:#0a0c14;
+  color:#fff;
 }
 
-.ad-container {
-  width: 100%;
-  max-width: 100vw;
-  max-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: hidden;
+canvas#background {
+  position:fixed; top:0; left:0;
+  width:100%; height:100%;
+  z-index:0;
 }
 
-.ad-container img,
-.ad-container video {
-  width: 100%;
-  height: auto;
-  max-height: 100vh;
-  object-fit: contain;
+#tenantIntro, #directoryView, #adView, #announcementView {
+  position:fixed; top:0; left:0;
+  width:100%; height:100%;
+  display:flex; justify-content:center; align-items:center;
+  z-index:1;
+  overflow:hidden;
 }
 
-/* optional background animation */
-.animated-bg {
-  position: fixed;
-  inset: 0;
-  background: radial-gradient(circle at center, #222 0%, #000 100%);
-  z-index: -1;
+.card {
+  width:70vw; max-width:1100px;
+  height:80vh;
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(18px) saturate(180%);
+  border-radius: 24px;
+  padding: 4vh 4vw;
+  display:flex; flex-direction:column; align-items:center;
+  gap:3vh;
+  opacity:0;
+  transform:translateY(50px);
+  animation:slideUp 1.2s forwards;
+  box-shadow:0 20px 60px rgba(0,0,0,0.5);
+}
+
+.card .header {
+  width:100%;
+  display:flex; justify-content:space-between; align-items:center;
+  padding-bottom:2vh;
+  border-bottom:1px solid rgba(255,255,255,0.12);
+}
+
+.card .header img {
+  height:10vh; width:10vh;
+  border-radius:16px; object-fit:contain;
+  box-shadow:0 6px 20px rgba(0,0,0,0.3);
+  animation:floatLogo 4s ease-in-out infinite;
+}
+
+.card .header .name {
+  font-size:4.5vh; font-weight:800;
+  text-align:right; flex:1; padding-left:2vw;
+  background: linear-gradient(90deg,#00c3ff,#005bea);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  position:relative;
+}
+
+.card .header .name::after {
+  content:"";
+  position:absolute; bottom:-5px; left:0;
+  width:0%; height:3px;
+  background: linear-gradient(90deg,#00c3ff,#005bea);
+  animation:underline 1s ease forwards;
+  animation-delay:0.3s;
+}
+
+.card .media {
+  width:25vw; max-width:400px; height:auto;
+  object-fit:contain; border-radius:16px;
+  box-shadow:0 12px 40px rgba(0,0,0,0.45);
+  transform:scale(0.75); opacity:0;
+  animation:zoomMedia 1s forwards 0.3s;
+}
+
+.card video {
+  width:100%; border-radius:16px;
+  box-shadow:0 12px 40px rgba(0,0,0,0.45);
+}
+
+.card .details {
+  width:100%;
+  background: rgba(255,255,255,0.05);
+  backdrop-filter: blur(15px);
+  border-radius:16px;
+  padding:2vh 2vw;
+  display:flex; flex-direction:column; gap:1.5vh;
+  transform:translateY(40px);
+  opacity:0;
+  animation:fadeUp 1s forwards 0.6s;
+}
+
+.card .details h2 { font-size:3vh; color:#00c3ff; margin:0; }
+.card .details p { font-size:2vh; color:#dbe3f0; margin:0; }
+
+.directory-container {
+  width:85%; max-width:1200px;
+  padding:3vh 2vw;
+  background: rgba(255,255,255,0.03);
+  backdrop-filter: blur(20px);
+  border-radius:24px;
+  box-shadow:0 20px 60px rgba(0,0,0,0.45);
+  display:flex; flex-direction:column; gap:2.5vh;
+  overflow:hidden;
+}
+
+.directory-title {
+  font-size:5vh; font-weight:800; text-align:center;
+  background: linear-gradient(90deg,#00c3ff,#005bea);
+  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  margin-bottom:2vh;
+}
+
+.floor-section {
+  display:flex; justify-content:space-between; align-items:center;
+  padding:2vh 1vw; background: rgba(255,255,255,0.04);
+  border-radius:16px; gap:1vw;
+  opacity:0; transform:translateY(60px);
+  animation:floorFade 0.8s forwards;
+}
+
+.floor-section .floor-num { font-size:3vh; font-weight:600; color:#00c3ff; }
+
+.tenant-logos { display:flex; flex-wrap:wrap; gap:1vw; }
+
+.tenant-logos img {
+  height:7vh; width:auto; object-fit:contain;
+  border-radius:12px; background:rgba(255,255,255,0.1);
+  padding:4px; box-shadow:0 4px 18px rgba(0,0,0,0.25);
+  transition:all 0.3s ease;
+}
+.tenant-logos img:hover {
+  transform:scale(1.15) rotate(-2deg);
+  box-shadow:0 10px 30px rgba(0,0,0,0.35);
+}
+
+@keyframes slideUp { to{transform:translateY(0); opacity:1;} }
+@keyframes zoomMedia { to{transform:scale(1); opacity:1;} }
+@keyframes floatLogo { 0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);} }
+@keyframes fadeUp { to{transform:translateY(0); opacity:1;} }
+@keyframes underline { from{width:0;} to{width:100%;} }
+@keyframes floorFade { to{opacity:1; transform:translateY(0);} }
+@keyframes fadeOut { to{opacity:0; transform:translateY(-40px);} }
+.fade-out { animation:fadeOut 0.8s ease forwards; }
+
+@media(max-width:768px){
+  .card .header .name{font-size:6vw;}
+  .card .details p{font-size:3vw;}
+  .directory-title{font-size:6vw;}
+  .floor-section .floor-num{font-size:4vw;}
+  .tenant-logos img{height:12vw;}
 }
