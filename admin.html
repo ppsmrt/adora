@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
 <head>
   <meta charset="UTF-8"/>
@@ -43,6 +43,27 @@
   <h2 class="text-2xl font-bold mb-4 text-orange-400 text-center">Existing Tenants</h2>
   <div id="tenantList" class="space-y-4 max-w-4xl mx-auto"></div>
 
+
+  <!-- 🔹 Announcements Section -->
+  <h2 class="text-3xl font-extrabold mt-12 mb-6 text-blue-400 text-center">Announcements</h2>
+  <form id="announcementForm" class="space-y-4 mb-6 bg-gray-800 p-6 rounded-lg shadow-lg max-w-3xl mx-auto">
+    <input id="announcementUrl" type="url" placeholder="Enter Announcement Image/Video URL"
+           class="p-3 bg-gray-700 rounded w-full text-white"/>
+    <button type="submit" class="bg-green-500 hover:bg-green-600 px-6 py-2 rounded font-semibold w-full">Save</button>
+  </form>
+  <div id="announcementList" class="space-y-4 max-w-3xl mx-auto"></div>
+
+
+  <!-- 🔹 Ads Section -->
+  <h2 class="text-3xl font-extrabold mt-12 mb-6 text-purple-400 text-center">Ads</h2>
+  <form id="adsForm" class="space-y-4 mb-6 bg-gray-800 p-6 rounded-lg shadow-lg max-w-3xl mx-auto">
+    <input id="adsUrl" type="url" placeholder="Enter Ad Image/Video URL"
+           class="p-3 bg-gray-700 rounded w-full text-white"/>
+    <button type="submit" class="bg-green-500 hover:bg-green-600 px-6 py-2 rounded font-semibold w-full">Save</button>
+  </form>
+  <div id="adsList" class="space-y-4 max-w-3xl mx-auto"></div>
+
+
   <!-- Firebase + Script -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -59,6 +80,7 @@
     const db = getDatabase(app);
 
     document.addEventListener("DOMContentLoaded", () => {
+      /* ------------------ TENANTS ------------------ */
       const blockEl = document.getElementById("block");
       const floorEl = document.getElementById("floor");
       const tenantList = document.getElementById("tenantList");
@@ -74,7 +96,6 @@
 
       let editTenantId = null;
 
-      // Add/Edit Tenant
       addForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         const block = blockEl.value;
@@ -99,7 +120,6 @@
             const tenantRef = push(ref(db, `blocks/${block}/floors/${floor}/tenants`));
             await set(tenantRef, tenantData);
           }
-
           addForm.reset();
         } catch (err) {
           alert("Error: " + err.message);
@@ -112,7 +132,6 @@
         cancelEditBtn.classList.add("hidden");
       });
 
-      // Watch tenants
       function watchTenants() {
         const block = blockEl.value;
         const floor = floorEl.value;
@@ -120,17 +139,14 @@
           tenantList.innerHTML = "<p class='text-gray-400 text-center'>Select block and floor to view tenants.</p>";
           return;
         }
-
         const tenantsRef = ref(db, `blocks/${block}/floors/${floor}/tenants`);
         onValue(tenantsRef, (snapshot) => {
           const data = snapshot.val();
           tenantList.innerHTML = "";
-
           if (!data) {
             tenantList.innerHTML = "<p class='text-gray-400 text-center'>No tenants found.</p>";
             return;
           }
-
           Object.keys(data).forEach(tid => {
             const t = data[tid];
             const item = document.createElement("div");
@@ -155,7 +171,6 @@
             const right = document.createElement("div");
             right.className = "flex gap-2";
 
-            // Edit Button
             const editBtn = document.createElement("button");
             editBtn.textContent = "Edit";
             editBtn.className = "bg-yellow-500 px-4 py-1 rounded hover:bg-yellow-600 text-sm";
@@ -171,7 +186,6 @@
             };
             right.appendChild(editBtn);
 
-            // Delete Button
             const delBtn = document.createElement("button");
             delBtn.textContent = "Delete";
             delBtn.className = "bg-red-600 px-4 py-1 rounded hover:bg-red-700 text-sm";
@@ -187,9 +201,70 @@
           });
         });
       }
-
       blockEl.addEventListener("change", watchTenants);
       floorEl.addEventListener("input", watchTenants);
+
+
+      /* ------------------ ANNOUNCEMENTS ------------------ */
+      const announcementForm = document.getElementById("announcementForm");
+      const announcementUrl = document.getElementById("announcementUrl");
+      const announcementList = document.getElementById("announcementList");
+
+      announcementForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!announcementUrl.value) return;
+        const newRef = push(ref(db, "announcements"));
+        await set(newRef, { url: announcementUrl.value });
+        announcementForm.reset();
+      });
+
+      onValue(ref(db, "announcements"), (snap) => {
+        const data = snap.val();
+        announcementList.innerHTML = "";
+        if (!data) return;
+        Object.keys(data).forEach((id) => {
+          const item = document.createElement("div");
+          item.className = "flex items-center justify-between bg-gray-800 p-4 rounded-lg shadow-md";
+          item.innerHTML = `<span class="truncate w-2/3">${data[id].url}</span>`;
+          const delBtn = document.createElement("button");
+          delBtn.textContent = "Delete";
+          delBtn.className = "bg-red-600 px-4 py-1 rounded hover:bg-red-700 text-sm";
+          delBtn.onclick = () => remove(ref(db, "announcements/" + id));
+          item.appendChild(delBtn);
+          announcementList.appendChild(item);
+        });
+      });
+
+
+      /* ------------------ ADS ------------------ */
+      const adsForm = document.getElementById("adsForm");
+      const adsUrl = document.getElementById("adsUrl");
+      const adsList = document.getElementById("adsList");
+
+      adsForm.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        if (!adsUrl.value) return;
+        const newRef = push(ref(db, "ads"));
+        await set(newRef, { url: adsUrl.value });
+        adsForm.reset();
+      });
+
+      onValue(ref(db, "ads"), (snap) => {
+        const data = snap.val();
+        adsList.innerHTML = "";
+        if (!data) return;
+        Object.keys(data).forEach((id) => {
+          const item = document.createElement("div");
+          item.className = "flex items-center justify-between bg-gray-800 p-4 rounded-lg shadow-md";
+          item.innerHTML = `<span class="truncate w-2/3">${data[id].url}</span>`;
+          const delBtn = document.createElement("button");
+          delBtn.textContent = "Delete";
+          delBtn.className = "bg-red-600 px-4 py-1 rounded hover:bg-red-700 text-sm";
+          delBtn.onclick = () => remove(ref(db, "ads/" + id));
+          item.appendChild(delBtn);
+          adsList.appendChild(item);
+        });
+      });
     });
   </script>
 </body>
