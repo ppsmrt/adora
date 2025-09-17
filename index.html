@@ -4,128 +4,150 @@
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
 <title>Corporate Tenant Directory</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
 <style>
 html, body {
   margin:0; padding:0;
   width:100vw; height:100vh;
   overflow:hidden;
-  font-family:"Inter","Roboto",sans-serif;
-  background:#0a0c14;
+  font-family:"Inter", sans-serif;
+  background:#000;
   color:#fff;
 }
 
-/* Background */
-canvas#background {
-  position:fixed; top:0; left:0;
-  width:100%; height:100%;
-  z-index:0;
+/* Base gradient */
+body::before {
+  content:"";
+  position:fixed; inset:0;
+  background:linear-gradient(135deg,#00111f,#001f33,#002f44);
+  background-size:600% 600%;
+  animation:bgShift 60s infinite linear;
+  z-index:-3;
+}
+@keyframes bgShift {
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
 }
 
-/* Directory */
+/* Nature GIF overlay */
+#natureBg {
+  position:fixed; inset:0;
+  object-fit:cover;
+  z-index:-2;
+  opacity:0.25;
+  transition:opacity 2s ease;
+  pointer-events:none;
+}
+
+/* Gradient particles canvas */
+#particles {
+  position:fixed; inset:0;
+  z-index:-1;
+  pointer-events:none;
+}
+
+/* Directory container */
 #directoryView {
-  position:fixed; top:0; left:0;
-  width:100%; height:100%;
+  position:fixed; inset:0;
   display:flex; justify-content:center; align-items:center;
-  z-index:1;
-  padding:5vh 5vw;
-}
-
-.directory-container {
-  width:90%; max-width:1400px;
-  padding:4vh 3vw;
-  background: linear-gradient(135deg, rgba(0,195,255,0.08), rgba(0,91,234,0.12));
-  backdrop-filter: blur(25px) saturate(160%);
-  border-radius:30px;
-  box-shadow:0 25px 70px rgba(0,0,0,0.55);
-  display:flex; flex-direction:column; gap:3vh;
+  padding:6vh 4vw;
   overflow-y:auto;
-  max-height:85vh;
-  animation:fadeUp 1.2s ease;
+}
+.directory-container {
+  width:95%; max-width:1500px;
+  padding:5vh 4vw;
+  border-radius:28px;
+  display:flex; flex-direction:column; gap:4vh;
+  animation:fadeIn 1.5s ease forwards;
+}
+@keyframes fadeIn {
+  from{opacity:0; transform:translateY(40px);}
+  to{opacity:1; transform:translateY(0);}
 }
 
 /* Title */
 .directory-title {
-  font-size:5.5vh; font-weight:800; text-align:center;
-  background: linear-gradient(90deg,#00c3ff,#005bea,#00ffcc);
+  font-size:6vh;
+  font-weight:800;
+  text-align:center;
+  font-family:"Orbitron",sans-serif;
+  background:linear-gradient(90deg,#ff6ec4,#7873f5,#4adeff,#5af78d);
   -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-  letter-spacing:1px;
+  text-transform:uppercase;
+  letter-spacing:3px;
   margin-bottom:2vh;
   position:relative;
 }
 .directory-title::after {
   content:"";
   display:block;
-  width:80px; height:4px;
-  margin:12px auto 0;
-  background:linear-gradient(90deg,#00c3ff,#005bea);
+  width:100px; height:5px;
+  margin:18px auto 0;
   border-radius:4px;
-  animation:glowLine 2s infinite alternate;
+  background:linear-gradient(90deg,#4adeff,#5af78d);
+  animation:glowBar 2.5s infinite alternate;
+}
+@keyframes glowBar {
+  from{opacity:0.3; transform:scaleX(0.6);}
+  to{opacity:1; transform:scaleX(1);}
 }
 
-/* Floor Section */
+/* Floor sections */
 .floor-section {
   display:flex; align-items:center; justify-content:space-between;
-  padding:2.5vh 2vw;
+  padding:3vh 2.5vw;
   border-radius:20px;
-  background: rgba(255,255,255,0.04);
-  border:1px solid rgba(255,255,255,0.08);
-  gap:2vw;
-  transform:translateY(40px);
+  background:rgba(255,255,255,0.05);
+  border:1px solid rgba(255,255,255,0.12);
+  box-shadow:0 12px 45px rgba(0,0,0,0.4);
+  gap:3vw;
+  transform:translateY(50px);
   opacity:0;
-  animation:slideUp 0.9s forwards;
-  box-shadow:0 10px 35px rgba(0,0,0,0.35);
-  transition: all 0.3s ease;
+  animation:slideUp 1s forwards;
+  transition:all 0.4s ease;
 }
-.floor-section:hover {
-  transform:translateY(0) scale(1.02);
-  border-color:rgba(0,195,255,0.4);
-  box-shadow:0 20px 50px rgba(0,195,255,0.25);
-}
+@keyframes slideUp { to{transform:translateY(0); opacity:1;} }
 
-/* Floor label */
+/* Floor number */
 .floor-num {
-  font-size:3.5vh;
+  font-size:3.8vh;
   font-weight:700;
-  color:#00c3ff;
-  flex:0 0 120px;
-  text-shadow:0 0 8px rgba(0,195,255,0.4);
+  color:#5af78d;
+  flex:0 0 150px;
+  font-family:"Orbitron",sans-serif;
+  text-shadow:0 0 12px rgba(90,247,141,0.6);
 }
 
-/* Logos */
+/* Logos grid */
 .tenant-logos {
-  display:flex; flex-wrap:wrap; gap:1.2vw;
+  display:flex; flex-wrap:wrap; gap:1.6vw;
   flex:1;
 }
 .tenant-logos img {
-  height:8vh; width:auto;
-  border-radius:14px;
-  padding:6px;
-  background:rgba(255,255,255,0.08);
-  box-shadow:0 6px 20px rgba(0,0,0,0.35);
-  transition:all 0.35s ease;
+  height:9vh; width:auto;
+  border-radius:18px;
+  padding:8px;
+  background:rgba(255,255,255,0.07);
+  box-shadow:0 8px 25px rgba(0,0,0,0.35);
+  transition:transform 0.5s ease;
 }
 .tenant-logos img:hover {
-  transform:scale(1.2) rotate(-3deg);
-  background:rgba(0,195,255,0.12);
-  box-shadow:0 12px 30px rgba(0,195,255,0.35);
+  transform:scale(1.15) rotate(-2deg);
 }
 
-/* Animations */
-@keyframes slideUp { to{transform:translateY(0); opacity:1;} }
-@keyframes fadeUp { from{opacity:0; transform:translateY(30px);} to{opacity:1; transform:translateY(0);} }
-@keyframes glowLine { from{opacity:0.4;} to{opacity:1;} }
-
+/* Responsive */
 @media(max-width:768px){
   .directory-title{font-size:7vw;}
-  .floor-section{flex-direction:column; align-items:flex-start; gap:1.5vh;}
-  .floor-num{font-size:5vw;}
-  .tenant-logos img{height:14vw;}
+  .floor-section{flex-direction:column; align-items:flex-start; gap:2vh;}
+  .floor-num{font-size:5.5vw;}
+  .tenant-logos img{height:16vw;}
 }
 </style>
 </head>
 <body>
-<canvas id="background"></canvas>
+<video id="natureBg" autoplay muted loop></video>
+<canvas id="particles"></canvas>
 <div id="directoryView"></div>
 
 <script type="module">
@@ -169,7 +191,7 @@ canvas#background {
 
       const floorSection = document.createElement("div");
       floorSection.className="floor-section";
-      floorSection.style.animationDelay = `${i*0.15}s`;
+      floorSection.style.animationDelay = `${i*0.2}s`;
 
       const floorNum = document.createElement("div");
       floorNum.className="floor-num";
@@ -193,44 +215,67 @@ canvas#background {
     directoryView.appendChild(container);
   });
 
-  // --- Background animation ---
-  const canvas = document.getElementById("background");
+  /* --- Particle system --- */
+  const canvas = document.getElementById("particles");
   const ctx = canvas.getContext("2d");
-  let shapes = [];
+  let particles = [];
 
-  function initShapes(){
+  function resizeCanvas(){
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    shapes = [];
-    for(let i=0;i<60;i++){
-      shapes.push({
+    particles = [];
+    for(let i=0;i<40;i++){
+      particles.push({
         x:Math.random()*canvas.width,
         y:Math.random()*canvas.height,
-        size:Math.random()*28+12,
-        dx:(Math.random()-0.5)*0.5,
-        dy:(Math.random()-0.5)*0.5,
-        angle:Math.random()*360
+        r:Math.random()*40+20,
+        dx:(Math.random()-0.5)*0.3,
+        dy:(Math.random()-0.5)*0.3,
+        color:`hsla(${Math.random()*360}, 100%, 60%, 0.15)`
       });
     }
   }
-  function animateShapes(){
+  function animateParticles(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
-    shapes.forEach(s=>{
-      ctx.save();
-      ctx.translate(s.x,s.y);
-      ctx.rotate(s.angle*Math.PI/180);
-      ctx.strokeStyle = "rgba(0,195,255,0.2)";
-      ctx.lineWidth = 1;
-      ctx.strokeRect(-s.size/2,-s.size/2,s.size,s.size);
-      ctx.restore();
-      s.x += s.dx; s.y += s.dy; s.angle += 0.25;
-      if(s.x<0||s.x>canvas.width) s.dx*=-1;
-      if(s.y<0||s.y>canvas.height) s.dy*=-1;
+    particles.forEach(p=>{
+      ctx.beginPath();
+      const gradient = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
+      gradient.addColorStop(0,p.color);
+      gradient.addColorStop(1,"transparent");
+      ctx.fillStyle=gradient;
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fill();
+      p.x+=p.dx; p.y+=p.dy;
+      if(p.x<0||p.x>canvas.width) p.dx*=-1;
+      if(p.y<0||p.y>canvas.height) p.dy*=-1;
     });
-    requestAnimationFrame(animateShapes);
+    requestAnimationFrame(animateParticles);
   }
-  window.addEventListener("resize",()=>{ initShapes(); });
-  initShapes(); animateShapes();
+  window.addEventListener("resize",resizeCanvas);
+  resizeCanvas(); animateParticles();
+
+  /* --- Nature GIF rotation --- */
+  const gifList = [
+    "https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.mp4", // spring blossoms
+    "https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.mp4", // flowing water
+    "https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.mp4", // forest
+    "https://media.giphy.com/media/xT0GqssRweIhlz209i/giphy.mp4"  // sunlight leaves
+  ];
+  const natureBg = document.getElementById("natureBg");
+  let index=0;
+  function rotateGif(){
+    natureBg.style.opacity=0;
+    setTimeout(()=>{
+      index=(index+1)%gifList.length;
+      natureBg.src=gifList[index];
+      natureBg.load();
+      natureBg.play();
+      natureBg.style.opacity=0.25;
+    },2000);
+  }
+  natureBg.src=gifList[index];
+  natureBg.play();
+  setInterval(rotateGif,60000); // every 1 minute
 </script>
 </body>
 </html>
