@@ -3,12 +3,10 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
-<title>Corporate Tenant Intro Loop</title>
+<title>Corporate Tenant Directory</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/style.css">
 <style>
-  
-  html, body {
+html, body {
   margin:0; padding:0;
   width:100vw; height:100vh;
   overflow:hidden;
@@ -17,377 +15,222 @@
   color:#fff;
 }
 
+/* Background */
 canvas#background {
   position:fixed; top:0; left:0;
   width:100%; height:100%;
   z-index:0;
 }
 
-#tenantIntro, #directoryView, #adView, #announcementView {
+/* Directory */
+#directoryView {
   position:fixed; top:0; left:0;
   width:100%; height:100%;
   display:flex; justify-content:center; align-items:center;
   z-index:1;
-  overflow:hidden;
+  padding:5vh 5vw;
 }
-
-.card {
-  width:70vw; max-width:1100px;
-  height:80vh;
-  background: rgba(255,255,255,0.03);
-  backdrop-filter: blur(18px) saturate(180%);
-  border-radius: 24px;
-  padding: 4vh 4vw;
-  display:flex; flex-direction:column; align-items:center;
-  gap:3vh;
-  opacity:0;
-  transform:translateY(50px);
-  animation:slideUp 1.2s forwards;
-  box-shadow:0 20px 60px rgba(0,0,0,0.5);
-}
-
-.card .header {
-  width:100%;
-  display:flex; justify-content:space-between; align-items:center;
-  padding-bottom:2vh;
-  border-bottom:1px solid rgba(255,255,255,0.12);
-}
-
-.card .header img {
-  height:10vh; width:10vh;
-  border-radius:16px; object-fit:contain;
-  box-shadow:0 6px 20px rgba(0,0,0,0.3);
-  animation:floatLogo 4s ease-in-out infinite;
-}
-
-.card .header .name {
-  font-size:4.5vh; font-weight:800;
-  text-align:right; flex:1; padding-left:2vw;
-  background: linear-gradient(90deg,#00c3ff,#005bea);
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-  position:relative;
-}
-
-.card .header .name::after {
-  content:"";
-  position:absolute; bottom:-5px; left:0;
-  width:0%; height:3px;
-  background: linear-gradient(90deg,#00c3ff,#005bea);
-  animation:underline 1s ease forwards;
-  animation-delay:0.3s;
-}
-
-.card .media {
-  width:25vw; max-width:400px; height:auto;
-  object-fit:contain; border-radius:16px;
-  box-shadow:0 12px 40px rgba(0,0,0,0.45);
-  transform:scale(0.75); opacity:0;
-  animation:zoomMedia 1s forwards 0.3s;
-}
-
-.card video {
-  width:100%; border-radius:16px;
-  box-shadow:0 12px 40px rgba(0,0,0,0.45);
-}
-
-.card .details {
-  width:100%;
-  background: rgba(255,255,255,0.05);
-  backdrop-filter: blur(15px);
-  border-radius:16px;
-  padding:2vh 2vw;
-  display:flex; flex-direction:column; gap:1.5vh;
-  transform:translateY(40px);
-  opacity:0;
-  animation:fadeUp 1s forwards 0.6s;
-}
-
-.card .details h2 { font-size:3vh; color:#00c3ff; margin:0; }
-.card .details p { font-size:2vh; color:#dbe3f0; margin:0; }
 
 .directory-container {
-  width:85%; max-width:1200px;
-  padding:3vh 2vw;
-  background: rgba(255,255,255,0.03);
-  backdrop-filter: blur(20px);
-  border-radius:24px;
-  box-shadow:0 20px 60px rgba(0,0,0,0.45);
-  display:flex; flex-direction:column; gap:2.5vh;
-  overflow:hidden;
+  width:90%; max-width:1400px;
+  padding:4vh 3vw;
+  background: linear-gradient(135deg, rgba(0,195,255,0.08), rgba(0,91,234,0.12));
+  backdrop-filter: blur(25px) saturate(160%);
+  border-radius:30px;
+  box-shadow:0 25px 70px rgba(0,0,0,0.55);
+  display:flex; flex-direction:column; gap:3vh;
+  overflow-y:auto;
+  max-height:85vh;
+  animation:fadeUp 1.2s ease;
 }
 
+/* Title */
 .directory-title {
-  font-size:5vh; font-weight:800; text-align:center;
-  background: linear-gradient(90deg,#00c3ff,#005bea);
+  font-size:5.5vh; font-weight:800; text-align:center;
+  background: linear-gradient(90deg,#00c3ff,#005bea,#00ffcc);
   -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+  letter-spacing:1px;
   margin-bottom:2vh;
+  position:relative;
+}
+.directory-title::after {
+  content:"";
+  display:block;
+  width:80px; height:4px;
+  margin:12px auto 0;
+  background:linear-gradient(90deg,#00c3ff,#005bea);
+  border-radius:4px;
+  animation:glowLine 2s infinite alternate;
 }
 
+/* Floor Section */
 .floor-section {
-  display:flex; justify-content:space-between; align-items:center;
-  padding:2vh 1vw; background: rgba(255,255,255,0.04);
-  border-radius:16px; gap:1vw;
-  opacity:0; transform:translateY(60px);
-  animation:floorFade 0.8s forwards;
+  display:flex; align-items:center; justify-content:space-between;
+  padding:2.5vh 2vw;
+  border-radius:20px;
+  background: rgba(255,255,255,0.04);
+  border:1px solid rgba(255,255,255,0.08);
+  gap:2vw;
+  transform:translateY(40px);
+  opacity:0;
+  animation:slideUp 0.9s forwards;
+  box-shadow:0 10px 35px rgba(0,0,0,0.35);
+  transition: all 0.3s ease;
+}
+.floor-section:hover {
+  transform:translateY(0) scale(1.02);
+  border-color:rgba(0,195,255,0.4);
+  box-shadow:0 20px 50px rgba(0,195,255,0.25);
 }
 
-.floor-section .floor-num { font-size:3vh; font-weight:600; color:#00c3ff; }
+/* Floor label */
+.floor-num {
+  font-size:3.5vh;
+  font-weight:700;
+  color:#00c3ff;
+  flex:0 0 120px;
+  text-shadow:0 0 8px rgba(0,195,255,0.4);
+}
 
-.tenant-logos { display:flex; flex-wrap:wrap; gap:1vw; }
-
+/* Logos */
+.tenant-logos {
+  display:flex; flex-wrap:wrap; gap:1.2vw;
+  flex:1;
+}
 .tenant-logos img {
-  height:7vh; width:auto; object-fit:contain;
-  border-radius:12px; background:rgba(255,255,255,0.1);
-  padding:4px; box-shadow:0 4px 18px rgba(0,0,0,0.25);
-  transition:all 0.3s ease;
+  height:8vh; width:auto;
+  border-radius:14px;
+  padding:6px;
+  background:rgba(255,255,255,0.08);
+  box-shadow:0 6px 20px rgba(0,0,0,0.35);
+  transition:all 0.35s ease;
 }
 .tenant-logos img:hover {
-  transform:scale(1.15) rotate(-2deg);
-  box-shadow:0 10px 30px rgba(0,0,0,0.35);
+  transform:scale(1.2) rotate(-3deg);
+  background:rgba(0,195,255,0.12);
+  box-shadow:0 12px 30px rgba(0,195,255,0.35);
 }
 
+/* Animations */
 @keyframes slideUp { to{transform:translateY(0); opacity:1;} }
-@keyframes zoomMedia { to{transform:scale(1); opacity:1;} }
-@keyframes floatLogo { 0%,100%{transform:translateY(0);}50%{transform:translateY(-10px);} }
-@keyframes fadeUp { to{transform:translateY(0); opacity:1;} }
-@keyframes underline { from{width:0;} to{width:100%;} }
-@keyframes floorFade { to{opacity:1; transform:translateY(0);} }
-@keyframes fadeOut { to{opacity:0; transform:translateY(-40px);} }
-.fade-out { animation:fadeOut 0.8s ease forwards; }
+@keyframes fadeUp { from{opacity:0; transform:translateY(30px);} to{opacity:1; transform:translateY(0);} }
+@keyframes glowLine { from{opacity:0.4;} to{opacity:1;} }
 
 @media(max-width:768px){
-  .card .header .name{font-size:6vw;}
-  .card .details p{font-size:3vw;}
-  .directory-title{font-size:6vw;}
-  .floor-section .floor-num{font-size:4vw;}
-  .tenant-logos img{height:12vw;}
+  .directory-title{font-size:7vw;}
+  .floor-section{flex-direction:column; align-items:flex-start; gap:1.5vh;}
+  .floor-num{font-size:5vw;}
+  .tenant-logos img{height:14vw;}
 }
 </style>
 </head>
 <body>
 <canvas id="background"></canvas>
-<div id="tenantIntro"></div>
-<div id="adView" style="display:none;"></div>
-<div id="directoryView" style="display:none;"></div>
-<div id="announcementView" style="display:none;"></div>
+<div id="directoryView"></div>
 
 <script type="module">
-
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+  import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-// --- Firebase config ---
-const firebaseConfig = {
-  apiKey: "AIzaSyCrGIB_YK33p_2EPTpU-klZ_3xQ5TOPm4c",
-  authDomain: "adora-ad.firebaseapp.com",
-  databaseURL: "https://adora-ad-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "adora-ad",
-  storageBucket: "adora-ad.appspot.com",
-  messagingSenderId: "550034277527",
-  appId: "1:550034277527:web:966b16ce942a161e8955d2",
-};
+  // Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyCrGIB_YK33p_2EPTpU-klZ_3xQ5TOPm4c",
+    authDomain: "adora-ad.firebaseapp.com",
+    databaseURL: "https://adora-ad-default-rtdb.asia-southeast1.firebasedatabase.app",
+    projectId: "adora-ad",
+    storageBucket: "adora-ad.appspot.com",
+    messagingSenderId: "550034277527",
+    appId: "1:550034277527:web:966b16ce942a161e8955d2",
+  };
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+  const app = initializeApp(firebaseConfig);
+  const db = getDatabase(app);
 
-// --- Firebase refs ---
-const floorsRef = ref(db, "blocks/A/floors");
-const adsRef = ref(db, "ads");
-const announcementsRef = ref(db, "announcements");
+  const directoryView = document.getElementById("directoryView");
+  const floorsRef = ref(db, "blocks/A/floors");
 
-// --- DOM elements ---
-const tenantIntro = document.getElementById("tenantIntro");
-const adView = document.getElementById("adView");
-const directoryView = document.getElementById("directoryView");
-const announcementView = document.getElementById("announcementView");
+  function ordinal(n){ const s=["th","st","nd","rd"], v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
 
-// --- Helper ---
-function ordinal(n){ const s=["th","st","nd","rd"], v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
-
-let tenantsSequence = [], adsSequence = [], announcementsSequence = [];
-let index = 0;
-
-// --- Fetch tenants ---
-onValue(floorsRef, snapshot => {
+  onValue(floorsRef, snapshot => {
     const data = snapshot.val();
-    tenantsSequence = [];
-    Object.keys(data).forEach(floor => {
-        const tenantsObj = data[floor].tenants;
-        if (tenantsObj) Object.keys(tenantsObj).forEach(key => {
-            tenantsSequence.push({
-                name: tenantsObj[key].name,
-                logo: tenantsObj[key].logo,
-                floor: ordinal(Number(floor)),
-                description: tenantsObj[key].description || "Welcome.",
-                core: tenantsObj[key].core || "N/A",
-                contact: tenantsObj[key].contact || "N/A",
-                email: tenantsObj[key].email || "N/A",
-                theme: tenantsObj[key].theme || "#0f1117,#1a1c25"
-            });
-        });
-    });
-    startLoop();
-});
-
-// --- Fetch ads & announcements ---
-onValue(adsRef, snapshot => { adsSequence = snapshot.val() ? Object.values(snapshot.val()) : []; });
-onValue(announcementsRef, snapshot => { announcementsSequence = snapshot.val() ? Object.values(snapshot.val()) : []; });
-
-// --- Main Loop ---
-function startLoop(){ showNextTenant(); }
-
-function showCard(content, type="tenant", duration=9000){
-    tenantIntro.style.display="none";
-    adView.style.display="none";
-    announcementView.style.display="none";
-
-    const container = type==="tenant"? tenantIntro : type==="ad"? adView : announcementView;
-    container.style.display="flex";
-    container.innerHTML="";
-
-    const card = document.createElement("div");
-    card.className="card";
-    if(type==="tenant") card.style.background=`linear-gradient(135deg,${content.theme})`;
-
-    // --- Media (image/video) ---
-    if(content.url && content.url.match(/\.(mp4|webm|ogg)$/i)){
-        const video = document.createElement("video");
-        video.src = content.url;
-        video.autoplay = true; video.loop = true; video.muted = true;
-        video.className = "media";
-        card.appendChild(video);
-    } else if(content.logo || content.image || content.url){
-        const img = document.createElement("img");
-        img.src = content.logo || content.image || content.url;
-        img.className = "media";
-        card.appendChild(img);
-    }
-
-    // --- Tenant details ---
-    if(type==="tenant"){
-        const header = document.createElement("div");
-        header.className="header";
-        header.innerHTML = `<img src="${content.logo}" alt="logo"/><div class="name">${content.name}</div>`;
-        card.appendChild(header);
-
-        const details = document.createElement("div");
-        details.className="details";
-        details.innerHTML = `
-            <h2>About ${content.name}</h2>
-            <p><strong>Description:</strong> ${content.description}</p>
-            <p><strong>Floor:</strong> ${content.floor} Floor</p>
-            <p><strong>Core:</strong> ${content.core}</p>
-            <p><strong>Contact:</strong> ${content.contact}</p>
-            <p><strong>Email:</strong> ${content.email}</p>
-        `;
-        card.appendChild(details);
-    }
-
-    container.appendChild(card);
-
-    setTimeout(()=>{
-        card.classList.add("fade-out");
-        setTimeout(()=>{
-            if(type==="tenant") index++;
-            nextStep();
-        },800);
-    },duration);
-}
-
-function nextStep(){
-    if(index < tenantsSequence.length){
-        if(index>0 && index%10===0 && adsSequence.length>0){
-            const ad = adsSequence[Math.floor(Math.random()*adsSequence.length)];
-            showCard(ad,"ad",9000);
-        } else showCard(tenantsSequence[index],"tenant",9000);
-    } else showDirectory();
-}
-
-function showDirectory(){
-    tenantIntro.style.display="none"; adView.style.display="none"; announcementView.style.display="none";
-    directoryView.style.display="flex";
     directoryView.innerHTML="";
 
     const container = document.createElement("div");
     container.className="directory-container";
 
     const title = document.createElement("div");
-    title.className="directory-title"; title.textContent="Tenant Directory";
+    title.className="directory-title";
+    title.textContent="Tenant Directory";
     container.appendChild(title);
 
-    tenantsSequence.forEach((tenant)=>{
-        const floorSection = document.createElement("div");
-        floorSection.className="floor-section";
+    Object.keys(data).forEach((floor,i)=>{
+      const tenantsObj = data[floor].tenants;
+      if(!tenantsObj) return;
 
-        const floorNum = document.createElement("div");
-        floorNum.className="floor-num"; floorNum.textContent=tenant.floor;
+      const floorSection = document.createElement("div");
+      floorSection.className="floor-section";
+      floorSection.style.animationDelay = `${i*0.15}s`;
 
-        const logosDiv = document.createElement("div"); logosDiv.className="tenant-logos";
-        const img = document.createElement("img"); img.src=tenant.logo; logosDiv.appendChild(img);
+      const floorNum = document.createElement("div");
+      floorNum.className="floor-num";
+      floorNum.textContent = ordinal(Number(floor)) + " Floor";
 
-        floorSection.appendChild(floorNum);
-        floorSection.appendChild(logosDiv);
-        container.appendChild(floorSection);
+      const logosDiv = document.createElement("div");
+      logosDiv.className="tenant-logos";
+
+      Object.keys(tenantsObj).forEach(key=>{
+        const img = document.createElement("img");
+        img.src = tenantsObj[key].logo;
+        img.alt = tenantsObj[key].name;
+        logosDiv.appendChild(img);
+      });
+
+      floorSection.appendChild(floorNum);
+      floorSection.appendChild(logosDiv);
+      container.appendChild(floorSection);
     });
 
     directoryView.appendChild(container);
+  });
 
-    setTimeout(()=>{ directoryView.style.display="none"; showAnnouncements(); },10000);
-}
+  // --- Background animation ---
+  const canvas = document.getElementById("background");
+  const ctx = canvas.getContext("2d");
+  let shapes = [];
 
-function showAnnouncements(){
-    let i=0;
-    function nextAnn(){
-        if(i>=announcementsSequence.length){ index=0; startLoop(); return; }
-        showCard(announcementsSequence[i],"announcement",60000);
-        i++;
-    }
-    nextAnn();
-    let annInterval = setInterval(nextAnn,60000);
-    setTimeout(()=>clearInterval(annInterval), announcementsSequence.length*60000);
-}
-
-// --- Animated Corporate Background ---
-const canvas = document.getElementById("background");
-const ctx = canvas.getContext("2d");
-let shapes = [];
-
-function initShapes(){
+  function initShapes(){
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     shapes = [];
-    for(let i=0;i<50;i++){
-        shapes.push({
-            x:Math.random()*canvas.width,
-            y:Math.random()*canvas.height,
-            size:Math.random()*30+10,
-            dx:(Math.random()-0.5)*0.5,
-            dy:(Math.random()-0.5)*0.5,
-            angle:Math.random()*360
-        });
+    for(let i=0;i<60;i++){
+      shapes.push({
+        x:Math.random()*canvas.width,
+        y:Math.random()*canvas.height,
+        size:Math.random()*28+12,
+        dx:(Math.random()-0.5)*0.5,
+        dy:(Math.random()-0.5)*0.5,
+        angle:Math.random()*360
+      });
     }
-}
-
-function animateShapes(){
+  }
+  function animateShapes(){
     ctx.clearRect(0,0,canvas.width,canvas.height);
     shapes.forEach(s=>{
-        ctx.save();
-        ctx.translate(s.x,s.y);
-        ctx.rotate(s.angle*Math.PI/180);
-        ctx.strokeStyle = "rgba(0,195,255,0.2)";
-        ctx.lineWidth = 1;
-        ctx.strokeRect(-s.size/2,-s.size/2,s.size,s.size);
-        ctx.restore();
-
-        s.x += s.dx; s.y += s.dy; s.angle += 0.3;
-        if(s.x<0||s.x>canvas.width) s.dx*=-1;
-        if(s.y<0||s.y>canvas.height) s.dy*=-1;
+      ctx.save();
+      ctx.translate(s.x,s.y);
+      ctx.rotate(s.angle*Math.PI/180);
+      ctx.strokeStyle = "rgba(0,195,255,0.2)";
+      ctx.lineWidth = 1;
+      ctx.strokeRect(-s.size/2,-s.size/2,s.size,s.size);
+      ctx.restore();
+      s.x += s.dx; s.y += s.dy; s.angle += 0.25;
+      if(s.x<0||s.x>canvas.width) s.dx*=-1;
+      if(s.y<0||s.y>canvas.height) s.dy*=-1;
     });
     requestAnimationFrame(animateShapes);
-}
-
-window.addEventListener("resize",()=>{ initShapes(); });
-initShapes(); animateShapes();
+  }
+  window.addEventListener("resize",()=>{ initShapes(); });
+  initShapes(); animateShapes();
 </script>
 </body>
 </html>
