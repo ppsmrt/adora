@@ -1,457 +1,116 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
-<title>Tenant Intro + Directory Loop (Premium Corporate)</title>
-<!-- Google Fonts -->
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-<style>
-  html, body {
-    margin: 0; padding: 0;
-    width: 100vw; height: 100vh;
-    overflow: hidden;
-    font-family: "Inter", "Poppins", sans-serif;
-    background: #0f1117;
-    color: #222;
-  }
-
-  canvas#particles {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: 0;
-    background: linear-gradient(135deg,#0f1117,#1a1c25);
-  }
-
-  #tenantIntro, #directoryView {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-sizing: border-box;
-    z-index: 1;
-    overflow: hidden;
-    transition: opacity 0.8s ease;
-  }
-
-  /* --- Intro Fullscreen --- */
-  .intro-fullscreen {
-    width: 100%; height: 100%;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: stretch;
-    background: linear-gradient(135deg,#f0f4f8,#e1e5eb);
-    color: #222;
-    padding: 2vh 2vw;
-    box-sizing: border-box;
-    animation: fadeIn 0.8s ease forwards;
-    border-radius: 12px;
-  }
-
-  /* --- Header --- */
-  .intro-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-    padding: 1.2vh 2vw;
-    backdrop-filter: blur(14px);
-    background: rgba(255,255,255,0.2);
-    border-radius: 14px;
-    box-shadow: 0 8px 28px rgba(0,0,0,0.15);
-    margin-bottom: 4vh;
-    opacity: 0; transform: translateY(-40px);
-    animation: slideDown 0.8s ease forwards;
-  }
-
-  .intro-header img {
-    height: 10vh; width: 10vh;
-    border-radius: 16px;
-    background: #fff;
-    padding: 0.5vh;
-    object-fit: contain;
-    box-shadow: 0 6px 16px rgba(0,0,0,0.25);
-    animation: floatLogo 4s ease-in-out infinite;
-  }
-
-  .intro-header .tenant-name {
-    font-size: 5vh;
-    font-weight: 800;
-    text-align: right;
-    flex: 1;
-    padding-left: 2vw;
-    background: linear-gradient(90deg,#0046b3,#00aaff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    position: relative;
-    letter-spacing: 1px;
-  }
-
-  .intro-header .tenant-name::after {
-    content: "";
-    position: absolute;
-    bottom: -4px; left: 0;
-    width: 0%; height: 3px;
-    background: linear-gradient(90deg,#0046b3,#00aaff);
-    animation: underline 1.2s ease forwards;
-    animation-delay: 0.4s;
-  }
-
-  /* --- Big logo --- */
-  .intro-logo {
-    max-width: 60vw;
-    max-height: 28vh;
-    margin: 3vh auto 3vh auto;
-    object-fit: contain;
-    opacity: 0; transform: scale(0.8);
-    animation: zoomIn 0.9s ease 0.3s forwards;
-    box-shadow: 0 12px 35px rgba(0,0,0,0.18);
-    border-radius: 12px;
-  }
-
-  /* --- Details card --- */
-  .intro-details {
-    font-size: 2.3vh;
-    line-height: 1.6;
-    max-width: 85vw;
-    margin: 0 auto;
-    padding: 2.5vh 2.5vw;
-    background: rgba(255,255,255,0.9);
-    border-radius: 20px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.18);
-    opacity: 0; transform: translateY(25px);
-    animation: fadeUp 1s ease 0.6s forwards;
-    transition: transform 0.4s ease;
-  }
-  .intro-details:hover { transform: translateY(-5px); }
-
-  .intro-details h2 {
-    margin-top: 0; 
-    font-size: 3vh; 
-    color: #0046b3;
-    letter-spacing: 0.5px;
-  }
-
-  /* --- Directory --- */
-  .directory-container {
-    width: 100%; height: 100%;
-    overflow: hidden;
-    padding: 3vh 2vw;
-    background: rgba(255,255,255,0.95);
-    border-radius: 16px;
-    box-sizing: border-box;
-    animation: fadeIn 1s ease forwards;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.12);
-  }
-
-  .directory-title {
-    font-size: 5vh;
-    font-weight: 700;
-    text-align: center;
-    margin-bottom: 3vh;
-    background: linear-gradient(90deg,#0046b3,#00aaff);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    letter-spacing: 1px;
-  }
-
-  .directory-header {
-    display: flex;
-    justify-content: space-between;
-    font-weight: 700;
-    margin-bottom: 2vh;
-    font-size: 3.2vh;
-    border-bottom: 2px solid #333;
-    padding-bottom: 0.7vh;
-  }
-
-  .floor-section {
-    background: rgba(255,255,255,0.85);
-    border-radius: 16px;
-    padding: 1.5vh 1.2vw;
-    margin-bottom: 2.5vh;
-    box-shadow: 0 6px 18px rgba(0,0,0,0.1);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    transition: transform 0.35s ease, box-shadow 0.35s ease;
-  }
-  .floor-section:hover { 
-    transform: scale(1.03); 
-    box-shadow: 0 12px 30px rgba(0,0,0,0.2);
-  }
-
-  .floor-section div:first-child {
-    font-size: 3vh;
-    min-width: 100px;
-    font-weight: 600;
-    color: #0046b3;
-  }
-
-  .tenant-logos {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1.2vw;
-    max-width: 75vw;
-  }
-
-  .tenant-logos img {
-    height: 8vh; width: auto;
-    object-fit: contain;
-    transition: all 0.4s ease;
-    border-radius: 8px;
-    background: #fff;
-    padding: 4px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-  }
-  .tenant-logos img:hover {
-    transform: scale(1.15) rotate(-2deg);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
-  }
-
-  /* --- Animations --- */
-  @keyframes fadeIn { from{opacity:0;} to{opacity:1;} }
-  @keyframes slideDown { to{opacity:1; transform:translateY(0);} }
-  @keyframes zoomIn { to{opacity:1; transform:scale(1);} }
-  @keyframes fadeUp { to{opacity:1; transform:translateY(0);} }
-  @keyframes floatLogo {
-    0%,100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
-  @keyframes underline { from{width:0;} to{width:100%;} }
-  @keyframes fadeOut { to{opacity:0; transform:translateX(-40px);} }
-  .fade-out { animation: fadeOut 0.6s ease forwards; }
-
-  @media (max-width:768px){
-    .intro-header .tenant-name { font-size: 6vw; }
-    .intro-details { font-size: 3.5vw; }
-    .directory-title { font-size: 6vw; }
-    .directory-header { font-size: 4vw; }
-    .tenant-logos img { height: 12vw; }
-  }
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Tenant Directory — Global Infocity</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    @keyframes rowAnim {
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+    .row-anim {
+      opacity: 0;
+      transform: translateY(40px) scale(0.95);
+      animation: rowAnim 0.6s forwards;
+    }
+  </style>
 </head>
-<body>
-<canvas id="particles"></canvas>
-<div id="tenantIntro"></div>
-<div id="directoryView" style="display:none;"></div>
+<body class="bg-gray-50 w-screen h-screen overflow-hidden flex justify-center items-center">
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+  <div class="w-full h-full max-w-full sm:max-w-5xl bg-white rounded-none sm:rounded-2xl shadow-xl flex flex-col">
+    <!-- Header -->
+    <div class="text-center px-4 sm:px-6 py-4 sm:py-6 border-b border-gray-200 flex-shrink-0">
+      <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-orange-600">Global Infocity Park</h1>
+      <h2 class="text-xl sm:text-2xl lg:text-3xl font-semibold text-gray-800 mt-1 sm:mt-2">Block A</h2>
+    </div>
 
-const firebaseConfig = {
-  apiKey: "AIzaSyCrGIB_YK33p_2EPTpU-klZ_3xQ5TOPm4c",
-  authDomain: "adora-ad.firebaseapp.com",
-  databaseURL: "https://adora-ad-default-rtdb.asia-southeast1.firebasedatabase.app",
-  projectId: "adora-ad",
-  storageBucket: "adora-ad.appspot.com",
-  messagingSenderId: "550034277527",
-  appId: "1:550034277527:web:966b16ce942a161e8955d2",
-  measurementId: "G-QW5Y41EKLR"
-};
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const floorsRef = ref(db,"blocks/A/floors");
+    <!-- Directory list -->
+    <div id="directoryView" 
+         class="flex flex-col-reverse border-t border-gray-200 flex-1 overflow-hidden p-2 sm:p-4 lg:p-6">
+      <!-- Floors will load dynamically -->
+    </div>
+  </div>
 
-const tenantIntro = document.getElementById("tenantIntro");
-const directoryView = document.getElementById("directoryView");
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-function ordinal(n){
-  const s=["th","st","nd","rd"], v=n%100;
-  return n+(s[(v-20)%10]||s[v]||s[0]);
-}
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCrGIB_YK33p_2EPTpU-klZ_3xQ5TOPm4c",
+      authDomain: "adora-ad.firebaseapp.com",
+      databaseURL: "https://adora-ad-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "adora-ad",
+      storageBucket: "adora-ad.appspot.com",
+      messagingSenderId: "550034277527",
+      appId: "1:550034277527:web:966b16ce942a161e8955d2",
+    };
 
-onValue(floorsRef,(snapshot)=>{
-  const data = snapshot.val();
-  const tenantsSequence = [];
-  Object.keys(data).forEach(floor=>{
-    const tenantsObj = data[floor].tenants;
-    if(tenantsObj){
-      Object.keys(tenantsObj).forEach(key=>{
-        tenantsSequence.push({
-          name: tenantsObj[key].name,
-          logo: tenantsObj[key].logo,
-          floor: ordinal(Number(floor)),
-          description: tenantsObj[key].description || "Welcome to our company.",
-          core: tenantsObj[key].core || "N/A",
-          contact: tenantsObj[key].contact || "N/A",
-          email: tenantsObj[key].email || "N/A",
-          theme: tenantsObj[key].theme || "#f0f4f8,#e1e5eb"
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const floorsRef = ref(db, "blocks/A/floors");
+
+    const listContainer = document.getElementById("directoryView");
+
+    onValue(floorsRef, snapshot => {
+      const data = snapshot.val();
+      listContainer.innerHTML = "";
+
+      if (!data) return;
+
+      const floorKeys = Object.keys(data).sort((a, b) => a - b);
+
+      floorKeys.forEach((floor, i) => {
+        const tenants = data[floor]?.tenants;
+        if (!tenants) return;
+
+        // Row with same view logic
+        const row = document.createElement("div");
+        row.className = `
+          grid grid-cols-[80px_1px_auto] items-center
+          px-2 sm:px-4 lg:px-6 py-3 sm:py-4 lg:py-6 border-b border-gray-200
+          row-anim
+        `;
+        row.style.animationDelay = `${(i + 1) * 0.1}s`;
+
+        // Floor label
+        const floorDiv = document.createElement("div");
+        floorDiv.className = "text-sm sm:text-base lg:text-lg font-semibold text-gray-500 whitespace-nowrap pl-2";
+        floorDiv.textContent = `Floor ${floor}`;
+
+        // Divider
+        const divider = document.createElement("div");
+        divider.className = "w-px h-12 sm:h-16 lg:h-20 bg-gradient-to-b from-transparent via-gray-300 to-transparent mx-auto";
+
+        // Logo container
+        const logoDiv = document.createElement("div");
+        logoDiv.className = "flex flex-wrap gap-2 sm:gap-3 lg:gap-4 justify-start";
+
+        Object.keys(tenants).forEach(key => {
+          const img = document.createElement("img");
+          img.src = tenants[key].logo || "https://via.placeholder.com/80";
+          img.alt = tenants[key].name || "Tenant";
+          img.className = `
+            w-14 h-14 sm:w-20 sm:h-20 lg:w-24 lg:h-24
+            rounded-xl object-contain bg-gray-50 p-2
+            shadow-sm hover:scale-105 transition-transform
+          `;
+          logoDiv.appendChild(img);
         });
+
+        row.appendChild(floorDiv);
+        row.appendChild(divider);
+        row.appendChild(logoDiv);
+
+        listContainer.appendChild(row);
       });
-    }
-  });
-
-  let currentIndex = 0;
-
-  function showNextTenant(){
-    tenantIntro.style.display="flex";
-    directoryView.style.display="none";
-    tenantIntro.innerHTML = "";
-
-    if(currentIndex < tenantsSequence.length){
-      const tenant = tenantsSequence[currentIndex];
-      const wrapper = document.createElement("div");
-      wrapper.className = "intro-fullscreen";
-      wrapper.style.background = `linear-gradient(135deg,${tenant.theme})`;
-
-      const header = document.createElement("div");
-      header.className = "intro-header";
-      header.innerHTML = `
-        <img src="${tenant.logo}" alt="logo"/>
-        <div class="tenant-name">${tenant.name}</div>
-      `;
-      wrapper.appendChild(header);
-
-      const bigLogo = document.createElement("img");
-      bigLogo.src = tenant.logo;
-      bigLogo.className = "intro-logo";
-      wrapper.appendChild(bigLogo);
-
-      const details = document.createElement("div");
-      details.className = "intro-details";
-      details.innerHTML = `
-        <h2>About ${tenant.name}</h2>
-        <p><strong>Description:</strong> ${tenant.description}</p>
-        <p><strong>Floor:</strong> ${tenant.floor} Floor</p>
-        <p><strong>Core:</strong> ${tenant.core}</p>
-        <p><strong>Contact:</strong> ${tenant.contact}</p>
-        <p><strong>Email:</strong> ${tenant.email}</p>
-      `;
-      wrapper.appendChild(details);
-
-      tenantIntro.appendChild(wrapper);
-
-      currentIndex++;
-      setTimeout(()=>{
-        wrapper.classList.add("fade-out");
-        setTimeout(showNextTenant,700);
-      },9000);
-    } else {
-      showDirectory();
-    }
-  }
-
-  function showDirectory(){
-    tenantIntro.style.display="none";
-    directoryView.style.display="block";
-    directoryView.innerHTML = "";
-
-    const container = document.createElement("div");
-    container.className = "directory-container";
-
-    const title = document.createElement("div");
-    title.className = "directory-title";
-    title.textContent = "Tenant Directory";
-    container.appendChild(title);
-
-    const headerRow = document.createElement("div");
-    headerRow.className = "directory-header";
-    headerRow.innerHTML = `<span>Floor</span><span>Block Name</span>`;
-    container.appendChild(headerRow);
-
-    Object.keys(data).forEach(floor=>{
-      const floorSection = document.createElement("div");
-      floorSection.className = "floor-section";
-
-      const floorNum = document.createElement("div");
-      floorNum.textContent = ordinal(Number(floor));
-      const logosDiv = document.createElement("div");
-      logosDiv.className = "tenant-logos";
-
-      const tenantsObj = data[floor].tenants;
-      if(tenantsObj){
-        Object.keys(tenantsObj).forEach(key=>{
-          const logoImg = document.createElement("img");
-          logoImg.src = tenantsObj[key].logo;
-          logosDiv.appendChild(logoImg);
-        });
-      }
-
-      floorSection.appendChild(floorNum);
-      floorSection.appendChild(logosDiv);
-      container.appendChild(floorSection);
     });
-
-    directoryView.appendChild(container);
-
-    let scrollAmount = 0;
-    const maxScroll = container.scrollHeight - container.clientHeight;
-    const scrollStep = maxScroll / 240;
-    const scrollInterval = setInterval(()=>{
-      scrollAmount += scrollStep;
-      if(scrollAmount >= maxScroll) scrollAmount = maxScroll;
-      container.scrollTo({top: scrollAmount, behavior:"smooth"});
-    },60);
-
-    setTimeout(()=>{
-      clearInterval(scrollInterval);
-      currentIndex = 0;
-      showNextTenant();
-    },22000);
-  }
-
-  showNextTenant();
-});
-
-/* --- Premium Particles --- */
-const canvas = document.getElementById("particles");
-const ctx = canvas.getContext("2d");
-let particlesArray = [];
-
-function initParticles(){
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  particlesArray=[];
-  for(let i=0;i<140;i++){
-    particlesArray.push({
-      x: Math.random()*canvas.width,
-      y: Math.random()*canvas.height,
-      r: Math.random()*2+1,
-      dx: (Math.random()-0.5)*0.3,
-      dy: (Math.random()-0.5)*0.3
-    });
-  }
-}
-
-function animateParticles(){
-  ctx.clearRect(0,0,canvas.width,canvas.height);
-  ctx.fillStyle="rgba(0,170,255,0.8)";
-  particlesArray.forEach((p,i)=>{
-    ctx.beginPath();
-    ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-    ctx.fill();
-
-    // Connect lines
-    for(let j=i+1;j<particlesArray.length;j++){
-      const p2 = particlesArray[j];
-      const dist = Math.hypot(p.x-p2.x,p.y-p2.y);
-      if(dist<120){
-        ctx.strokeStyle="rgba(0,170,255,0.12)";
-        ctx.lineWidth=1;
-        ctx.beginPath();
-        ctx.moveTo(p.x,p.y);
-        ctx.lineTo(p2.x,p2.y);
-        ctx.stroke();
-      }
-    }
-
-    p.x+=p.dx; p.y+=p.dy;
-    if(p.x<0||p.x>canvas.width) p.dx*=-1;
-    if(p.y<0||p.y>canvas.height) p.dy*=-1;
-  });
-  requestAnimationFrame(animateParticles);
-}
-
-window.addEventListener("resize",initParticles);
-initParticles();
-animateParticles();
-</script>
+  </script>
 </body>
 </html>
