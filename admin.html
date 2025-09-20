@@ -3,64 +3,56 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Admin - Manage Clients</title>
+<title>Admin - Manage Tenants</title>
 <script src="https://cdn.tailwindcss.com"></script>
 <style>
-  /* Scrollbars */
-  ::-webkit-scrollbar { width: 10px; }
-  ::-webkit-scrollbar-track { background: #f3f4f6; border-radius: 5px; }
-  ::-webkit-scrollbar-thumb { background: #6366f1; border-radius: 5px; }
-  ::-webkit-scrollbar-thumb:hover { background: #4f46e5; }
+  /* Smooth iOS-like scrollbar */
+  ::-webkit-scrollbar { width: 8px; }
+  ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 20px; }
+  ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-  /* Card hover animation */
+  /* iOS-like card hover */
   .card-hover:hover {
-    transform: translateY(-3px);
-    transition: all 0.3s ease;
-    box-shadow: 0 12px 24px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+    transition: all 0.2s ease;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.06);
   }
 
-  /* Gradient buttons */
-  .btn-gradient {
-    background: linear-gradient(90deg, #4f46e5, #6366f1);
+  /* iOS-like buttons */
+  .btn-primary {
+    background: #6366f1;
     color: white;
     font-weight: 600;
-    transition: all 0.3s;
+    border-radius: 12px;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 6px rgba(99,102,241,0.3);
   }
-  .btn-gradient:hover {
-    background: linear-gradient(90deg, #6366f1, #8b5cf6);
-    transform: scale(1.05);
-  }
-
-  /* Gradient text headers */
-  .gradient-text {
-    background: linear-gradient(to right, #4f46e5, #6366f1);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+  .btn-primary:hover {
+    background: #4f46e5;
+    transform: scale(1.02);
   }
 
-  /* Input focus */
-  input:focus, select:focus, textarea:focus {
+  /* Input focus like iOS */
+  input:focus, select:focus {
     outline: none;
     border-color: #6366f1;
-    box-shadow: 0 0 0 3px rgba(99,102,241,0.2);
+    box-shadow: 0 0 0 2px rgba(99,102,241,0.2);
   }
 
-  /* Toast notification */
+  /* Toast */
   #toast {
     position: fixed;
-    bottom: 20px;
-    right: 20px;
+    bottom: 16px;
+    right: 16px;
     background: #4f46e5;
     color: white;
-    padding: 16px 24px;
-    border-radius: 12px;
-    box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    padding: 14px 20px;
+    border-radius: 14px;
     font-weight: 500;
     display: none;
     z-index: 9999;
     animation: fadeInOut 3s forwards;
   }
-
   @keyframes fadeInOut {
     0% { opacity: 0; transform: translateY(20px);}
     10% { opacity: 1; transform: translateY(0);}
@@ -69,37 +61,31 @@
   }
 </style>
 </head>
-<body class="bg-gray-50 text-gray-900 font-sans">
+<body class="bg-gray-100 text-gray-900 font-sans">
 
-<!-- Premium Header -->
-<header class="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 text-white text-center font-bold text-2xl shadow-lg">
-  Premium Admin Panel
+<!-- Slim Header -->
+<header class="bg-white border-b border-gray-200 p-4 text-center text-lg font-semibold shadow-sm">
+  Tenant Management
 </header>
 
 <!-- Toast -->
 <div id="toast"></div>
 
-<!-- Page Title -->
-<h1 class="text-4xl font-extrabold mb-10 text-center gradient-text drop-shadow-lg">
-  Admin Panel - Manage Tenants
-</h1>
-
 <!-- Add/Edit Tenant Form -->
-<form id="addForm" class="space-y-6 mb-12 bg-white p-8 rounded-3xl shadow-xl max-w-4xl mx-auto border border-gray-200">
-  <h2 class="text-2xl font-bold mb-6 text-gray-800 border-b border-gray-300 pb-2">Add / Edit Tenant</h2>
+<form id="addForm" class="space-y-6 mb-6 bg-white p-6 rounded-2xl shadow-md max-w-4xl mx-auto mt-6">
+  <h2 class="text-lg font-semibold mb-4 text-gray-800">Add / Edit Tenant</h2>
 
-  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-    <select id="block" class="p-4 bg-gray-100 rounded-lg w-full border border-gray-300 text-gray-800">
+  <!-- Force 2 columns always -->
+  <div class="grid grid-cols-2 gap-4">
+    <select id="block" class="p-3 bg-gray-50 rounded-xl w-full border border-gray-200 shadow-sm">
       <option value="A">Block A</option>
       <option value="B">Block B</option>
       <option value="C">Block C</option>
     </select>
 
-    <select id="core" class="p-4 bg-gray-100 rounded-lg w-full border border-gray-300 text-gray-800">
-      <!-- Options dynamically filled -->
-    </select>
+    <select id="core" class="p-3 bg-gray-50 rounded-xl w-full border border-gray-200 shadow-sm"></select>
 
-    <select id="floor" class="p-4 bg-gray-100 rounded-lg w-full border border-gray-300 text-gray-800">
+    <select id="floor" class="p-3 bg-gray-50 rounded-xl w-full border border-gray-200 shadow-sm">
       <option value="GF">GF</option>
       <option value="1">1</option>
       <option value="2">2</option>
@@ -116,23 +102,39 @@
       <option value="13">13</option>
     </select>
 
-    <input id="name" type="text" placeholder="Tenant Name" class="p-4 bg-gray-100 rounded-lg w-full border border-gray-300 text-gray-800"/>
-    <input id="logoUrl" type="url" placeholder="Logo Image URL" class="p-4 bg-gray-100 rounded-lg w-full border border-gray-300 text-gray-800"/>
+    <input id="name" type="text" placeholder="Tenant Name" class="p-3 bg-gray-50 rounded-xl w-full border border-gray-200 shadow-sm"/>
+    <input id="logoUrl" type="url" placeholder="Logo Image URL" class="p-3 bg-gray-50 rounded-xl w-full border border-gray-200 shadow-sm"/>
   </div>
 
-  <div class="flex gap-4 mt-6">
-    <button type="submit" class="btn-gradient px-8 py-3 rounded-xl shadow-lg w-full">Save Tenant</button>
-    <button type="button" id="cancelEdit" class="bg-gray-200 text-gray-800 px-8 py-3 rounded-xl w-full hidden shadow-inner">Cancel</button>
+  <div class="flex gap-4 mt-4">
+    <button type="submit" class="btn-primary px-6 py-2 w-full">Save Tenant</button>
+    <button type="button" id="cancelEdit" class="bg-gray-200 text-gray-800 px-6 py-2 rounded-xl w-full hidden">Cancel</button>
   </div>
 </form>
 
-<!-- Tenant List -->
-<h2 class="text-3xl font-extrabold mb-6 text-center text-gray-700 drop-shadow-md">Existing Tenants</h2>
-<div id="tenantList" class="space-y-4 max-w-5xl mx-auto"></div>
+<!-- Tenant Filters -->
+<div class="max-w-4xl mx-auto mb-6 bg-white p-4 rounded-2xl shadow-sm border border-gray-100">
+  <!-- Force 3 columns always -->
+  <div class="grid grid-cols-3 gap-3 items-center">
+    <select id="filterBlock" class="p-3 bg-gray-50 rounded-xl border border-gray-200 shadow-sm">
+      <option value="">All Blocks</option>
+      <option value="A">Block A</option>
+      <option value="B">Block B</option>
+      <option value="C">Block C</option>
+    </select>
+    <select id="filterCore" class="p-3 bg-gray-50 rounded-xl border border-gray-200 shadow-sm">
+      <option value="">All Cores</option>
+    </select>
+    <input id="filterSearch" type="text" placeholder="Search Tenant" class="p-3 bg-gray-50 rounded-xl border border-gray-200 shadow-sm"/>
+  </div>
+</div>
 
-<!-- Premium Footer -->
-<footer class="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 text-white text-center font-semibold mt-12 shadow-inner">
-  © 2025 Premium Admin Panel. All rights reserved.
+<!-- Tenant List -->
+<div id="tenantList" class="space-y-3 max-w-4xl mx-auto"></div>
+
+<!-- Slim Footer -->
+<footer class="bg-white border-t border-gray-200 p-4 text-center text-sm text-gray-500 mt-8">
+  © 2025 Tenant Management
 </footer>
 
 <!-- Firebase + Script -->
@@ -166,7 +168,13 @@
     const logoEl = document.getElementById("logoUrl");
     const addForm = document.getElementById("addForm");
     const cancelEditBtn = document.getElementById("cancelEdit");
+
+    const filterBlock = document.getElementById("filterBlock");
+    const filterCore = document.getElementById("filterCore");
+    const filterSearch = document.getElementById("filterSearch");
+
     let editTenantId = null;
+    let allTenants = [];
 
     function updateCoreOptions() {
       const block = blockEl.value;
@@ -183,10 +191,28 @@
       });
     }
 
-    blockEl.addEventListener("change", () => {
-      updateCoreOptions();
-      watchTenants();
+    function updateFilterCoreOptions() {
+      const block = filterBlock.value;
+      filterCore.innerHTML = "<option value=''>All Cores</option>";
+      let options = [];
+      if (block === "A") options = ["Core-1", "Core-2"];
+      else if (block === "B") options = ["No Core"];
+      else if (block === "C") options = ["Core-1", "Core-2"];
+      options.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c;
+        opt.textContent = c;
+        filterCore.appendChild(opt);
+      });
+    }
+
+    blockEl.addEventListener("change", updateCoreOptions);
+    filterBlock.addEventListener("change", () => {
+      updateFilterCoreOptions();
+      renderTenants();
     });
+    filterCore.addEventListener("change", renderTenants);
+    filterSearch.addEventListener("input", renderTenants);
 
     addForm.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -196,7 +222,7 @@
       const name = nameEl.value;
       const logo = logoEl.value;
       if (!block || !floor || !name) return showToast("Fill at least block, floor, and name");
-      const tenantData = { name, logo, core };
+      const tenantData = { name, logo, core, block, floor };
       try {
         if (editTenantId) {
           await set(ref(db, `blocks/${block}/floors/${floor}/tenants/${editTenantId}`), tenantData);
@@ -209,6 +235,7 @@
           showToast("Tenant added!");
         }
         addForm.reset();
+        updateCoreOptions();
       } catch (err) { showToast("Error: " + err.message); }
     });
 
@@ -218,72 +245,98 @@
       cancelEditBtn.classList.add("hidden");
     });
 
-    function watchTenants() {
-      const block = blockEl.value;
-      const floor = floorEl.value;
-      if (!block || !floor) {
-        tenantList.innerHTML = "<p class='text-gray-400 text-center'>Select block and floor to view tenants.</p>";
-        return;
-      }
-      const tenantsRef = ref(db, `blocks/${block}/floors/${floor}/tenants`);
+    function fetchTenants() {
+      const tenantsRef = ref(db, "blocks");
       onValue(tenantsRef, (snapshot) => {
         const data = snapshot.val();
-        tenantList.innerHTML = "";
-        if (!data) {
-          tenantList.innerHTML = "<p class='text-gray-400 text-center'>No tenants found.</p>";
-          return;
+        allTenants = [];
+        if (data) {
+          Object.keys(data).forEach(block => {
+            const floors = data[block].floors || {};
+            Object.keys(floors).forEach(floor => {
+              const tenants = floors[floor].tenants || {};
+              Object.keys(tenants).forEach(tid => {
+                allTenants.push({ id: tid, ...tenants[tid], block, floor });
+              });
+            });
+          });
         }
-        Object.keys(data).forEach(tid => {
-          const t = data[tid];
-          const item = document.createElement("div");
-          item.className = "flex items-center justify-between bg-white p-4 rounded-lg shadow-md card-hover";
-
-          const left = document.createElement("div");
-          left.className = "flex items-center gap-4";
-          if (t.logo) {
-            const logo = document.createElement("img");
-            logo.src = t.logo;
-            logo.className = "h-12 w-12 rounded";
-            left.appendChild(logo);
-          }
-          const info = document.createElement("div");
-          info.innerHTML = `<span class="font-bold text-lg text-gray-800">${t.name}</span><br><span class="text-sm text-gray-500">Floor: ${floor}, Core: ${t.core || 'N/A'}</span>`;
-          left.appendChild(info);
-          item.appendChild(left);
-
-          const right = document.createElement("div");
-          right.className = "flex gap-2";
-          const editBtn = document.createElement("button");
-          editBtn.textContent = "Edit";
-          editBtn.className = "bg-yellow-400 px-4 py-1 rounded hover:bg-yellow-500 text-sm";
-          editBtn.onclick = () => {
-            editTenantId = tid;
-            nameEl.value = t.name;
-            logoEl.value = t.logo || "";
-            coreEl.value = t.core || "";
-            cancelEditBtn.classList.remove("hidden");
-          };
-          right.appendChild(editBtn);
-
-          const delBtn = document.createElement("button");
-          delBtn.textContent = "Delete";
-          delBtn.className = "bg-red-600 px-4 py-1 rounded hover:bg-red-700 text-sm";
-          delBtn.onclick = async () => {
-            if (confirm(`Delete tenant ${t.name}?`)) {
-              await remove(ref(db, `blocks/${block}/floors/${floor}/tenants/${tid}`));
-              showToast("Tenant deleted!");
-            }
-          };
-          right.appendChild(delBtn);
-
-          item.appendChild(right);
-          tenantList.appendChild(item);
-        });
+        renderTenants();
       });
     }
 
-    floorEl.addEventListener("change", watchTenants);
-    updateCoreOptions(); // Initialize core options
+    function renderTenants() {
+      const blockFilter = filterBlock.value;
+      const coreFilter = filterCore.value;
+      const searchFilter = filterSearch.value.toLowerCase();
+
+      const filtered = allTenants.filter(t => {
+        return (!blockFilter || t.block === blockFilter) &&
+               (!coreFilter || t.core === coreFilter) &&
+               (!searchFilter || t.name.toLowerCase().includes(searchFilter));
+      });
+
+      tenantList.innerHTML = "";
+      if (filtered.length === 0) {
+        tenantList.innerHTML = "<p class='text-gray-400 text-center'>No tenants found.</p>";
+        return;
+      }
+
+      filtered.forEach(t => {
+        const item = document.createElement("div");
+        item.className = "flex items-center justify-between bg-white p-4 rounded-xl shadow-sm card-hover";
+
+        const left = document.createElement("div");
+        left.className = "flex items-center gap-3";
+        if (t.logo) {
+          const logo = document.createElement("img");
+          logo.src = t.logo;
+          logo.className = "h-10 w-10 rounded";
+          left.appendChild(logo);
+        }
+        const info = document.createElement("div");
+        info.innerHTML = `<span class="font-semibold text-base text-gray-800">${t.name}</span><br>
+                          <span class="text-xs text-gray-500">Block ${t.block} • Floor ${t.floor} • ${t.core || 'N/A'}</span>`;
+        left.appendChild(info);
+        item.appendChild(left);
+
+        const right = document.createElement("div");
+        right.className = "flex gap-2";
+        const editBtn = document.createElement("button");
+        editBtn.textContent = "Edit";
+        editBtn.className = "bg-yellow-400 px-3 py-1 rounded text-xs";
+        editBtn.onclick = () => {
+          editTenantId = t.id;
+          blockEl.value = t.block;
+          updateCoreOptions();
+          coreEl.value = t.core || "";
+          floorEl.value = t.floor;
+          nameEl.value = t.name;
+          logoEl.value = t.logo || "";
+          cancelEditBtn.classList.remove("hidden");
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        };
+        right.appendChild(editBtn);
+
+        const delBtn = document.createElement("button");
+        delBtn.textContent = "Delete";
+        delBtn.className = "bg-red-500 px-3 py-1 rounded text-xs text-white";
+        delBtn.onclick = async () => {
+          if (confirm(`Delete tenant ${t.name}?`)) {
+            await remove(ref(db, `blocks/${t.block}/floors/${t.floor}/tenants/${t.id}`));
+            showToast("Tenant deleted!");
+          }
+        };
+        right.appendChild(delBtn);
+
+        item.appendChild(right);
+        tenantList.appendChild(item);
+      });
+    }
+
+    updateCoreOptions();
+    updateFilterCoreOptions();
+    fetchTenants();
   });
 </script>
 </body>
