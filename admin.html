@@ -76,11 +76,11 @@
 
 <!-- Page Title -->
 <h1 class="text-4xl font-extrabold mb-10 text-center gradient-text drop-shadow-lg">
-  Admin Panel - Manage Tenants & Ads
+  Admin Panel - Manage Tenants
 </h1>
 
 <!-- Add/Edit Tenant Form -->
-<form id="addForm" class="space-y-6 mb-12 bg-white p-8 rounded-3xl shadow-xl max-w-5xl mx-auto border border-gray-200">
+<form id="addForm" class="space-y-6 mb-12 bg-white p-8 rounded-3xl shadow-xl max-w-3xl mx-auto border border-gray-200">
   <h2 class="text-2xl font-bold mb-6 text-gray-800 border-b border-gray-300 pb-2">Add / Edit Tenant</h2>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -92,15 +92,8 @@
     </select>
 
     <input id="floor" type="number" placeholder="Floor Number" class="p-4 bg-gray-100 rounded-lg w-full border border-gray-300 text-gray-800"/>
-
     <input id="name" type="text" placeholder="Tenant Name" class="p-4 bg-gray-100 rounded-lg w-full border border-gray-300 text-gray-800"/>
     <input id="logoUrl" type="url" placeholder="Logo Image URL" class="p-4 bg-gray-100 rounded-lg w-full border border-gray-300 text-gray-800"/>
-
-    <input id="core" type="text" placeholder="Core" class="p-4 bg-gray-100 rounded-lg w-full border border-gray-300 text-gray-800"/>
-    <input id="contact" type="text" placeholder="Contact Number" class="p-4 bg-gray-100 rounded-lg w-full border border-gray-300 text-gray-800"/>
-
-    <input id="email" type="email" placeholder="Email" class="p-4 bg-gray-100 rounded-lg w-full border border-gray-300 text-gray-800"/>
-    <textarea id="description" placeholder="Description" class="p-4 bg-gray-100 rounded-lg w-full resize-none border border-gray-300 text-gray-800"></textarea>
   </div>
 
   <div class="flex gap-4 mt-6">
@@ -112,22 +105,6 @@
 <!-- Tenant List -->
 <h2 class="text-3xl font-extrabold mb-6 text-center text-gray-700 drop-shadow-md">Existing Tenants</h2>
 <div id="tenantList" class="space-y-4 max-w-5xl mx-auto"></div>
-
-<!-- Announcements -->
-<h2 class="text-3xl font-extrabold mt-12 mb-6 text-center text-blue-600 drop-shadow-md">Announcements</h2>
-<form id="announcementForm" class="space-y-4 mb-6 bg-white p-6 rounded-3xl shadow-xl max-w-3xl mx-auto border border-gray-200">
-  <input id="announcementUrl" type="url" placeholder="Enter Announcement Image/Video URL" class="p-4 bg-gray-100 rounded-lg w-full border border-gray-300 text-gray-800"/>
-  <button type="submit" class="btn-gradient px-6 py-2 rounded-xl w-full shadow-lg">Save</button>
-</form>
-<div id="announcementList" class="space-y-4 max-w-3xl mx-auto"></div>
-
-<!-- Ads -->
-<h2 class="text-3xl font-extrabold mt-12 mb-6 text-center text-purple-600 drop-shadow-md">Ads</h2>
-<form id="adsForm" class="space-y-4 mb-6 bg-white p-6 rounded-3xl shadow-xl max-w-3xl mx-auto border border-gray-200">
-  <input id="adsUrl" type="url" placeholder="Enter Ad Image/Video URL" class="p-4 bg-gray-100 rounded-lg w-full border border-gray-300 text-gray-800"/>
-  <button type="submit" class="btn-gradient px-6 py-2 rounded-xl w-full shadow-lg">Save</button>
-</form>
-<div id="adsList" class="space-y-4 max-w-3xl mx-auto"></div>
 
 <!-- Firebase + Script -->
 <script type="module">
@@ -157,10 +134,6 @@
     const tenantList = document.getElementById("tenantList");
     const nameEl = document.getElementById("name");
     const logoEl = document.getElementById("logoUrl");
-    const coreEl = document.getElementById("core");
-    const descEl = document.getElementById("description");
-    const contactEl = document.getElementById("contact");
-    const emailEl = document.getElementById("email");
     const addForm = document.getElementById("addForm");
     const cancelEditBtn = document.getElementById("cancelEdit");
     let editTenantId = null;
@@ -171,12 +144,8 @@
       const floor = floorEl.value;
       const name = nameEl.value;
       const logo = logoEl.value;
-      const core = coreEl.value;
-      const description = descEl.value;
-      const contact = contactEl.value;
-      const email = emailEl.value;
       if (!block || !floor || !name) return showToast("Fill at least block, floor, and name");
-      const tenantData = { name, logo, core, description, contact, email };
+      const tenantData = { name, logo };
       try {
         if (editTenantId) {
           await set(ref(db, `blocks/${block}/floors/${floor}/tenants/${editTenantId}`), tenantData);
@@ -240,10 +209,6 @@
             editTenantId = tid;
             nameEl.value = t.name;
             logoEl.value = t.logo || "";
-            coreEl.value = t.core || "";
-            descEl.value = t.description || "";
-            contactEl.value = t.contact || "";
-            emailEl.value = t.email || "";
             cancelEditBtn.classList.remove("hidden");
           };
           right.appendChild(editBtn);
@@ -266,65 +231,6 @@
     }
     blockEl.addEventListener("change", watchTenants);
     floorEl.addEventListener("input", watchTenants);
-
-    // Announcements
-    const announcementForm = document.getElementById("announcementForm");
-    const announcementUrl = document.getElementById("announcementUrl");
-    const announcementList = document.getElementById("announcementList");
-    announcementForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      if (!announcementUrl.value) return showToast("Enter announcement URL");
-      const newRef = push(ref(db, "announcements"));
-      await set(newRef, { url: announcementUrl.value });
-      announcementForm.reset();
-      showToast("Announcement added!");
-    });
-    onValue(ref(db, "announcements"), (snap) => {
-      const data = snap.val();
-      announcementList.innerHTML = "";
-      if (!data) return;
-      Object.keys(data).forEach((id) => {
-        const item = document.createElement("div");
-        item.className = "flex items-center justify-between bg-white p-4 rounded-lg shadow-md card-hover";
-        item.innerHTML = `<span class="truncate w-2/3 text-gray-800">${data[id].url}</span>`;
-        const delBtn = document.createElement("button");
-        delBtn.textContent = "Delete";
-        delBtn.className = "bg-red-600 px-4 py-1 rounded hover:bg-red-700 text-sm";
-        delBtn.onclick = () => { remove(ref(db, "announcements/" + id)); showToast("Announcement deleted!"); };
-        item.appendChild(delBtn);
-        announcementList.appendChild(item);
-      });
-    });
-
-    // Ads
-    const adsForm = document.getElementById("adsForm");
-    const adsUrl = document.getElementById("adsUrl");
-    const adsList = document.getElementById("adsList");
-    adsForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-      if (!adsUrl.value) return showToast("Enter ad URL");
-      const newRef = push(ref(db, "ads"));
-      await set(newRef, { url: adsUrl.value });
-      adsForm.reset();
-      showToast("Ad added!");
-    });
-    onValue(ref(db, "ads"), (snap) => {
-      const data = snap.val();
-      adsList.innerHTML = "";
-      if (!data) return;
-      Object.keys(data).forEach((id) => {
-        const item = document.createElement("div");
-        item.className = "flex items-center justify-between bg-white p-4 rounded-lg shadow-md card-hover";
-        item.innerHTML = `<span class="truncate w-2/3 text-gray-800">${data[id].url}</span>`;
-        const delBtn = document.createElement("button");
-        delBtn.textContent = "Delete";
-        delBtn.className = "bg-red-600 px-4 py-1 rounded hover:bg-red-700 text-sm";
-        delBtn.onclick = () => { remove(ref(db, "ads/" + id)); showToast("Ad deleted!"); };
-        item.appendChild(delBtn);
-        adsList.appendChild(item);
-      });
-    });
-
   });
 </script>
 </body>
