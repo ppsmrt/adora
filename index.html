@@ -1,281 +1,179 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"/>
-<title>Corporate Tenant Directory</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Orbitron:wght@500;700&display=swap" rel="stylesheet">
-<style>
-html, body {
-  margin:0; padding:0;
-  width:100vw; height:100vh;
-  overflow:hidden;
-  font-family:"Inter", sans-serif;
-  background:#000;
-  color:#fff;
-}
-
-/* Base gradient */
-body::before {
-  content:"";
-  position:fixed; inset:0;
-  background:linear-gradient(135deg,#00111f,#001f33,#002f44);
-  background-size:600% 600%;
-  animation:bgShift 60s infinite linear;
-  z-index:-3;
-}
-@keyframes bgShift {
-  0%{background-position:0% 50%;}
-  50%{background-position:100% 50%;}
-  100%{background-position:0% 50%;}
-}
-
-/* Nature GIF overlay */
-#natureBg {
-  position:fixed; inset:0;
-  object-fit:cover;
-  z-index:-2;
-  opacity:0.25;
-  transition:opacity 2s ease;
-  pointer-events:none;
-}
-
-/* Gradient particles canvas */
-#particles {
-  position:fixed; inset:0;
-  z-index:-1;
-  pointer-events:none;
-}
-
-/* Directory container */
-#directoryView {
-  position:fixed; inset:0;
-  display:flex; justify-content:center; align-items:center;
-  padding:6vh 4vw;
-  overflow-y:auto;
-}
-.directory-container {
-  width:95%; max-width:1500px;
-  padding:5vh 4vw;
-  border-radius:28px;
-  display:flex; flex-direction:column; gap:4vh;
-  animation:fadeIn 1.5s ease forwards;
-}
-@keyframes fadeIn {
-  from{opacity:0; transform:translateY(40px);}
-  to{opacity:1; transform:translateY(0);}
-}
-
-/* Title */
-.directory-title {
-  font-size:6vh;
-  font-weight:800;
-  text-align:center;
-  font-family:"Orbitron",sans-serif;
-  background:linear-gradient(90deg,#ff6ec4,#7873f5,#4adeff,#5af78d);
-  -webkit-background-clip:text; -webkit-text-fill-color:transparent;
-  text-transform:uppercase;
-  letter-spacing:3px;
-  margin-bottom:2vh;
-  position:relative;
-}
-.directory-title::after {
-  content:"";
-  display:block;
-  width:100px; height:5px;
-  margin:18px auto 0;
-  border-radius:4px;
-  background:linear-gradient(90deg,#4adeff,#5af78d);
-  animation:glowBar 2.5s infinite alternate;
-}
-@keyframes glowBar {
-  from{opacity:0.3; transform:scaleX(0.6);}
-  to{opacity:1; transform:scaleX(1);}
-}
-
-/* Floor sections */
-.floor-section {
-  display:flex; align-items:center; justify-content:space-between;
-  padding:3vh 2.5vw;
-  border-radius:20px;
-  background:rgba(255,255,255,0.05);
-  border:1px solid rgba(255,255,255,0.12);
-  box-shadow:0 12px 45px rgba(0,0,0,0.4);
-  gap:3vw;
-  transform:translateY(50px);
-  opacity:0;
-  animation:slideUp 1s forwards;
-  transition:all 0.4s ease;
-}
-@keyframes slideUp { to{transform:translateY(0); opacity:1;} }
-
-/* Floor number */
-.floor-num {
-  font-size:3.8vh;
-  font-weight:700;
-  color:#5af78d;
-  flex:0 0 150px;
-  font-family:"Orbitron",sans-serif;
-  text-shadow:0 0 12px rgba(90,247,141,0.6);
-}
-
-/* Logos grid */
-.tenant-logos {
-  display:flex; flex-wrap:wrap; gap:1.6vw;
-  flex:1;
-}
-.tenant-logos img {
-  height:9vh; width:auto;
-  border-radius:18px;
-  padding:8px;
-  background:rgba(255,255,255,0.07);
-  box-shadow:0 8px 25px rgba(0,0,0,0.35);
-  transition:transform 0.5s ease;
-}
-.tenant-logos img:hover {
-  transform:scale(1.15) rotate(-2deg);
-}
-
-/* Responsive */
-@media(max-width:768px){
-  .directory-title{font-size:7vw;}
-  .floor-section{flex-direction:column; align-items:flex-start; gap:2vh;}
-  .floor-num{font-size:5.5vw;}
-  .tenant-logos img{height:16vw;}
-}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Premium Tenant Directory — Global Infocity</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --accent: #ff6600;
+      --muted: #6b7280;
+      --bg: #ffffff;
+      --divider: rgba(0,0,0,0.1);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 20px;
+    }
+    .directory {
+      width: 700px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+    .header {
+      text-align: center;
+      padding: 20px;
+      background: #fff;
+    }
+    .header h1 {
+      color: var(--accent);
+      font-size: 32px;
+      font-weight: 800;
+    }
+    .header h2 {
+      font-size: 28px;
+      font-weight: 600;
+      margin-top: 6px;
+    }
+    .list {
+      display: flex;
+      flex-direction: column-reverse;
+      border-top: 1px solid var(--divider);
+    }
+    .row {
+      display: grid;
+      grid-template-columns: 80px 1px auto;
+      align-items: center;
+      padding: 16px 12px;
+      border-bottom: 1px solid var(--divider);
+      opacity: 0;
+      transform: translateY(40px) scale(0.5);
+      animation: rowAnim 0.6s forwards;
+    }
+    .row:last-child {
+      border-bottom: none;
+    }
+    .divider-vertical {
+      width: 1px;
+      height: 70px;
+      background: linear-gradient(to bottom, transparent, var(--divider), transparent);
+      justify-self: center;
+    }
+    .floor {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--muted);
+      text-align: left;
+      padding-left: 10px;
+      white-space: nowrap;
+    }
+    .logo {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .logo img {
+      width: 80px;
+      height: 80px;
+      border-radius: 12px;
+      object-fit: contain;
+      background: #f9f9f9;
+      padding: 6px;
+    }
+    @keyframes rowAnim {
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+  </style>
 </head>
 <body>
-<video id="natureBg" autoplay muted loop></video>
-<canvas id="particles"></canvas>
-<div id="directoryView"></div>
+  <div class="directory">
+    <div class="header">
+      <h1>Global Infocity Park</h1>
+      <h2>Block A</h2>
+    </div>
+    <div class="list" id="directoryView">
+      <!-- Floors will be dynamically loaded from Firebase -->
+    </div>
+  </div>
 
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-  import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+    import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
-  // Firebase config
-  const firebaseConfig = {
-    apiKey: "AIzaSyCrGIB_YK33p_2EPTpU-klZ_3xQ5TOPm4c",
-    authDomain: "adora-ad.firebaseapp.com",
-    databaseURL: "https://adora-ad-default-rtdb.asia-southeast1.firebasedatabase.app",
-    projectId: "adora-ad",
-    storageBucket: "adora-ad.appspot.com",
-    messagingSenderId: "550034277527",
-    appId: "1:550034277527:web:966b16ce942a161e8955d2",
-  };
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyCrGIB_YK33p_2EPTpU-klZ_3xQ5TOPm4c",
+      authDomain: "adora-ad.firebaseapp.com",
+      databaseURL: "https://adora-ad-default-rtdb.asia-southeast1.firebasedatabase.app",
+      projectId: "adora-ad",
+      storageBucket: "adora-ad.appspot.com",
+      messagingSenderId: "550034277527",
+      appId: "1:550034277527:web:966b16ce942a161e8955d2",
+    };
 
-  const app = initializeApp(firebaseConfig);
-  const db = getDatabase(app);
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+    const floorsRef = ref(db, "blocks/A/floors");
 
-  const directoryView = document.getElementById("directoryView");
-  const floorsRef = ref(db, "blocks/A/floors");
+    const listContainer = document.getElementById("directoryView");
 
-  function ordinal(n){ const s=["th","st","nd","rd"], v=n%100; return n+(s[(v-20)%10]||s[v]||s[0]); }
+    // Utility to add animation delays
+    function ordinal(n) { return n; } // We'll just show "Floor X"
 
-  onValue(floorsRef, snapshot => {
-    const data = snapshot.val();
-    directoryView.innerHTML="";
+    onValue(floorsRef, snapshot => {
+      const data = snapshot.val();
+      listContainer.innerHTML = ""; // Clear existing rows
 
-    const container = document.createElement("div");
-    container.className="directory-container";
+      if (!data) return;
 
-    const title = document.createElement("div");
-    title.className="directory-title";
-    title.textContent="Tenant Directory";
-    container.appendChild(title);
+      // Sort floors numerically
+      const floorKeys = Object.keys(data).sort((a,b)=>a-b);
 
-    Object.keys(data).forEach((floor,i)=>{
-      const tenantsObj = data[floor].tenants;
-      if(!tenantsObj) return;
+      floorKeys.forEach((floor, i) => {
+        const tenants = data[floor]?.tenants;
+        if (!tenants) return;
 
-      const floorSection = document.createElement("div");
-      floorSection.className="floor-section";
-      floorSection.style.animationDelay = `${i*0.2}s`;
+        const row = document.createElement("div");
+        row.className = "row";
+        row.style.animationDelay = `${(i+1)*0.1}s`;
 
-      const floorNum = document.createElement("div");
-      floorNum.className="floor-num";
-      floorNum.textContent = ordinal(Number(floor)) + " Floor";
+        const floorDiv = document.createElement("div");
+        floorDiv.className = "floor";
+        floorDiv.textContent = `Floor ${floor}`;
 
-      const logosDiv = document.createElement("div");
-      logosDiv.className="tenant-logos";
+        const divider = document.createElement("div");
+        divider.className = "divider-vertical";
 
-      Object.keys(tenantsObj).forEach(key=>{
-        const img = document.createElement("img");
-        img.src = tenantsObj[key].logo;
-        img.alt = tenantsObj[key].name;
-        logosDiv.appendChild(img);
+        const logoDiv = document.createElement("div");
+        logoDiv.className = "logo";
+
+        Object.keys(tenants).forEach(key => {
+          const img = document.createElement("img");
+          img.src = tenants[key].logo || "https://via.placeholder.com/80";
+          img.alt = tenants[key].name || "Tenant";
+          logoDiv.appendChild(img);
+        });
+
+        row.appendChild(floorDiv);
+        row.appendChild(divider);
+        row.appendChild(logoDiv);
+
+        listContainer.appendChild(row);
       });
-
-      floorSection.appendChild(floorNum);
-      floorSection.appendChild(logosDiv);
-      container.appendChild(floorSection);
     });
-
-    directoryView.appendChild(container);
-  });
-
-  /* --- Particle system --- */
-  const canvas = document.getElementById("particles");
-  const ctx = canvas.getContext("2d");
-  let particles = [];
-
-  function resizeCanvas(){
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    particles = [];
-    for(let i=0;i<40;i++){
-      particles.push({
-        x:Math.random()*canvas.width,
-        y:Math.random()*canvas.height,
-        r:Math.random()*40+20,
-        dx:(Math.random()-0.5)*0.3,
-        dy:(Math.random()-0.5)*0.3,
-        color:`hsla(${Math.random()*360}, 100%, 60%, 0.15)`
-      });
-    }
-  }
-  function animateParticles(){
-    ctx.clearRect(0,0,canvas.width,canvas.height);
-    particles.forEach(p=>{
-      ctx.beginPath();
-      const gradient = ctx.createRadialGradient(p.x,p.y,0,p.x,p.y,p.r);
-      gradient.addColorStop(0,p.color);
-      gradient.addColorStop(1,"transparent");
-      ctx.fillStyle=gradient;
-      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
-      ctx.fill();
-      p.x+=p.dx; p.y+=p.dy;
-      if(p.x<0||p.x>canvas.width) p.dx*=-1;
-      if(p.y<0||p.y>canvas.height) p.dy*=-1;
-    });
-    requestAnimationFrame(animateParticles);
-  }
-  window.addEventListener("resize",resizeCanvas);
-  resizeCanvas(); animateParticles();
-
-  /* --- Nature GIF rotation --- */
-  const gifList = [
-    "https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.mp4", // spring blossoms
-    "https://media.giphy.com/media/3o6Zt481isNVuQI1l6/giphy.mp4", // flowing water
-    "https://media.giphy.com/media/l0MYt5jPR6QX5pnqM/giphy.mp4", // forest
-    "https://media.giphy.com/media/xT0GqssRweIhlz209i/giphy.mp4"  // sunlight leaves
-  ];
-  const natureBg = document.getElementById("natureBg");
-  let index=0;
-  function rotateGif(){
-    natureBg.style.opacity=0;
-    setTimeout(()=>{
-      index=(index+1)%gifList.length;
-      natureBg.src=gifList[index];
-      natureBg.load();
-      natureBg.play();
-      natureBg.style.opacity=0.25;
-    },2000);
-  }
-  natureBg.src=gifList[index];
-  natureBg.play();
-  setInterval(rotateGif,60000); // every 1 minute
-</script>
+  </script>
 </body>
 </html>
