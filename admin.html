@@ -69,7 +69,12 @@
   }
 </style>
 </head>
-<body class="bg-gray-50 text-gray-900 p-6 font-sans">
+<body class="bg-gray-50 text-gray-900 font-sans">
+
+<!-- Premium Header -->
+<header class="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 text-white text-center font-bold text-2xl shadow-lg">
+  Premium Admin Panel
+</header>
 
 <!-- Toast -->
 <div id="toast"></div>
@@ -80,18 +85,37 @@
 </h1>
 
 <!-- Add/Edit Tenant Form -->
-<form id="addForm" class="space-y-6 mb-12 bg-white p-8 rounded-3xl shadow-xl max-w-3xl mx-auto border border-gray-200">
+<form id="addForm" class="space-y-6 mb-12 bg-white p-8 rounded-3xl shadow-xl max-w-4xl mx-auto border border-gray-200">
   <h2 class="text-2xl font-bold mb-6 text-gray-800 border-b border-gray-300 pb-2">Add / Edit Tenant</h2>
 
   <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     <select id="block" class="p-4 bg-gray-100 rounded-lg w-full border border-gray-300 text-gray-800">
-      <option value="">Select Block</option>
       <option value="A">Block A</option>
       <option value="B">Block B</option>
       <option value="C">Block C</option>
     </select>
 
-    <input id="floor" type="number" placeholder="Floor Number" class="p-4 bg-gray-100 rounded-lg w-full border border-gray-300 text-gray-800"/>
+    <select id="core" class="p-4 bg-gray-100 rounded-lg w-full border border-gray-300 text-gray-800">
+      <!-- Options dynamically filled -->
+    </select>
+
+    <select id="floor" class="p-4 bg-gray-100 rounded-lg w-full border border-gray-300 text-gray-800">
+      <option value="GF">GF</option>
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+      <option value="7">7</option>
+      <option value="8">8</option>
+      <option value="9">9</option>
+      <option value="10">10</option>
+      <option value="11">11</option>
+      <option value="12">12</option>
+      <option value="13">13</option>
+    </select>
+
     <input id="name" type="text" placeholder="Tenant Name" class="p-4 bg-gray-100 rounded-lg w-full border border-gray-300 text-gray-800"/>
     <input id="logoUrl" type="url" placeholder="Logo Image URL" class="p-4 bg-gray-100 rounded-lg w-full border border-gray-300 text-gray-800"/>
   </div>
@@ -105,6 +129,11 @@
 <!-- Tenant List -->
 <h2 class="text-3xl font-extrabold mb-6 text-center text-gray-700 drop-shadow-md">Existing Tenants</h2>
 <div id="tenantList" class="space-y-4 max-w-5xl mx-auto"></div>
+
+<!-- Premium Footer -->
+<footer class="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 text-white text-center font-semibold mt-12 shadow-inner">
+  © 2025 Premium Admin Panel. All rights reserved.
+</footer>
 
 <!-- Firebase + Script -->
 <script type="module">
@@ -130,6 +159,7 @@
 
   document.addEventListener("DOMContentLoaded", () => {
     const blockEl = document.getElementById("block");
+    const coreEl = document.getElementById("core");
     const floorEl = document.getElementById("floor");
     const tenantList = document.getElementById("tenantList");
     const nameEl = document.getElementById("name");
@@ -138,14 +168,35 @@
     const cancelEditBtn = document.getElementById("cancelEdit");
     let editTenantId = null;
 
+    function updateCoreOptions() {
+      const block = blockEl.value;
+      coreEl.innerHTML = "";
+      let options = [];
+      if (block === "A") options = ["Core-1", "Core-2"];
+      else if (block === "B") options = ["No Core"];
+      else if (block === "C") options = ["Core-1", "Core-2"];
+      options.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c;
+        opt.textContent = c;
+        coreEl.appendChild(opt);
+      });
+    }
+
+    blockEl.addEventListener("change", () => {
+      updateCoreOptions();
+      watchTenants();
+    });
+
     addForm.addEventListener("submit", async (e) => {
       e.preventDefault();
       const block = blockEl.value;
+      const core = coreEl.value;
       const floor = floorEl.value;
       const name = nameEl.value;
       const logo = logoEl.value;
       if (!block || !floor || !name) return showToast("Fill at least block, floor, and name");
-      const tenantData = { name, logo };
+      const tenantData = { name, logo, core };
       try {
         if (editTenantId) {
           await set(ref(db, `blocks/${block}/floors/${floor}/tenants/${editTenantId}`), tenantData);
@@ -196,7 +247,7 @@
             left.appendChild(logo);
           }
           const info = document.createElement("div");
-          info.innerHTML = `<span class="font-bold text-lg text-gray-800">${t.name}</span><br><span class="text-sm text-gray-500">Floor: ${floor}</span>`;
+          info.innerHTML = `<span class="font-bold text-lg text-gray-800">${t.name}</span><br><span class="text-sm text-gray-500">Floor: ${floor}, Core: ${t.core || 'N/A'}</span>`;
           left.appendChild(info);
           item.appendChild(left);
 
@@ -209,6 +260,7 @@
             editTenantId = tid;
             nameEl.value = t.name;
             logoEl.value = t.logo || "";
+            coreEl.value = t.core || "";
             cancelEditBtn.classList.remove("hidden");
           };
           right.appendChild(editBtn);
@@ -229,8 +281,9 @@
         });
       });
     }
-    blockEl.addEventListener("change", watchTenants);
-    floorEl.addEventListener("input", watchTenants);
+
+    floorEl.addEventListener("change", watchTenants);
+    updateCoreOptions(); // Initialize core options
   });
 </script>
 </body>
