@@ -72,10 +72,10 @@
       padding: 0 1vw;
       gap: 0.5vw;
       opacity: 0;
-      transform: translateY(20px);
+      transform: translateY(0);
       height: auto;
     }
-    .row.show { animation: fadeSlideUp 1s forwards; }
+    .row.show { animation: fadeSlideUp 0.8s forwards; }
 
     .divider-vertical {
       width: 2px;
@@ -91,13 +91,13 @@
       transform: scale(0.5);
       flex-shrink: 0;
     }
-    .floor.show { animation: popIn 0.8s forwards; }
+    .floor.show { animation: popIn 0.6s forwards; }
 
     .logo {
       display: flex;
       justify-content: flex-start;
       align-items: center;
-      flex-wrap: wrap;
+      flex-wrap: wrap; /* wrap logos if too many */
       gap: 1vw;
       width: 100%;
     }
@@ -110,15 +110,12 @@
       opacity: 0;
       transform: scale(0.5);
     }
-    .logo img.show { animation: popIn 0.8s forwards; }
+    .logo img.show { animation: popIn 0.6s forwards; }
 
+    /* Animations */
     @keyframes fadeZoom { to { opacity: 1; transform: scale(1); } }
     @keyframes fadeSlideUp { to { opacity: 1; transform: translateY(0); } }
-    @keyframes popIn {
-      0% { opacity: 0; transform: scale(0.5); }
-      70% { opacity: 1; transform: scale(1.1); }
-      100% { transform: scale(1); }
-    }
+    @keyframes popIn { to { opacity: 1; transform: scale(1); } }
     @keyframes fadeOut { to { opacity: 0; transform: scale(0.95); } }
   </style>
 </head>
@@ -155,7 +152,7 @@
     const directoryDiv = document.getElementById("directory");
 
     let directoryData = null;
-    const displayTime = 30000; // 30s after animations complete
+    const loopInterval = 40000; // 40s loop
 
     onValue(floorsRef, snapshot => {
       directoryData = snapshot.val();
@@ -163,15 +160,15 @@
     });
 
     function startLoop() {
-      playAnimation();
-      // clear any previous interval
-      let loopTimer = setInterval(() => {
+      playAnimation(); // initial
+      setInterval(() => {
+        // fade-out before restarting
         directoryDiv.classList.add("fade-out");
         setTimeout(() => {
           directoryDiv.classList.remove("fade-out");
           playAnimation();
         }, 1000);
-      }, displayTime + 2000); // wait 30s + approx animation duration
+      }, loopInterval);
     }
 
     function playAnimation() {
@@ -181,8 +178,8 @@
       mainTitle.style.opacity = 0; mainTitle.style.transform = "scale(0.8)";
       subTitle.style.opacity = 0; subTitle.style.transform = "translateY(20px)";
 
-      setTimeout(() => { mainTitle.style.animation = "fadeZoom 1.2s forwards"; }, 200);
-      setTimeout(() => { subTitle.style.animation = "fadeSlideUp 1.2s forwards"; }, 1400);
+      setTimeout(() => { mainTitle.style.animation = "fadeZoom 1s forwards"; }, 200);
+      setTimeout(() => { subTitle.style.animation = "fadeSlideUp 1s forwards"; }, 1200);
 
       const floorKeys = Object.keys(directoryData).sort((a,b)=>{
         if(a==="GF") return -1;
@@ -194,7 +191,7 @@
       const headerHeight = document.querySelector('.header').clientHeight;
       const rowHeight = (directoryHeight - headerHeight) / floorKeys.length;
 
-      let globalDelay = 2000;
+      let globalDelay = 2000; // start after headers
 
       floorKeys.forEach(floor => {
         const tenants = directoryData[floor]?.tenants;
@@ -247,8 +244,8 @@
 
           logoDiv.appendChild(img);
 
-          // wave animation left-to-right, logos stay visible
-          setTimeout(() => img.classList.add("show"), globalDelay + 600 + idx*400);
+          // Wave-style animation left-to-right
+          setTimeout(() => img.classList.add("show"), globalDelay + 400 + idx*200);
         });
 
         row.appendChild(floorDiv);
@@ -257,9 +254,9 @@
         listContainer.appendChild(row);
 
         setTimeout(()=>row.classList.add("show"), globalDelay);
-        setTimeout(()=>floorDiv.classList.add("show"), globalDelay+600);
+        setTimeout(()=>floorDiv.classList.add("show"), globalDelay+400);
 
-        globalDelay += (tenantKeys.length+2)*400; 
+        globalDelay += (tenantKeys.length+2)*400;
       });
     }
   </script>
