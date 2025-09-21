@@ -50,7 +50,7 @@
     .row {
       display: grid;
       grid-template-columns: 12vw 1.5vw auto; /* floor | divider | logos */
-      align-items: center;
+      align-items: center; /* aligns floor + divider + logos */
       border-bottom: 1px solid var(--divider);
       opacity: 0;
       transform: translateY(4vh) scale(0.5);
@@ -72,9 +72,9 @@
     .logo {
       display: flex;
       justify-content: flex-start;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 0.5vh;
+      align-items: center; /* vertical alignment with floor numbers */
+      flex-wrap: nowrap;   /* keep in one row */
+      gap: 1vw;
       width: 100%;
     }
     .logo img {
@@ -193,14 +193,11 @@
           // Width per tenant
           let maxW = availableLogoWidth / tenantCount - 16;
 
-          // Minimum size (avoid tiny/pixelated logos on big screens)
-          const minSize = 64; // px (can be adjusted)
-          img.style.maxHeight = `${Math.max(maxH, minSize)}px`;
+          // Minimum size
+          const minSize = 64;
+          img.style.height = `${Math.max(maxH, minSize)}px`; // fixed height for alignment
           img.style.maxWidth  = `${Math.max(maxW, minSize)}px`;
-
-          // Keep aspect ratio
-          img.style.height = "auto";
-          img.style.width  = "auto";
+          img.style.width  = "auto"; // keep aspect ratio
 
           logoDiv.appendChild(img);
         });
