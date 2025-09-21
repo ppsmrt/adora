@@ -32,30 +32,30 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      position: relative;
     }
+    .fade-out { animation: fadeOut 1s forwards; }
+
     .header {
       text-align: center;
       padding: 2vh 0;
       flex-shrink: 0;
     }
+    .header h1, .header h2 {
+      opacity: 0;
+    }
     .header h1 {
       color: var(--accent);
-      font-weight: 900;
+      font-weight: 800;
       margin: 0;
       font-size: 2rem;
-      opacity: 0;
       transform: scale(0.8);
-      animation: fadeZoom 1s forwards;
-      animation-delay: 0.2s;
     }
     .header h2 {
       font-weight: 600;
       margin: 0;
       font-size: 1.5rem;
-      opacity: 0;
       transform: translateY(20px);
-      animation: fadeSlideUp 1s forwards;
-      animation-delay: 1s;
     }
 
     .list {
@@ -65,6 +65,7 @@
       flex: 1;
       overflow: hidden;
     }
+
     .row {
       display: grid;
       grid-template-columns: 12vw 1.5vw auto;
@@ -73,32 +74,32 @@
       padding: 0 1vw;
       gap: 0.5vw;
       opacity: 0;
-      transform: translateY(30px);
+      transform: translateY(0);
+      height: auto;
     }
-    .row.show {
-      animation: fadeSlideUp 0.8s forwards;
-    }
+    .row.show { animation: fadeSlideUp 0.8s forwards; }
 
     .divider-vertical {
       width: 2px;
       justify-self: center;
       background: linear-gradient(to bottom, transparent, var(--divider), transparent);
     }
+
     .floor {
       display: flex;
       justify-content: center;
       align-items: center;
       opacity: 0;
       transform: scale(0.5);
+      flex-shrink: 0;
     }
-    .floor.show {
-      animation: popIn 0.6s forwards;
-    }
+    .floor.show { animation: popIn 0.6s forwards; }
+
     .logo {
       display: flex;
       justify-content: flex-start;
       align-items: center;
-      flex-wrap: nowrap;
+      flex-wrap: wrap; /* wrap logos if too many */
       gap: 1vw;
       width: 100%;
     }
@@ -111,24 +112,17 @@
       opacity: 0;
       transform: scale(0.5);
     }
-    .logo img.show {
-      animation: popIn 0.6s forwards;
-    }
+    .logo img.show { animation: popIn 0.6s forwards; }
 
     /* Animations */
-    @keyframes fadeZoom {
-      to { opacity: 1; transform: scale(1); }
-    }
-    @keyframes fadeSlideUp {
-      to { opacity: 1; transform: translateY(0); }
-    }
-    @keyframes popIn {
-      to { opacity: 1; transform: scale(1); }
-    }
+    @keyframes fadeZoom { to { opacity: 1; transform: scale(1); } }
+    @keyframes fadeSlideUp { to { opacity: 1; transform: translateY(0); } }
+    @keyframes popIn { to { opacity: 1; transform: scale(1); } }
+    @keyframes fadeOut { to { opacity: 0; transform: scale(0.95); } }
   </style>
 </head>
 <body>
-  <div class="directory">
+  <div class="directory" id="directory">
     <div class="header">
       <h1 id="mainTitle">Global Infocity Park</h1>
       <h2 id="subTitle">Block A</h2>
@@ -153,29 +147,60 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
     const floorsRef = ref(db, "blocks/A/floors");
+
     const listContainer = document.getElementById("directoryView");
+    const mainTitle = document.getElementById("mainTitle");
+    const subTitle = document.getElementById("subTitle");
+    const directoryDiv = document.getElementById("directory");
+
+    let directoryData = null;
+    const loopInterval = 40000; // 40s loop
 
     onValue(floorsRef, snapshot => {
-      const data = snapshot.val();
-      listContainer.innerHTML = "";
-      if (!data) return;
+      directoryData = snapshot.val();
+      startLoop();
+    });
 
-      const floorKeys = Object.keys(data).sort((a,b)=>{
-        if(a === "GF") return -1;
-        if(b === "GF") return 1;
-        return parseInt(a) - parseInt(b);
+    function startLoop() {
+      playAnimation(); // initial
+      setInterval(() => {
+        // fade-out before restarting
+        directoryDiv.classList.add("fade-out");
+        setTimeout(() => {
+          directoryDiv.classList.remove("fade-out");
+          playAnimation();
+        }, 1000);
+      }, loopInterval);
+    }
+
+    function playAnimation() {
+      if (!directoryData) return;
+
+      // Reset content
+      listContainer.innerHTML = "";
+      mainTitle.style.opacity = 0; mainTitle.style.transform = "scale(0.8)";
+      subTitle.style.opacity = 0; subTitle.style.transform = "translateY(20px)";
+
+      // Animate headers
+      setTimeout(() => { mainTitle.style.animation = "fadeZoom 1s forwards"; }, 200);
+      setTimeout(() => { subTitle.style.animation = "fadeSlideUp 1s forwards"; }, 1200);
+
+      const floorKeys = Object.keys(directoryData).sort((a,b)=>{
+        if(a==="GF") return -1;
+        if(b==="GF") return 1;
+        return parseInt(a)-parseInt(b);
       });
 
       const numFloors = floorKeys.length;
-      const directoryHeight = document.querySelector('.directory').clientHeight;
+      const directoryHeight = directoryDiv.clientHeight;
       const headerHeight = document.querySelector('.header').clientHeight;
       const rowHeight = (directoryHeight - headerHeight) / numFloors;
 
-      let globalDelay = 2; // start after headers are done
+      let globalDelay = 2000; // start after headers
 
-      floorKeys.forEach((floor, i) => {
-        const tenants = data[floor]?.tenants;
-        if (!tenants) return;
+      floorKeys.forEach(floor => {
+        const tenants = directoryData[floor]?.tenants;
+        if(!tenants) return;
 
         const row = document.createElement("div");
         row.className = "row";
@@ -184,52 +209,48 @@
         const floorDiv = document.createElement("div");
         floorDiv.className = "floor";
         const floorBtn = document.createElement("div");
-        floorBtn.style.background = "#000";
-        floorBtn.style.color = "#fff";
-        floorBtn.style.borderRadius = "50%";
-        floorBtn.style.width = `${rowHeight * 0.5}px`;
-        floorBtn.style.height = `${rowHeight * 0.5}px`;
-        floorBtn.style.display = "flex";
-        floorBtn.style.justifyContent = "center";
-        floorBtn.style.alignItems = "center";
-        floorBtn.style.fontWeight = "600";
-        floorBtn.style.fontSize = `${rowHeight * 0.2}px`;
+        floorBtn.style.background="#000"; floorBtn.style.color="#fff";
+        floorBtn.style.borderRadius="50%";
+        floorBtn.style.width=`${rowHeight*0.5}px`;
+        floorBtn.style.height=`${rowHeight*0.5}px`;
+        floorBtn.style.display="flex"; floorBtn.style.justifyContent="center";
+        floorBtn.style.alignItems="center";
+        floorBtn.style.fontWeight="600";
+        floorBtn.style.fontSize=`${rowHeight*0.2}px`;
         floorBtn.textContent = floor;
         floorDiv.appendChild(floorBtn);
 
         const divider = document.createElement("div");
         divider.className = "divider-vertical";
-        divider.style.height = `${rowHeight * 0.7}px`;
+        divider.style.height=`${rowHeight*0.7}px`;
 
         const logoDiv = document.createElement("div");
-        logoDiv.className = "logo";
+        logoDiv.className="logo";
 
         const tenantKeys = Object.keys(tenants);
         const tenantCount = tenantKeys.length;
-        const availableLogoWidth = document.querySelector('.directory').clientWidth 
-          - (12/100 * document.querySelector('.directory').clientWidth) 
-          - 1.5/100 * document.querySelector('.directory').clientWidth;
+        const availableLogoWidth = directoryDiv.clientWidth - (12/100 * directoryDiv.clientWidth) - (1.5/100 * directoryDiv.clientWidth);
 
         tenantKeys.forEach((key, idx) => {
           const img = document.createElement("img");
           img.src = tenants[key].logo || "https://via.placeholder.com/80";
           img.alt = tenants[key].name || "Tenant";
 
-          let maxH = rowHeight * 0.8;
-          if (tenantCount <= 2) maxH = rowHeight * 0.95;
-          else if (tenantCount <= 4) maxH = rowHeight * 0.85;
+          let maxH = rowHeight*0.8;
+          if(tenantCount<=2) maxH=rowHeight*0.95;
+          else if(tenantCount<=4) maxH=rowHeight*0.85;
 
-          let maxW = availableLogoWidth / tenantCount - 16;
-          const minSize = 64;
+          let maxW = availableLogoWidth/tenantCount - 16;
+          const minSize=64;
 
-          img.style.height = `${Math.max(maxH, minSize)}px`;
-          img.style.maxWidth = `${Math.max(maxW, minSize)}px`;
-          img.style.width = "auto";
-
-          // Animate each logo with stagger
-          setTimeout(() => img.classList.add("show"), (globalDelay + idx + 2) * 400);
+          img.style.height=`${Math.max(maxH,minSize)}px`;
+          img.style.maxWidth=`${Math.max(maxW,minSize)}px`;
+          img.style.width="auto";
 
           logoDiv.appendChild(img);
+
+          // Animate logos staggered
+          setTimeout(()=>img.classList.add("show"), globalDelay + (idx+2)*400);
         });
 
         row.appendChild(floorDiv);
@@ -237,13 +258,13 @@
         row.appendChild(logoDiv);
         listContainer.appendChild(row);
 
-        // Animate row and floor circle
-        setTimeout(() => row.classList.add("show"), globalDelay * 400);
-        setTimeout(() => floorDiv.classList.add("show"), (globalDelay + 1) * 400);
+        // Animate row + floor
+        setTimeout(()=>row.classList.add("show"), globalDelay);
+        setTimeout(()=>floorDiv.classList.add("show"), globalDelay+400);
 
-        globalDelay += tenantKeys.length + 2; // push delay for next floor
+        globalDelay += (tenantKeys.length+2)*400;
       });
-    });
+    }
   </script>
 </body>
 </html>
