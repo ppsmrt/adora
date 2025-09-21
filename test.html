@@ -41,9 +41,7 @@
       padding: 2vh 0;
       flex-shrink: 0;
     }
-    .header h1, .header h2 {
-      opacity: 0;
-    }
+    .header h1, .header h2 { opacity: 0; }
     .header h1 {
       color: var(--accent);
       font-weight: 800;
@@ -176,12 +174,10 @@
     function playAnimation() {
       if (!directoryData) return;
 
-      // Reset content
       listContainer.innerHTML = "";
       mainTitle.style.opacity = 0; mainTitle.style.transform = "scale(0.8)";
       subTitle.style.opacity = 0; subTitle.style.transform = "translateY(20px)";
 
-      // Animate headers
       setTimeout(() => { mainTitle.style.animation = "fadeZoom 1s forwards"; }, 200);
       setTimeout(() => { subTitle.style.animation = "fadeSlideUp 1s forwards"; }, 1200);
 
@@ -191,10 +187,9 @@
         return parseInt(a)-parseInt(b);
       });
 
-      const numFloors = floorKeys.length;
       const directoryHeight = directoryDiv.clientHeight;
       const headerHeight = document.querySelector('.header').clientHeight;
-      const rowHeight = (directoryHeight - headerHeight) / numFloors;
+      const rowHeight = (directoryHeight - headerHeight) / floorKeys.length;
 
       let globalDelay = 2000; // start after headers
 
@@ -249,8 +244,8 @@
 
           logoDiv.appendChild(img);
 
-          // Animate logos staggered
-          setTimeout(()=>img.classList.add("show"), globalDelay + (idx+2)*400);
+          // Wave-style animation left-to-right
+          setTimeout(() => img.classList.add("show"), globalDelay + 400 + idx*200);
         });
 
         row.appendChild(floorDiv);
@@ -258,7 +253,6 @@
         row.appendChild(logoDiv);
         listContainer.appendChild(row);
 
-        // Animate row + floor
         setTimeout(()=>row.classList.add("show"), globalDelay);
         setTimeout(()=>floorDiv.classList.add("show"), globalDelay+400);
 
