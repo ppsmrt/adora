@@ -97,7 +97,7 @@
       display: flex;
       justify-content: flex-start;
       align-items: center;
-      flex-wrap: wrap; /* wrap logos if too many */
+      flex-wrap: wrap;
       gap: 1vw;
       width: 100%;
     }
@@ -112,7 +112,6 @@
     }
     .logo img.show { animation: popIn 0.8s forwards; }
 
-    /* Animations */
     @keyframes fadeZoom { to { opacity: 1; transform: scale(1); } }
     @keyframes fadeSlideUp { to { opacity: 1; transform: translateY(0); } }
     @keyframes popIn {
@@ -156,7 +155,7 @@
     const directoryDiv = document.getElementById("directory");
 
     let directoryData = null;
-    const loopInterval = 40000; // 40s loop
+    const displayTime = 30000; // 30s after animations complete
 
     onValue(floorsRef, snapshot => {
       directoryData = snapshot.val();
@@ -164,15 +163,15 @@
     });
 
     function startLoop() {
-      playAnimation(); // initial
-      setInterval(() => {
-        // fade-out before restarting
+      playAnimation();
+      // clear any previous interval
+      let loopTimer = setInterval(() => {
         directoryDiv.classList.add("fade-out");
         setTimeout(() => {
           directoryDiv.classList.remove("fade-out");
           playAnimation();
         }, 1000);
-      }, loopInterval);
+      }, displayTime + 2000); // wait 30s + approx animation duration
     }
 
     function playAnimation() {
@@ -195,7 +194,7 @@
       const headerHeight = document.querySelector('.header').clientHeight;
       const rowHeight = (directoryHeight - headerHeight) / floorKeys.length;
 
-      let globalDelay = 2000; // start after headers
+      let globalDelay = 2000;
 
       floorKeys.forEach(floor => {
         const tenants = directoryData[floor]?.tenants;
@@ -248,7 +247,7 @@
 
           logoDiv.appendChild(img);
 
-          // Slower wave animation left-to-right with bounce
+          // wave animation left-to-right, logos stay visible
           setTimeout(() => img.classList.add("show"), globalDelay + 600 + idx*400);
         });
 
@@ -260,7 +259,7 @@
         setTimeout(()=>row.classList.add("show"), globalDelay);
         setTimeout(()=>floorDiv.classList.add("show"), globalDelay+600);
 
-        globalDelay += (tenantKeys.length+2)*400; // slower global delay
+        globalDelay += (tenantKeys.length+2)*400; 
       });
     }
   </script>
